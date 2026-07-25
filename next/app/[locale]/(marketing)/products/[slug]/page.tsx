@@ -8,6 +8,7 @@ import DynamicZoneManager from '@/components/dynamic-zone/manager'
 import { generateMetadataObject } from '@/lib/shared/metadata';
 
 import fetchContentType from "@/lib/strapi/fetchContentType";
+import { fetchCached } from "@/lib/strapi/fetchCached";
 
 export async function generateMetadata({
   params,
@@ -28,7 +29,7 @@ export default async function SingleProductPage({
 }: {
   params: { slug: string, locale: string };
 }) {
-  const product = await fetchContentType("products", {
+  const product = await fetchCached("products", {
     filters: { slug: params.slug, locale: params.locale },
   }, true)
 

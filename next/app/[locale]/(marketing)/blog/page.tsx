@@ -9,6 +9,7 @@ import { IconClipboardText } from "@tabler/icons-react";
 import { BlogPostRows } from "@/components/blog-post-rows";
 import { AmbientColor } from "@/components/decorations/ambient-color";
 import fetchContentType from "@/lib/strapi/fetchContentType";
+import { fetchCached } from "@/lib/strapi/fetchCached";
 import { Article } from "@/types/types";
 import { generateMetadataObject } from '@/lib/shared/metadata';
 
@@ -34,7 +35,7 @@ export default async function Blog({
 }: {
   params: { locale: string, slug: string };
 }) {
-  const blogPage = await fetchContentType('blog-page', {
+  const blogPage = await fetchCached('blog-page', {
     filters: { locale: params.locale },
   }, true)
   const articles = await fetchContentType('articles', {

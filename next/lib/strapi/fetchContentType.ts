@@ -64,10 +64,9 @@ export default async function fetchContentType(
     const response = await fetch(`${url.href}?${qs.stringify(queryParams)}`, {
       method: "GET",
       headers: headers,
-      // 4. Caching Strategy
-      // 'no-store' ensures you always see fresh data in dev/preview.
-      // For production speed, you might change this to { next: { revalidate: 60 } } later.
-      cache: "no-store", 
+      ...(isEnabled
+        ? { cache: "no-store" }
+        : { next: { revalidate: 60 } }),
     });
 
     if (!response.ok) {

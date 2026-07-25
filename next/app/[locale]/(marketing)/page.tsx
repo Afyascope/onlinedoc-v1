@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 
 import PageContent from '@/lib/shared/PageContent';
 import fetchContentType from '@/lib/strapi/fetchContentType';
+import { fetchCached } from '@/lib/strapi/fetchCached';
 import { generateMetadataObject } from '@/lib/shared/metadata';
 import ClientSlugHandler from './ClientSlugHandler';
 
@@ -30,7 +31,7 @@ export async function generateMetadata({
 
 export default async function HomePage({ params }: { params: { locale: string } }) {
 
-  const pageData = await fetchContentType(
+  const pageData = await fetchCached(
     'pages',
     {
       filters: {

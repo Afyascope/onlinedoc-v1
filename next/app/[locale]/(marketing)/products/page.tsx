@@ -9,6 +9,7 @@ import { ProductItems } from "@/components/products/product-items";
 import { Subheading } from "@/components/elements/subheading";
 import { IconShoppingCartUp } from "@tabler/icons-react";
 import fetchContentType from "@/lib/strapi/fetchContentType";
+import { fetchCached } from "@/lib/strapi/fetchCached";
 import { generateMetadataObject } from '@/lib/shared/metadata';
 
 import ClientSlugHandler from '../ClientSlugHandler';
@@ -38,7 +39,7 @@ export default async function Products({
 }) {
 
   // Fetch the product-page and products data
-  const productPage = await fetchContentType('product-page', {
+  const productPage = await fetchCached('product-page', {
     filters: {
       locale: params.locale,
     },

@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation'; // 1. Add this import
 import PageContent from '@/lib/shared/PageContent';
 import fetchContentType from '@/lib/strapi/fetchContentType';
+import { fetchCached } from '@/lib/strapi/fetchCached';
 import { generateMetadataObject } from '@/lib/shared/metadata';
 import ClientSlugHandler from '../ClientSlugHandler';
 
@@ -34,7 +35,7 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: { params: { locale: string, slug: string } }) {
-  const pageData = await fetchContentType(
+  const pageData = await fetchCached(
     "pages",
     {
       filters: {

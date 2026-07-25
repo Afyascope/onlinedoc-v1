@@ -10,6 +10,7 @@ import { CartProvider } from '@/context/cart-context';
 import { cn } from '@/lib/utils';
 import { ViewTransitions } from 'next-view-transitions';
 import fetchContentType from '@/lib/strapi/fetchContentType';
+import { fetchCached } from '@/lib/strapi/fetchCached';
 import { Analytics } from '@vercel/analytics/react';
 import SetLang from './SetLang';
 import { OrganizationSchema } from '@/components/seo/json-ld';
@@ -54,7 +55,7 @@ export default async function LocaleLayout({
     children: React.ReactNode;
     params: { locale: string };
 }) {
-    const pageData = await fetchContentType('global', { filters: { locale } }, true);
+    const pageData = await fetchCached('global', { filters: { locale } }, true);
     
     return (
         <ViewTransitions>

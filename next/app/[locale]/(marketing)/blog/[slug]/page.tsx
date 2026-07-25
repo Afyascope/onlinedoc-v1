@@ -3,6 +3,7 @@ import { Metadata } from "next";
 
 import { BlogLayout } from "@/components/blog-layout";
 import fetchContentType from "@/lib/strapi/fetchContentType";
+import { fetchCached } from "@/lib/strapi/fetchCached";
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { generateMetadataObject } from '@/lib/shared/metadata';
 
@@ -30,7 +31,7 @@ export default async function SingleArticlePage({
 }: {
   params: { slug: string; locale: string };
 }) {
-  const article = await fetchContentType(
+  const article = await fetchCached(
     "articles",
     {
       filters: {

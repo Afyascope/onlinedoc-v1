@@ -1,5 +1,6 @@
 import React from 'react';
 import dynamic from 'next/dynamic';
+import { SectionErrorBoundary } from '../error-boundary';
 
 interface DynamicZoneComponent {
   __component: string;
@@ -37,7 +38,11 @@ const DynamicZoneManager: React.FC<Props> = ({ dynamicZone, locale }) => {
             console.warn(`No component found for: ${componentData.__component}`);
             return null;
           }
-          return <Component key={componentData.id} {...componentData} locale={locale} />;
+          return (
+            <SectionErrorBoundary key={componentData.id}>
+              <Component {...componentData} locale={locale} />
+            </SectionErrorBoundary>
+          );
         })}
     </div>
   );
