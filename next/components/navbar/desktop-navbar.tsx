@@ -44,32 +44,16 @@ export const DesktopNavbar = ({ leftNavbarItems, rightNavbarItems, logo, locale 
   return (
     <motion.div
       className={cn(
-        "w-full flex relative justify-between px-4 py-3 rounded-full transition duration-200 bg-transparent mx-auto"
+        "w-full flex relative justify-between px-4 py-3 rounded-full mx-auto bg-white/90 backdrop-blur-xl border border-black/5 shadow-sm"
       )}
       animate={{
         width: showBackground ? "80%" : "100%",
-        background: "rgba(255, 255, 255, 0.9)",
-        backdropFilter: "blur(12px)",
-        border: "1px solid rgba(0, 0, 0, 0.08)",
         boxShadow: showBackground ? "0px 10px 30px rgba(0,0,0,0.08)" : "0px 1px 3px rgba(0,0,0,0.04)"
       }}
       transition={{
         duration: 0.4,
       }}
     >
-      <AnimatePresence>
-        {showBackground && (
-          <motion.div
-            key={String(showBackground)}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-              duration: 1,
-            }}
-            className="absolute inset-0 h-full w-full bg-[var(--color-primary)] pointer-events-none [mask-image:linear-gradient(to_bottom,white,transparent,white)] rounded-full opacity-5"
-          />
-        )}
-      </AnimatePresence>
       <div className="flex flex-row gap-2 items-center">
         <Logo locale={locale} image={logo?.image} />
         <div className="flex items-center gap-1.5">
