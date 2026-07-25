@@ -1,9 +1,18 @@
 import React from "react";
+import { Metadata } from "next";
 import { BlocksRenderer } from "@strapi/blocks-react-renderer";
 import { Heading } from "@/components/elements/heading";
 import { Subheading } from "@/components/elements/subheading";
 
-// 1. Fetch Data Function
+export const metadata: Metadata = {
+  title: "Services | OnlineDoc Healthcare",
+  description: "Explore our comprehensive healthcare services and solutions.",
+  openGraph: {
+    title: "Services | OnlineDoc Healthcare",
+    description: "Explore our comprehensive healthcare services and solutions.",
+  },
+};
+
 async function getServicePageData() {
   try {
     const res = await fetch(

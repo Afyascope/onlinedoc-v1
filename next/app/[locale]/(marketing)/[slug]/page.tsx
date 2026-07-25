@@ -22,9 +22,15 @@ export async function generateMetadata({
     true,
   );
 
+  if (!pageData) {
+    return {
+      title: "Page Not Found",
+      robots: { index: false },
+    };
+  }
+
   const seo = pageData?.seo;
-  const metadata = generateMetadataObject(seo);
-  return metadata;
+  return generateMetadataObject(seo, { locale: params.locale });
 }
 
 export default async function Page({ params }: { params: { locale: string, slug: string } }) {

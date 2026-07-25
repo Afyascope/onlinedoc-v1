@@ -14,15 +14,13 @@ export async function generateMetadata({
 }: {
   params: { locale: string, slug: string };
 }): Promise<Metadata> {
-
   const pageData = await fetchContentType("products", {
-    filters: { slug: params.slug },
+    filters: { slug: params.slug, locale: params.locale },
     populate: "seo.metaImage",
   }, true)
 
   const seo = pageData?.seo;
-  const metadata = generateMetadataObject(seo);
-  return metadata;
+  return generateMetadataObject(seo, { locale: params.locale });
 }
 
 export default async function SingleProductPage({
@@ -30,9 +28,8 @@ export default async function SingleProductPage({
 }: {
   params: { slug: string, locale: string };
 }) {
-
   const product = await fetchContentType("products", {
-    filters: { slug: params.slug },
+    filters: { slug: params.slug, locale: params.locale },
   }, true)
 
   if (!product) {

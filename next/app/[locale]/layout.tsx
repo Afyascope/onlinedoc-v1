@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { Metadata } from 'next';
-/* 1. Import BOTH fonts */
 import { Inter, Montserrat } from 'next/font/google';
 import { generateMetadataObject } from '@/lib/shared/metadata';
 
@@ -12,29 +11,27 @@ import { cn } from '@/lib/utils';
 import { ViewTransitions } from 'next-view-transitions';
 import fetchContentType from '@/lib/strapi/fetchContentType';
 import { Analytics } from '@vercel/analytics/react';
+import SetLang from './SetLang';
+import { OrganizationSchema } from '@/components/seo/json-ld';
 
-
-/* 2. Configure Inter (Body Font) */
 const inter = Inter({
     subsets: ["latin"],
     display: "swap",
-    variable: "--font-inter", // Matches tailwind.config.ts
+    variable: "--font-inter",
     weight: ["400", "500", "600", "700"],
 });
 
-/* 3. Configure Montserrat (Heading Font) */
 const montserrat = Montserrat({
     subsets: ["latin"],
     display: "swap",
-    variable: "--font-montserrat", // Matches tailwind.config.ts
+    variable: "--font-montserrat",
     weight: ["500", "600", "700", "800"],
 });
 
-// Default Global SEO for pages without them
 export async function generateMetadata({
     params,
 }: {
-    params: { locale: string; slug: string };
+    params: { locale: string };
 }): Promise<Metadata> {
     const pageData = await fetchContentType(
         'global',
@@ -46,7 +43,7 @@ export async function generateMetadata({
     );
 
     const seo = pageData?.seo;
-    const metadata = generateMetadataObject(seo);
+    const metadata = generateMetadataObject(seo, { locale: params.locale });
     return metadata;
 }
 
@@ -57,26 +54,26 @@ export default async function LocaleLayout({
     children: React.ReactNode;
     params: { locale: string };
 }) {
-
     const pageData = await fetchContentType('global', { filters: { locale } }, true);
     
     return (
-        <html lang={locale} className="bg-surface h-full">
-            <ViewTransitions>
-                <CartProvider>
-                    <body
-                        className={cn(
-                            inter.variable,
-                            montserrat.variable,
-                            "bg-surface antialiased h-full w-full font-secondary text-[var(--color-text-primary)]"
-                        )}
-                    >
-                        <Navbar data={pageData.navbar} locale={locale} />
-                        {children}
-                        <Footer data={pageData.footer} locale={locale} />
-                    </body>
-                </CartProvider>
-            </ViewTransitions>
-        </html>
+        <ViewTransitions>
+            <CartProvider>
+                <SetLang locale={locale} />
+                <OrganizationSchema />
+                <div
+                    className={cn(
+                        inter.variable,
+                        montserrat.variable,
+                        "bg-surface antialiased h-full w-full font-secondary text-[var(--color-text-primary)]"
+                    )}
+                >
+                    <Navbar data={pageData?.navbar} locale={locale} />
+                    {children}
+                    <Footer data={pageData?.footer} locale={locale} />
+                </div>
+            </CartProvider>
+            <Analytics />
+        </ViewTransitions>
     );
 }

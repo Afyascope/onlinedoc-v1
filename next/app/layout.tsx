@@ -1,5 +1,4 @@
-import type { Viewport } from "next";
-import { Locale, i18n } from '@/i18n.config'
+import type { Viewport, Metadata } from "next";
 
 import "./globals.css";
 
@@ -12,19 +11,17 @@ export const viewport: Viewport = {
   ],
 };
 
-export async function generateStaticParams() {
-  return i18n.locales.map(locale => ({ lang: locale }))
-}
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://onlinedoc.healthcare"),
+};
 
 export default function RootLayout({
   children,
-  params
 }: {
   children: React.ReactNode
-  params: { lang: Locale }
 }) {
   return (
-    <html lang={params.lang} suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SlugProvider>
           {children}

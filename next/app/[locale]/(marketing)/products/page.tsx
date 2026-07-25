@@ -27,7 +27,7 @@ export async function generateMetadata({
   }, true)
 
   const seo = pageData?.seo;
-  const metadata = generateMetadataObject(seo);
+  const metadata = generateMetadataObject(seo, { locale: params.locale });
   return metadata;
 }
 
