@@ -54,7 +54,7 @@ export const TestimonialsSlider = ({ testimonials }: { testimonials: any }) => {
           <div className="text-center">
             {/* Doctor Image / Avatar */}
             <div className="relative h-40">
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[480px] h-[480px] -z-10 pointer-events-none before:rounded-full rounded-full before:absolute before:inset-0 before:bg-gradient-to-b before:from-lightblack/20 before:to-transparent before:to-20% after:rounded-full after:absolute after:inset-0 after:bg-charcoal after:m-px before:-z-20 after:-z-20">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[480px] h-[480px] -z-10 pointer-events-none before:rounded-full rounded-full before:absolute before:inset-0 before:bg-gradient-to-b before:from-brand/10 before:to-transparent before:to-20% after:rounded-full after:absolute after:inset-0 after:bg-neutral-50 after:m-px before:-z-20 after:-z-20">
                 {slicedTestimonials.map((item: any, index: number) => (
                   <Transition
                     key={index}
@@ -69,7 +69,7 @@ export const TestimonialsSlider = ({ testimonials }: { testimonials: any }) => {
                   >
                     <div className="absolute inset-0 h-full -z-10">
                       <Image
-                        className="relative top-11 left-1/2 -translate-x-1/2 rounded-full border-2 border-charcoal shadow-2xl"
+                        className="relative top-11 left-1/2 -translate-x-1/2 rounded-full border-2 border-neutral-50 shadow-2xl"
                         src={strapiImage(item.user.image.url)}
                         width={64}
                         height={64}
@@ -96,7 +96,7 @@ export const TestimonialsSlider = ({ testimonials }: { testimonials: any }) => {
                     leaveTo="opacity-0 translate-x-4"
                     beforeEnter={() => heightFix()}
                   >
-                    <div className="text-xl md:text-2xl font-medium text-white leading-relaxed font-primary">
+                    <div className="text-xl md:text-2xl font-medium text-primary leading-relaxed font-primary">
                       &quot;{item.text}&quot;
                     </div>
                   </Transition>
@@ -108,12 +108,12 @@ export const TestimonialsSlider = ({ testimonials }: { testimonials: any }) => {
             <div className="flex flex-wrap justify-center -m-1.5 px-8 sm:px-6">
               {slicedTestimonials.map((item: any, index: number) => (
                 <button
-                  className={cn(
+                    className={cn(
                     `px-4 py-2 rounded-full m-1.5 text-xs md:text-sm border transition duration-200 ease-in-out font-secondary
-                     bg-neutral-900/50 backdrop-blur-sm
+                     bg-white border border-border backdrop-blur-sm
                     ${active === index
-                      ? "border-lightblack text-white shadow-[0_0_15px_rgba(0,194,203,0.3)]" // Active: Cyan Glow
-                      : "border-neutral-800 text-neutral-400 hover:border-neutral-600" // Inactive: Muted
+                      ? "border-brand text-primary shadow-[0_0_15px_rgba(0,194,203,0.3)]" // Active: Cyan Glow
+                      : "border-neutral-200 text-neutral-600 hover:border-neutral-600" // Inactive: Muted
                     }`
                   )}
                   key={index}
@@ -127,7 +127,7 @@ export const TestimonialsSlider = ({ testimonials }: { testimonials: any }) => {
                       {item.user.firstname} {item.user.lastname}
                     </span>
                     <span className="hidden sm:inline-block opacity-50">|</span>
-                    <span className="text-lightblack">
+                    <span className="text-brand">
                       {item.user.job}
                     </span>
                   </span>

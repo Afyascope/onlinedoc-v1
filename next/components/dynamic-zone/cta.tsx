@@ -18,16 +18,16 @@ export const CTA = ({
   locale: string 
 }) => {
   return (
-    <div className="relative py-40 bg-charcoal overflow-hidden">
+    <div className="relative py-40 bg-neutral-50 overflow-hidden">
       <AmbientColor />
       <Container className="flex flex-col md:flex-row justify-between items-center w-full px-8 relative z-10">
         
         {/* Text Section */}
         <div className="flex flex-col">
-          <motion.h2 className="text-white text-3xl md:text-5xl font-bold mx-auto md:mx-0 max-w-xl font-primary text-center md:text-left">
+          <motion.h2 className="text-primary text-3xl md:text-5xl font-bold mx-auto md:mx-0 max-w-xl font-primary text-center md:text-left">
             {heading}
           </motion.h2>
-          <p className="max-w-md mt-6 text-center md:text-left text-base md:text-lg mx-auto md:mx-0 text-neutral-300 font-secondary leading-relaxed">
+          <p className="max-w-md mt-6 text-center md:text-left text-base md:text-lg mx-auto md:mx-0 text-neutral-700 font-secondary leading-relaxed">
             {sub_heading}
           </p>
         </div>

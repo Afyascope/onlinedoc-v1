@@ -10,7 +10,7 @@ import { Article } from "@/types/types";
 export const BlogCard = ({ article, locale }: { article: Article, locale: string }) => {
   return (
     <Link
-      className="group grid grid-cols-1 md:grid-cols-2 rounded-2xl border border-white/10 bg-neutral-900 overflow-hidden hover:scale-[1.01] transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-900/20 hover:border-cyan-500/30"
+      className="group grid grid-cols-1 md:grid-cols-2 rounded-2xl border border-border bg-white overflow-hidden hover:scale-[1.01] transition-all duration-300 hover:shadow-2xl hover:shadow-brand/10 hover:border-brand/30 shadow-sm"
       href={`/${locale}/blog/${article.slug}`}
     >
       {/* Image Section */}
@@ -24,7 +24,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-neutral-800">
+          <div className="h-full w-full flex items-center justify-center bg-neutral-100">
             <span className="text-neutral-500 text-sm">No Image</span>
           </div>
         )}
@@ -48,20 +48,20 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
           </div>
 
           {/* Title */}
-          <h2 className="text-xl md:text-3xl font-bold mb-4 text-white font-primary group-hover:text-cyan-400 transition-colors">
+          <h2 className="text-xl md:text-3xl font-bold mb-4 text-primary font-primary group-hover:text-cyan-400 transition-colors">
             <Balancer>{article.title}</Balancer>
           </h2>
 
           {/* Description */}
-          <p className="text-left text-sm md:text-base text-neutral-400 font-secondary leading-relaxed line-clamp-3">
+          <p className="text-left text-sm md:text-base text-neutral-600 font-secondary leading-relaxed line-clamp-3">
             {truncate(article.description, 200)}
           </p>
         </div>
 
         {/* Footer / Date */}
-        <div className="flex items-center mt-6 pt-6 border-t border-white/5">
+        <div className="flex items-center mt-6 pt-6 border-t border-border/50">
           <div className="h-1.5 w-1.5 bg-cyan-500 rounded-full mr-3"></div>
-          <time className="text-neutral-400 text-sm font-medium">
+          <time className="text-neutral-600 text-sm font-medium">
             {format(new Date(article.publishedAt), "MMMM dd, yyyy")}
           </time>
         </div>
@@ -73,7 +73,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
 export const BlogCardVertical = ({ article, locale }: { article: Article, locale: string }) => {
   return (
     <Link
-      className="group flex flex-col h-full rounded-2xl border border-white/10 bg-neutral-900 overflow-hidden hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-900/20 hover:border-cyan-500/30"
+      className="group flex flex-col h-full rounded-2xl border border-border bg-white overflow-hidden hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl hover:shadow-brand/10 hover:border-brand/30 shadow-sm"
       href={`/${locale}/blog/${article.slug}`}
     >
       {/* Image Section */}
@@ -87,7 +87,7 @@ export const BlogCardVertical = ({ article, locale }: { article: Article, locale
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-neutral-800">
+          <div className="h-full w-full flex items-center justify-center bg-neutral-100">
              <span className="text-neutral-500 text-sm">No Image</span>
           </div>
         )}
@@ -111,17 +111,17 @@ export const BlogCardVertical = ({ article, locale }: { article: Article, locale
         </div>
 
         {/* Title */}
-        <h3 className="text-lg md:text-xl font-bold mb-3 text-white font-primary leading-tight group-hover:text-cyan-400 transition-colors">
+        <h3 className="text-lg md:text-xl font-bold mb-3 text-primary font-primary leading-tight group-hover:text-cyan-400 transition-colors">
           <Balancer>{article.title}</Balancer>
         </h3>
 
         {/* Description */}
-        <p className="text-sm text-neutral-400 font-secondary leading-relaxed line-clamp-3 mb-6">
+        <p className="text-sm text-neutral-600 font-secondary leading-relaxed line-clamp-3 mb-6">
           {truncate(article.description, 150)}
         </p>
 
         {/* Footer / Date (Pushed to bottom) */}
-        <div className="mt-auto flex items-center pt-4 border-t border-white/5">
+        <div className="mt-auto flex items-center pt-4 border-t border-border/50">
           <div className="h-1.5 w-1.5 bg-cyan-500 rounded-full mr-2"></div>
           <time className="text-neutral-500 text-xs font-medium uppercase tracking-wider">
             {format(new Date(article.publishedAt), "MMM dd, yyyy")}

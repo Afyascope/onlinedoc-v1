@@ -5,13 +5,13 @@ import { Container } from "../container";
 
 export const RelatedArticles = ({ heading, sub_heading, articles, locale }: { heading: string; sub_heading: string; articles: any[], locale: string }) => {
   return (
-    <Container className="py-20 relative z-20 border-t border-white/5">
+    <Container className="py-20 relative z-20 border-t border-border/50">
       <div className="flex flex-col mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-white font-primary">
+        <h2 className="text-3xl md:text-4xl font-bold text-primary font-primary">
           {heading}
         </h2>
         {sub_heading && (
-          <p className="mt-4 text-lg text-neutral-400 max-w-2xl font-secondary">
+          <p className="mt-4 text-lg text-neutral-600 max-w-2xl font-secondary">
             {sub_heading}
           </p>
         )}

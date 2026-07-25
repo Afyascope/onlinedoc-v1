@@ -23,8 +23,8 @@ export const BlogPostRows = ({ articles }: { articles: Article[] }) => {
 
   return (
     <div className="w-full py-20">
-      <div className="flex sm:flex-row flex-col justify-between gap-6 items-end sm:items-center mb-12 border-b border-white/10 pb-8">
-        <h3 className="text-3xl font-bold font-primary text-white">More Posts</h3>
+      <div className="flex sm:flex-row flex-col justify-between gap-6 items-end sm:items-center mb-12 border-b border-border pb-8">
+        <h3 className="text-3xl font-bold font-primary text-primary">More Posts</h3>
         
         {/* Search Bar */}
         <div className="relative w-full sm:w-96">
@@ -33,7 +33,7 @@ export const BlogPostRows = ({ articles }: { articles: Article[] }) => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search articles..."
-            className="w-full pl-4 pr-10 py-3 text-sm rounded-xl bg-neutral-900 border border-white/10 text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 transition-all"
+            className="w-full pl-4 pr-10 py-3 text-sm rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all"
           />
           {/* Optional: Search Icon position */}
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none">
@@ -42,10 +42,10 @@ export const BlogPostRows = ({ articles }: { articles: Article[] }) => {
         </div>
       </div>
 
-      <div className="divide-y divide-white/5">
+      <div className="divide-y divide-border/50">
         {results.length === 0 ? (
-          <div className="py-12 text-center bg-neutral-900/50 rounded-xl border border-dashed border-white/10">
-            <p className="text-neutral-400">No articles found matching &quot;{search}&quot;</p>
+          <div className="py-12 text-center bg-white rounded-xl border border-dashed border-border shadow-sm">
+            <p className="text-neutral-600">No articles found matching &quot;{search}&quot;</p>
           </div>
         ) : (
           results.map((article, index) => (
@@ -66,12 +66,12 @@ export const BlogPostRow = ({ article }: { article: Article }) => {
     >
       <div className="flex-1 pr-4">
         {/* Title */}
-        <h4 className="text-lg md:text-xl font-bold font-primary text-white group-hover:text-cyan-400 transition-colors duration-200">
+        <h4 className="text-lg md:text-xl font-bold font-primary text-primary group-hover:text-cyan-400 transition-colors duration-200">
           {article.title}
         </h4>
         
         {/* Description */}
-        <p className="text-neutral-400 text-sm mt-2 max-w-2xl font-secondary leading-relaxed">
+        <p className="text-neutral-600 text-sm mt-2 max-w-2xl font-secondary leading-relaxed">
           {truncate(article.description, 100)}
         </p>
 

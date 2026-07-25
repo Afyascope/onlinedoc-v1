@@ -10,18 +10,18 @@ import { Card } from "./card";
 
 export const HowItWorks = ({ heading, sub_heading, steps }: { heading: string, sub_heading: string, steps: any }) => {
   return (
-    <div className="bg-charcoal"> {/* Ensure background matches body */}
+    <div className="bg-neutral-50"> {/* Ensure background matches body */}
       <Container className="py-20 max-w-7xl mx-auto relative z-40">
         
-        <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-lightblack/10 border-lightblack/20">
-          <TbLayoutGrid className="h-6 w-6 text-lightblack" />
+        <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-brand/5 border-brand/20">
+          <TbLayoutGrid className="h-6 w-6 text-brand" />
         </FeatureIconContainer>
         
-        <Heading className="pt-4 font-primary text-white">
+        <Heading className="pt-4 font-primary text-primary">
           {heading}
         </Heading>
 
-        <Subheading className="max-w-3xl mx-auto text-neutral-300">
+        <Subheading className="max-w-3xl mx-auto text-neutral-700">
           {sub_heading}
         </Subheading>
 

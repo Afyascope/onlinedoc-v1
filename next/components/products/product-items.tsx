@@ -38,10 +38,10 @@ export const ProductItems = ({
     <div className="py-20 relative">
       {/* Main Header */}
       <div className="text-center mb-20">
-        <h2 className="text-3xl md:text-5xl font-bold font-primary text-white mb-4">
+        <h2 className="text-3xl md:text-5xl font-bold font-primary text-primary mb-4">
           {heading}
         </h2>
-        <p className="text-neutral-400 font-secondary text-lg max-w-2xl mx-auto">
+        <p className="text-neutral-600 font-secondary text-lg max-w-2xl mx-auto">
           {sub_heading}
         </p>
       </div>
@@ -77,8 +77,8 @@ const TrackSection = ({ title, products, locale }: { title: string, products: Pr
 
   return (
     <div className="mb-24">
-      <div className="flex items-center gap-4 mb-8 border-b border-white/10 pb-4">
-        <h3 className="text-xl md:text-2xl font-bold text-white font-primary uppercase tracking-wider">
+      <div className="flex items-center gap-4 mb-8 border-b border-border pb-4">
+        <h3 className="text-xl md:text-2xl font-bold text-primary font-primary uppercase tracking-wider">
           {title}
         </h3>
         <div className="h-1 bg-cyan-500 w-20 rounded-full hidden md:block" /> 
@@ -105,8 +105,8 @@ const ProductItem = ({ product, locale }: { product: Product, locale: string }) 
 
   return (
     <Link href={`/${locale}/products/${product.slug}` as never} className="group relative block h-full">
-      <div className="relative border border-white/10 rounded-xl overflow-hidden aspect-video bg-neutral-900">
-        <div className="absolute inset-0 bg-gradient-to-t from-charcoal via-transparent to-transparent opacity-80 z-10" />
+      <div className="relative border border-border rounded-xl overflow-hidden aspect-video bg-white shadow-sm">
+        <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/50 to-transparent opacity-80 z-10" />
 
         <Image
           src={strapiImage(product.images[0].url)}
@@ -125,10 +125,10 @@ const ProductItem = ({ product, locale }: { product: Product, locale: string }) 
       </div>
 
       <div className="mt-5">
-        <h4 className="text-white text-lg font-bold font-primary group-hover:text-cyan-400 transition-colors">
+        <h4 className="text-primary text-lg font-bold font-primary group-hover:text-cyan-400 transition-colors">
           {product.name}
         </h4>
-        <p className="text-neutral-400 text-sm mt-2 font-secondary leading-relaxed line-clamp-2">
+        <p className="text-neutral-600 text-sm mt-2 font-secondary leading-relaxed line-clamp-2">
           {product.description}
         </p>
       </div>

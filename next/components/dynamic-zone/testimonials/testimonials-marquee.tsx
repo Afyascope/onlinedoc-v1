@@ -36,7 +36,7 @@ export const TestimonialsMarquee = ({ testimonials }: { testimonials: any }) => 
                      alt={`${testimonial.user.firstname} ${testimonial.user.lastname}`}
                      width={40}
                      height={40}
-                     className="rounded-full ring-2 ring-white/10"
+                     className="rounded-full ring-2 ring-border/50"
                    />
                 ) : (
                    /* Fallback avatar if no image exists */
@@ -45,7 +45,7 @@ export const TestimonialsMarquee = ({ testimonials }: { testimonials: any }) => 
                    </div>
                 )}
                 <div className="flex flex-col">
-                  <QuoteDescription className="text-white font-bold">
+                  <QuoteDescription className="text-primary font-bold">
                     {`${testimonial.user.firstname} ${testimonial.user.lastname}`}
                   </QuoteDescription>
                   <QuoteDescription className="text-indigo-400 text-xs uppercase tracking-wider">
@@ -71,14 +71,14 @@ export const TestimonialsMarquee = ({ testimonials }: { testimonials: any }) => 
                 className="w-[350px] md:w-[450px] mx-4 h-full min-h-[220px] flex flex-col justify-between"
               >
                 <Quote>{testimonial.text}</Quote>
-                <div className="flex gap-3 items-center mt-6 border-t border-white/5 pt-4">
+              <div className="flex gap-3 items-center mt-6 border-t border-border/50 pt-4">
                   {testimonial?.user?.image?.url ? (
                     <Image
                       src={strapiImage(testimonial.user.image.url)}
                       alt={`${testimonial.user.firstname} ${testimonial.user.lastname}`}
                       width={40}
                       height={40}
-                      className="rounded-full ring-2 ring-white/10"
+                      className="rounded-full ring-2 ring-border/50"
                     />
                   ) : (
                     <div className="h-10 w-10 rounded-full bg-indigo-900/50 flex items-center justify-center text-indigo-400 font-bold text-xs ring-2 ring-white/10">
@@ -86,7 +86,7 @@ export const TestimonialsMarquee = ({ testimonials }: { testimonials: any }) => 
                     </div>
                   )}
                   <div className="flex flex-col">
-                    <QuoteDescription className="text-white font-bold">
+                    <QuoteDescription className="text-primary font-bold">
                       {`${testimonial.user.firstname} ${testimonial.user.lastname}`}
                     </QuoteDescription>
                     <QuoteDescription className="text-indigo-400 text-xs uppercase tracking-wider">
@@ -115,7 +115,7 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "p-6 rounded-2xl bg-neutral-900/40 border border-white/5 backdrop-blur-sm transition-all duration-300",
+        "p-6 rounded-2xl bg-neutral-50 border border-border/50 backdrop-blur-sm transition-all duration-300",
         "hover:border-indigo-500/30 hover:shadow-[0_0_30px_-10px_rgba(99,102,241,0.2)]", // Hover Glow Effect
         className
       )}
@@ -133,7 +133,7 @@ export const Quote = ({
   className?: string;
 }) => {
   return (
-    <h3 className={cn("text-lg font-secondary font-medium text-neutral-200 leading-relaxed italic", className)}>
+    <h3 className={cn("text-lg font-secondary font-medium text-neutral-800 leading-relaxed italic", className)}>
       &quot;{children}&quot;
     </h3>
   );
@@ -148,7 +148,7 @@ export const QuoteDescription = ({
 }) => {
   return (
     <p
-      className={cn("text-sm font-normal text-neutral-200 max-w-sm", className)}
+      className={cn("text-sm font-normal text-neutral-800 max-w-sm", className)}
     >
       {children}
     </p>

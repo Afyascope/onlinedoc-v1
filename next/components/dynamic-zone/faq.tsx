@@ -12,14 +12,14 @@ export const FAQ = ({ heading, sub_heading, faqs }: { heading: string, sub_headi
       
       {/* HEADER SECTION */}
       <div className="pt-20 md:pt-40 text-center max-w-3xl mx-auto">
-        <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-charcoal mx-auto">
-          <IconHelpHexagonFilled className="h-6 w-6 text-white" />
+        <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-neutral-50 mx-auto">
+          <IconHelpHexagonFilled className="h-6 w-6 text-primary" />
         </FeatureIconContainer>
         <Heading as="h1" className="mt-4">
           {heading}
         </Heading>
         {/* FIXED: Added the missing Subheading here */}
-        <Subheading className="mt-4 text-neutral-400">
+        <Subheading className="mt-4 text-neutral-600">
           {sub_heading}
         </Subheading>
       </div>
@@ -29,12 +29,12 @@ export const FAQ = ({ heading, sub_heading, faqs }: { heading: string, sub_headi
         {faqs && faqs.map((faq: { question: string, answer: string }) => (
           <div 
             key={faq.question} 
-            className="p-6 rounded-2xl bg-neutral-900/30 border border-white/5 hover:border-white/10 transition-colors"
+            className="p-6 rounded-2xl bg-white border border-border/50 hover:border-border transition-colors"
           >
-            <h4 className="text-lg font-bold text-white font-primary leading-snug">
+            <h4 className="text-lg font-bold text-primary font-primary leading-snug">
               {faq.question}
             </h4>
-            <p className="mt-3 text-neutral-400 font-secondary text-sm leading-relaxed">
+            <p className="mt-3 text-neutral-600 font-secondary text-sm leading-relaxed">
               {faq.answer}
             </p>
           </div>

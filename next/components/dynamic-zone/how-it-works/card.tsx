@@ -60,7 +60,7 @@ export const Card = ({
       {/* LEFT SIDE: LOGO or NUMBER */}
       <div className="flex justify-center md:justify-end md:pr-10">
         {image?.url ? (
-          <div className="relative h-24 w-24 md:h-32 md:w-32 bg-white/5 rounded-2xl p-4 border border-white/10 flex items-center justify-center backdrop-blur-sm shadow-xl">
+          <div className="relative h-24 w-24 md:h-32 md:w-32 bg-white/5 rounded-2xl p-4 border border-border flex items-center justify-center backdrop-blur-sm shadow-xl">
              <Image 
                src={strapiImage(image.url)} 
                alt={title} 
@@ -78,15 +78,15 @@ export const Card = ({
 
       {/* MIDDLE: CONNECTION BEAM */}
       <motion.div
-        className="h-[2px] w-full hidden md:block bg-neutral-800 rounded-full mt-0 relative overflow-hidden"
+        className="h-[2px] w-full hidden md:block bg-neutral-100 rounded-full mt-0 relative overflow-hidden"
         style={{ width }}
       >
-        <Beam className="top-[0.5px] bg-lightblack" /> {/* Cyan Beam */}
+        <Beam className="top-[0.5px] bg-brand" /> {/* Cyan Beam */}
       </motion.div>
 
       {/* RIGHT SIDE: CONTENT CARD */}
       <div
-        className="group p-8 rounded-xl border border-white/10 bg-charcoal/50 backdrop-blur-md relative z-40 col-span-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1"
+        className="group p-8 rounded-xl border border-border bg-neutral-50 backdrop-blur-md relative z-40 col-span-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1"
         onMouseMove={handleMouseMove}
       >
         {/* Hover Effect: Cyan & Red */}
@@ -113,10 +113,10 @@ export const Card = ({
           />
         </motion.div>
 
-        <h3 className="text-2xl font-bold font-primary text-white relative z-20 mt-2">
+        <h3 className="text-2xl font-bold font-primary text-primary relative z-20 mt-2">
           {title}
         </h3>
-        <p className="text-neutral-300 font-secondary text-sm leading-relaxed mt-4 relative z-20">
+        <p className="text-neutral-700 font-secondary text-sm leading-relaxed mt-4 relative z-20">
           {description}
         </p>
       </div>

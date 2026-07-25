@@ -45,11 +45,11 @@ export const Brands = ({ heading, sub_heading, logos }: { heading: string, sub_h
   }, [activeLogoSet]);
 
   return (
-    <div className="relative z-20 py-10 md:py-40 bg-charcoal">
-      <Heading className="pt-4 font-primary text-white">
+    <div className="relative z-20 py-10 md:py-40 bg-neutral-50">
+      <Heading className="pt-4 font-primary text-primary">
         {heading}
       </Heading>
-      <Subheading className="max-w-3xl mx-auto text-neutral-300 font-secondary">
+      <Subheading className="max-w-3xl mx-auto text-neutral-700 font-secondary">
         {sub_heading}
       </Subheading>
 

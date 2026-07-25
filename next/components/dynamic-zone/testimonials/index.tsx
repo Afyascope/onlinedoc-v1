@@ -11,19 +11,19 @@ import { AmbientColor } from "../../decorations/ambient-color";
 
 export const Testimonials = ({ heading, sub_heading, testimonials }: { heading: string, sub_heading: string, testimonials: object }) => {
   return (
-    <div className="relative bg-charcoal overflow-hidden">
+    <div className="relative bg-neutral-50 overflow-hidden">
       <AmbientColor />
       <div className="pb-20 relative z-10">
-        <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-lightblack/10 border-lightblack/20">
+        <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-brand/5 border-brand/20">
           {/* Medical Pulse Icon */}
-          <TbActivity className="h-6 w-6 text-lightblack" />
+          <TbActivity className="h-6 w-6 text-brand" />
         </FeatureIconContainer>
         
-        <Heading className="pt-4 font-primary text-white">
+        <Heading className="pt-4 font-primary text-primary">
             {heading}
         </Heading>
         
-        <Subheading className="text-neutral-300 font-secondary">
+        <Subheading className="text-neutral-700 font-secondary">
           {sub_heading}
         </Subheading>
       </div>
@@ -33,14 +33,14 @@ export const Testimonials = ({ heading, sub_heading, testimonials }: { heading: 
           <TestimonialsSlider testimonials={testimonials} />
           
           {/* Marquee Section: Useful for Hospital Partners */}
-          <div className="h-full w-full mt-20 border-t border-neutral-800 bg-charcoal/50 backdrop-blur-sm pt-10">
+          <div className="h-full w-full mt-20 border-t border-neutral-200 bg-neutral-50 backdrop-blur-sm pt-10">
             <TestimonialsMarquee testimonials={testimonials} />
           </div>
         </div>
       )}
      
      {/* Bottom Fade */}
-      <div className="absolute bottom-0 inset-x-0 h-40 w-full bg-gradient-to-t from-charcoal to-transparent pointer-events-none"></div>
+      <div className="absolute bottom-0 inset-x-0 h-40 w-full bg-gradient-to-t from-neutral-50 to-transparent pointer-events-none"></div>
     </div>
   );
 };

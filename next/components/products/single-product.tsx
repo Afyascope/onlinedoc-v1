@@ -48,7 +48,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
     : "Case Study";
 
   return (
-    <div className="bg-gradient-to-b from-neutral-900 to-neutral-950 p-4 md:p-10 rounded-md">
+    <div className="bg-gradient-to-b from-white to-neutral-100 p-4 md:p-10 rounded-md">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         
         {/* LEFT COLUMN: Image Slider */}
@@ -66,7 +66,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
                 }}
             >
                 {product.images.map((image, index) => (
-                    <div key={"slide-" + index} className="w-full flex-shrink-0 snap-center flex justify-center items-center bg-neutral-900/50">
+                    <div key={"slide-" + index} className="w-full flex-shrink-0 snap-center flex justify-center items-center bg-white">
                          {/* RESTORED: Specific width/height to prevent zoom */}
                          <Image
                           src={strapiImage(image.url)}
@@ -86,7 +86,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
                   <button 
                     onClick={() => scroll('left')}
                     className={cn(
-                        "absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0",
+                        "absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/80 text-primary p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0",
                         activeIndex === 0 && "hidden"
                     )}
                     disabled={activeIndex === 0}
@@ -96,7 +96,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
                   <button 
                     onClick={() => scroll('right')}
                      className={cn(
-                        "absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0",
+                        "absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/80 text-primary p-2 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 disabled:opacity-0",
                         activeIndex === product.images.length - 1 && "hidden"
                     )}
                     disabled={activeIndex === product.images.length - 1}
@@ -134,14 +134,14 @@ export const SingleProduct = ({ product }: { product: Product }) => {
 
         {/* RIGHT COLUMN: Details */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4 text-white">{product.name}</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-primary">{product.name}</h2>
           
           {/* Category Pill (Replaces Price) */}
           <p className="mb-6 bg-cyan-500/10 border border-cyan-500/20 text-xs px-4 py-1 rounded-full text-cyan-400 w-fit font-bold uppercase tracking-wider">
             {categoryName}
           </p>
           
-          <p className="text-base font-normal mb-4 text-neutral-400">
+          <p className="text-base font-normal mb-4 text-neutral-600">
             {product.description}
           </p>
 
@@ -153,28 +153,28 @@ export const SingleProduct = ({ product }: { product: Product }) => {
             ))}
           </ul>
           
-          <h3 className="text-sm font-medium text-neutral-400 mb-2">
+          <h3 className="text-sm font-medium text-neutral-600 mb-2">
             Industry / Client Type
           </h3>
           <ul className="list-none flex gap-4 flex-wrap">
             {product.plans && product.plans.map((plan, index) => (
               <li
                 key={index}
-                className="bg-neutral-800 text-sm text-white px-3 py-1 rounded-full font-medium"
+                className="bg-neutral-100 text-sm text-primary px-3 py-1 rounded-full font-medium"
               >
                 {plan.name}
               </li>
             ))}
           </ul>
 
-          <h3 className="text-sm font-medium text-neutral-400 mb-2 mt-8">
+          <h3 className="text-sm font-medium text-neutral-600 mb-2 mt-8">
             Categories
           </h3>
           <ul className="flex gap-4 flex-wrap">
             {product.categories && product.categories?.map((category, idx) => (
               <li
                 key={`category-${idx}`}
-                className="bg-neutral-800 text-sm text-white px-3 py-1 rounded-full font-medium"
+                className="bg-neutral-100 text-sm text-primary px-3 py-1 rounded-full font-medium"
               >
                 {category.name}
               </li>
@@ -202,7 +202,7 @@ const Divider = () => {
   return (
     <div className="relative">
       <div className="w-full h-px bg-neutral-950" />
-      <div className="w-full h-px bg-neutral-800" />
+      <div className="w-full h-px bg-neutral-100" />
     </div>
   );
 };
@@ -211,9 +211,9 @@ const Step = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex items-start justify-start gap-2 my-4">
       <div className="h-4 w-4 rounded-full bg-neutral-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-        <IconCheck className="h-3 w-3 [stroke-width:4px] text-neutral-300" />
+        <IconCheck className="h-3 w-3 [stroke-width:4px] text-neutral-700" />
       </div>
-      <div className="font-medium text-white text-sm">{children}</div>
+      <div className="font-medium text-primary text-sm">{children}</div>
     </div>
   );
 };
