@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "framer-motion";
 import { truncate } from "@/lib/utils";
 import { format } from "date-fns";
 import { Link } from "next-view-transitions";
@@ -22,7 +23,13 @@ export const BlogPostRows = ({ articles }: { articles: Article[] }) => {
   }, [search]);
 
   return (
-    <div className="w-full py-20">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="w-full py-20"
+    >
       <div className="flex sm:flex-row flex-col justify-between gap-6 items-end sm:items-center mb-12 border-b border-border pb-8">
         <h3 className="text-3xl font-bold font-primary text-primary">All Posts</h3>
         
@@ -33,7 +40,7 @@ export const BlogPostRows = ({ articles }: { articles: Article[] }) => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search articles..."
-            className="w-full pl-4 pr-10 py-3 text-sm rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all"
+            className="w-full pl-4 pr-10 py-3 text-sm rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand transition-all"
           />
           {/* Optional: Search Icon position */}
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 pointer-events-none">
@@ -53,7 +60,7 @@ export const BlogPostRows = ({ articles }: { articles: Article[] }) => {
           ))
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -62,7 +69,7 @@ export const BlogPostRow = ({ article }: { article: Article }) => {
     <Link
       href={`blog/${article.slug}`}
       key={`${article.slug}`}
-      className="group flex md:flex-row flex-col items-start justify-between md:items-center py-6 hover:bg-neutral-50 px-4 rounded-xl -mx-4 transition-colors duration-200"
+      className="group flex md:flex-row flex-col items-start justify-between md:items-center py-6 active:scale-[0.99] px-4 rounded-xl -mx-4 transition-all duration-200"
     >
       <div className="flex-1 pr-4">
         {/* Title */}

@@ -1,11 +1,18 @@
 "use client";
 import React from "react";
+import { motion } from "framer-motion";
 import { BlogCardVertical } from "../blog-card";
 import { Container } from "../container";
 
 export const RelatedArticles = ({ heading, sub_heading, articles, locale }: { heading: string; sub_heading: string; articles: any[], locale: string }) => {
   return (
-    <Container className="py-20 relative z-20 border-t border-border/50">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <Container className="py-20 relative z-20 border-t border-border/50">
       <div className="flex flex-col mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-primary font-primary">
           {heading}
@@ -23,5 +30,6 @@ export const RelatedArticles = ({ heading, sub_heading, articles, locale }: { he
         ))}
       </div>
     </Container>
+    </motion.div>
   );
 };

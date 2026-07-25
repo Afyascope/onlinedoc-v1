@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "framer-motion";
 import React from "react";
 import { Heading } from "../../elements/heading";
 import { Subheading } from "../../elements/subheading";
@@ -10,7 +11,13 @@ import { Card } from "./card";
 
 export const HowItWorks = ({ heading, sub_heading, steps }: { heading: string, sub_heading: string, steps: any }) => {
   return (
-    <div className="bg-neutral-50"> {/* Ensure background matches body */}
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="bg-neutral-50"
+    >
       <Container className="py-20 max-w-7xl mx-auto relative z-40">
         
         <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-brand/5 border-brand/20">
@@ -37,6 +44,6 @@ export const HowItWorks = ({ heading, sub_heading, steps }: { heading: string, s
           ))}
         </div>
       </Container>
-      </div>
+      </motion.div>
   );
 };

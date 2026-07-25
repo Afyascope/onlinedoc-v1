@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { Container } from "../container";
 import { FeatureIconContainer } from "./features/feature-icon-container";
 import { Heading } from "../elements/heading";
@@ -35,7 +36,13 @@ export const Pricing = ({ heading, sub_heading, plans }: { heading: string, sub_
   };
   
   return (
-    <div className="py-20 relative z-20">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="py-20 relative z-20"
+    >
       <Container>
         <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-neutral-50">
           {/* Changed Icon to Briefcase for 'Services' vibe */}
@@ -54,7 +61,7 @@ export const Pricing = ({ heading, sub_heading, plans }: { heading: string, sub_
           ))}
         </div>
       </Container>
-    </div>
+    </motion.div>
   );
 };
 

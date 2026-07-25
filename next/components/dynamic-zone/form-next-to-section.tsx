@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import StarBackground from "@/components/decorations/star-background";
 import ShootingStars from "@/components/decorations/shooting-star";
 import { AnimatedTooltip } from "@/components/ui/animated-tooltip";
@@ -40,7 +41,13 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
   ];
 
   return (
-    <div className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="w-full min-h-screen grid grid-cols-1 md:grid-cols-2 relative overflow-hidden"
+    >
       <div className="flex relative z-20 items-center w-full justify-center px-4 py-4 lg:py-40 sm:px-6 lg:flex-none lg:px-20  xl:px-24">
         <div className="mx-auto w-full max-w-md">
           <div>
@@ -74,7 +81,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
                           rows={5}
                           id="message"
                           placeholder={input.placeholder}
-                          className="block w-full bg-white px-4 rounded-md border border-border py-3 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
+                          className="block w-full bg-white px-4 rounded-md border border-border py-3 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:text-sm sm:leading-6"
                         />
                       ) : input.type === 'submit' ? (
                         <div>
@@ -85,7 +92,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
                           id="name"
                           type={input.type}
                           placeholder={input.placeholder}
-                          className="block w-full bg-white px-4 rounded-md border border-border py-3 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
+                          className="block w-full bg-white px-4 rounded-md border border-border py-3 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand sm:text-sm sm:leading-6"
                         />
                       }
                     </div>
@@ -126,7 +133,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
           </p>
         </div>
       </div>
-    </div>
+    </motion.div>
 
   );
 }

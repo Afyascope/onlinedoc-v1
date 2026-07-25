@@ -1,3 +1,5 @@
+"use client";
+import { motion } from "framer-motion";
 import React from "react";
 import { Product } from "@/types/types";
 import Image from "next/image";
@@ -35,7 +37,13 @@ export const ProductItems = ({
   // ideally, ensure all strapi items match one of these keywords.
 
   return (
-    <div className="py-20 relative">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="py-20 relative"
+    >
       {/* Main Header */}
       <div className="text-center mb-20">
         <h2 className="text-3xl md:text-5xl font-bold font-primary text-primary mb-4">
@@ -67,7 +75,7 @@ export const ProductItems = ({
         locale={locale} 
       />
 
-    </div>
+    </motion.div>
   );
 };
 
@@ -104,7 +112,7 @@ const ProductItem = ({ product, locale }: { product: Product, locale: string }) 
     : "Case Study";
 
   return (
-    <Link href={`/${locale}/products/${product.slug}` as never} className="group relative block h-full">
+    <Link href={`/${locale}/products/${product.slug}` as never} className="group relative block h-full active:scale-[0.99]">
       <div className="relative border border-border rounded-xl overflow-hidden aspect-video bg-white shadow-sm">
         <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/50 to-transparent opacity-80 z-10" />
 

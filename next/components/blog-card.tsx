@@ -10,7 +10,7 @@ import { Article } from "@/types/types";
 export const BlogCard = ({ article, locale }: { article: Article, locale: string }) => {
   return (
     <Link
-      className="group grid grid-cols-1 md:grid-cols-2 rounded-2xl border border-border bg-white overflow-hidden hover:scale-[1.01] transition-all duration-300 hover:shadow-2xl hover:shadow-brand/10 hover:border-brand/30 shadow-sm"
+      className="group grid grid-cols-1 md:grid-cols-2 rounded-2xl border border-border bg-white overflow-hidden active:scale-[0.99] hover:scale-[1.01] transition-all duration-300 hover:shadow-2xl hover:shadow-brand/10 hover:border-brand/30 shadow-sm"
       href={`/${locale}/blog/${article.slug}`}
     >
       {/* Image Section */}
@@ -24,7 +24,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-neutral-100">
+          <div className="h-full w-full flex items-center justify-center bg-neutral-100 animate-pulse">
             <span className="text-neutral-500 text-sm">No Image</span>
           </div>
         )}
@@ -73,7 +73,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
 export const BlogCardVertical = ({ article, locale }: { article: Article, locale: string }) => {
   return (
     <Link
-      className="group flex flex-col h-full rounded-2xl border border-border bg-white overflow-hidden hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl hover:shadow-brand/10 hover:border-brand/30 shadow-sm"
+      className="group flex flex-col h-full rounded-2xl border border-border bg-white overflow-hidden active:scale-[0.99] hover:-translate-y-1 transition-all duration-300 hover:shadow-2xl hover:shadow-brand/10 hover:border-brand/30 shadow-sm"
       href={`/${locale}/blog/${article.slug}`}
     >
       {/* Image Section */}
@@ -87,7 +87,7 @@ export const BlogCardVertical = ({ article, locale }: { article: Article, locale
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="h-full w-full flex items-center justify-center bg-neutral-100">
+          <div className="h-full w-full flex items-center justify-center bg-neutral-100 animate-pulse">
              <span className="text-neutral-500 text-sm">No Image</span>
           </div>
         )}

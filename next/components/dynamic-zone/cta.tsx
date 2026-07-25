@@ -18,7 +18,13 @@ export const CTA = ({
   locale: string 
 }) => {
   return (
-    <div className="relative py-24 bg-neutral-50 overflow-hidden">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="relative py-24 bg-neutral-50 overflow-hidden"
+    >
       <AmbientColor />
       <Container className="flex flex-col md:flex-row justify-between items-center w-full px-8 relative z-10">
         
@@ -48,6 +54,6 @@ export const CTA = ({
           ))}
         </div>
       </Container>
-    </div>
+    </motion.div>
   );
 };

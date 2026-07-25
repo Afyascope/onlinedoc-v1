@@ -11,7 +11,7 @@ export const AmbientColor = () => {
           height: "1380px",
           background:
             /* Hue 182 matches your Lightblack/Cyan brand color (#00C2CB) */
-            "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(182, 100%, 70%, .1) 0, hsla(182, 100%, 55%, .05) 50%, hsla(182, 100%, 45%, 0) 80%)",
+            "radial-gradient(68.54% 68.72% at 55.02% 31.46%, hsla(182, 50%, 50%, .08) 0, hsla(182, 100%, 55%, .05) 50%, hsla(182, 100%, 45%, 0) 80%)",
         }}
         className="absolute top-0 left-0"
       />
@@ -43,7 +43,7 @@ export const AmbientColor = () => {
           height: "1380px",
           background:
             /* Matches Beam 1 to unify the lighting effect */
-            "radial-gradient(50% 50% at 50% 50%, hsla(182, 100%, 85%, .04) 0, hsla(182, 100%, 45%, .02) 80%, transparent 100%)",
+            "radial-gradient(50% 50% at 50% 50%, hsla(182, 50%, 50%, .04) 0, hsla(182, 100%, 45%, .02) 80%, transparent 100%)",
         }}
         className="absolute top-0 left-0"
       />

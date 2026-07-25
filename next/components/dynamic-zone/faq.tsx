@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { Container } from "@/components/container";
 import { Heading } from "@/components/elements/heading";
 import { Subheading } from "@/components/elements/subheading"; 
@@ -8,7 +9,13 @@ import { IconHelpHexagonFilled } from "@tabler/icons-react";
 
 export const FAQ = ({ heading, sub_heading, faqs }: { heading: string, sub_heading: string, faqs: any[] }) => {
   return (
-    <Container className="flex flex-col items-center justify-between pb-20 relative z-20">
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <Container className="flex flex-col items-center justify-between pb-20 relative z-20">
       
       {/* HEADER SECTION */}
       <div className="pt-20 md:pt-40 text-center max-w-3xl mx-auto">
@@ -41,5 +48,6 @@ export const FAQ = ({ heading, sub_heading, faqs }: { heading: string, sub_headi
         ))}
       </div>
     </Container>
+    </motion.div>
   );
 };

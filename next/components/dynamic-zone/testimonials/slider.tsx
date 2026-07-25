@@ -113,7 +113,7 @@ export const TestimonialsSlider = ({ testimonials }: { testimonials: any }) => {
                      bg-white border border-border backdrop-blur-sm
                     ${active === index
                       ? "border-brand text-primary shadow-[0_0_15px_rgba(0,194,203,0.3)]" // Active: Cyan Glow
-                      : "border-neutral-200 text-neutral-600 hover:border-neutral-600" // Inactive: Muted
+                      : "border-neutral-200 text-neutral-600 hover:border-neutral-600 hover:scale-105" // Inactive: Muted
                     }`
                   )}
                   key={index}

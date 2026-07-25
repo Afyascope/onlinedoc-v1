@@ -46,7 +46,7 @@ export const Register = () => {
             <input
               type="text"
               placeholder="Full Name"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand transition-all text-sm"
             />
           </div>
 
@@ -55,7 +55,7 @@ export const Register = () => {
             <input
               type="email"
               placeholder="Work Email Address"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand transition-all text-sm"
             />
           </div>
 
@@ -64,7 +64,7 @@ export const Register = () => {
             <input
               type="text"
               placeholder="Organization (Optional)"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand transition-all text-sm"
             />
           </div>
 

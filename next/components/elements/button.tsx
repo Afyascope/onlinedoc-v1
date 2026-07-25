@@ -32,8 +32,9 @@ export const Button: React.FC<ButtonProps> = ({
   return (
     <Tag
       className={cn(
-        "relative z-10 text-sm md:text-sm font-bold rounded-xl px-6 py-3 flex items-center justify-center transition-all duration-200 cursor-pointer",
+        "relative z-10 text-sm md:text-sm font-bold rounded-xl px-6 py-3 flex items-center justify-center transition-all duration-200 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
         variants[variant] || variants.primary,
+        "active:scale-95",
         className
       )}
       {...props}

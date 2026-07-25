@@ -106,7 +106,7 @@ export const Card = ({
             animationSpeed={3}
             containerClassName="bg-transparent absolute inset-0 pointer-events-none"
             colors={[
-              [0, 194, 203], // Afyascope Cyan
+              [44, 177, 188], // Brand Cyan
               [255, 77, 77], // Afyascope Red
             ]}
             dotSize={2}

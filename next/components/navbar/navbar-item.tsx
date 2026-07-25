@@ -33,7 +33,7 @@ export function NavbarItem({
     <Link
       href={href}
       className={cn(
-        "flex items-center justify-center text-sm font-medium leading-[110%] px-4 py-2 rounded-full transition duration-200",
+        "flex items-center justify-center text-sm font-medium leading-[110%] px-4 py-2 rounded-full transition duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
         "text-neutral-600 hover:text-primary hover:bg-primary/5",
         
         isActive && "bg-primary/10 text-primary shadow-[0px_1px_0px_0px_rgba(15,42,67,0.1)_inset]",

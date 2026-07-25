@@ -46,7 +46,7 @@ export async function BlogLayout({
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent" />
           </div>
         ) : (
-          <div className="h-64 md:h-96 w-full rounded-2xl border border-border bg-white shadow-sm flex items-center justify-center">
+          <div className="h-64 md:h-96 w-full rounded-2xl border border-border bg-white shadow-sm flex items-center justify-center animate-pulse">
              <span className="text-neutral-700">No Cover Image</span>
           </div>
         )}

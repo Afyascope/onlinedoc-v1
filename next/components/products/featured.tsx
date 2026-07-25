@@ -49,7 +49,7 @@ const FeaturedItem = ({ product, locale }: { product: Product, locale: string })
   return (
     <Link
       href={`/${locale}/products/${product.slug}` as never}
-      className="group border border-border rounded-2xl overflow-hidden relative block h-full w-full shadow-sm hover:shadow-xl transition-shadow duration-300"
+      className="group border border-border rounded-2xl overflow-hidden relative block h-full w-full shadow-sm hover:shadow-xl active:scale-[0.99] transition-all duration-300"
     >
       {/* Gradient Overlay for Text Readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/10 to-transparent opacity-80 z-10 transition-opacity duration-300 group-hover:opacity-60" />
@@ -72,7 +72,7 @@ const FeaturedItem = ({ product, locale }: { product: Product, locale: string })
         alt={product.name}
         width={1000}
         height={1000}
-        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
       />
     </Link>
   );
