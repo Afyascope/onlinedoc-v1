@@ -14,7 +14,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
       href={`/${locale}/blog/${article.slug}`}
     >
       {/* Image Section */}
-      <div className="relative h-64 md:h-full w-full overflow-hidden">
+      <div className="relative aspect-video md:aspect-auto md:h-full w-full overflow-hidden">
         {article.image ? (
           <BlurImage
             src={strapiImage(article.image.url)}
@@ -77,7 +77,7 @@ export const BlogCardVertical = ({ article, locale }: { article: Article, locale
       href={`/${locale}/blog/${article.slug}`}
     >
       {/* Image Section */}
-      <div className="relative h-64 w-full overflow-hidden">
+      <div className="relative aspect-video w-full overflow-hidden">
         {article.image ? (
           <BlurImage
             src={strapiImage(article.image.url || "")}

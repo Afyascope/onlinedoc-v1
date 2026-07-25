@@ -115,7 +115,7 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "p-6 rounded-2xl bg-neutral-50 border border-border/50 backdrop-blur-sm transition-all duration-300",
+        "p-6 rounded-2xl bg-neutral-50 border border-border/50 backdrop-blur-sm shadow-sm transition-all duration-300",
         "hover:border-indigo-500/30 hover:shadow-[0_0_30px_-10px_rgba(99,102,241,0.2)]", // Hover Glow Effect
         className
       )}

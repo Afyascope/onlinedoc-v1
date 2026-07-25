@@ -11,7 +11,7 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "p-8 rounded-3xl border border-border bg-white shadow-sm group",
+        "p-8 rounded-3xl border border-border bg-white shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 group",
         className
       )}
     >

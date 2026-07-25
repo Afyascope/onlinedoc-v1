@@ -35,7 +35,7 @@ export const Pricing = ({ heading, sub_heading, plans }: { heading: string, sub_
   };
   
   return (
-    <div className="pt-20 pb-20 relative z-20">
+    <div className="py-20 relative z-20">
       <Container>
         <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-neutral-50">
           {/* Changed Icon to Briefcase for 'Services' vibe */}
@@ -62,8 +62,8 @@ const Card = ({ plan, onClick }: { plan: Plan; onClick: () => void }) => {
   return (
     <div
       className={cn(
-        "p-4 md:p-6 rounded-3xl bg-neutral-50 border border-border flex flex-col h-full",
-        plan.featured && "bg-white border-neutral-200"
+        "p-4 md:p-6 rounded-3xl bg-neutral-50 border border-border flex flex-col h-full shadow-sm hover:shadow-md transition-shadow",
+        plan.featured && "bg-white border-neutral-200 shadow-md hover:shadow-lg"
       )}
     >
       <div className="flex-1">

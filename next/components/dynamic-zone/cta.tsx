@@ -18,7 +18,7 @@ export const CTA = ({
   locale: string 
 }) => {
   return (
-    <div className="relative py-40 bg-neutral-50 overflow-hidden">
+    <div className="relative py-24 bg-neutral-50 overflow-hidden">
       <AmbientColor />
       <Container className="flex flex-col md:flex-row justify-between items-center w-full px-8 relative z-10">
         

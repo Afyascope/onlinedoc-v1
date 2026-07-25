@@ -62,7 +62,7 @@ export const BlogPostRow = ({ article }: { article: Article }) => {
     <Link
       href={`blog/${article.slug}`}
       key={`${article.slug}`}
-      className="group flex md:flex-row flex-col items-start justify-between md:items-center py-6 hover:bg-white/5 px-4 rounded-xl -mx-4 transition-colors duration-200"
+      className="group flex md:flex-row flex-col items-start justify-between md:items-center py-6 hover:bg-neutral-50 px-4 rounded-xl -mx-4 transition-colors duration-200"
     >
       <div className="flex-1 pr-4">
         {/* Title */}

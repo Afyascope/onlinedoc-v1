@@ -54,7 +54,7 @@ export const Launches = ({ heading, sub_heading, launches }: { heading: string; 
         duration: 0.5,
       }}
       ref={ref}
-      className="w-full relative h-full pt-20 md:pt-40"
+      className="w-full relative h-full py-20 md:py-40"
     >
       <div className="px-6">
         <FeatureIconContainer className="flex justify-center items-center overflow-hidden">

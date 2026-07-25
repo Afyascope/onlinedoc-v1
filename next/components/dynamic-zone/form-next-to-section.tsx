@@ -74,7 +74,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
                           rows={5}
                           id="message"
                           placeholder={input.placeholder}
-                          className="block w-full bg-white px-4 rounded-md border border-border py-1.5 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
+                          className="block w-full bg-white px-4 rounded-md border border-border py-3 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
                         />
                       ) : input.type === 'submit' ? (
                         <div>
@@ -85,7 +85,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
                           id="name"
                           type={input.type}
                           placeholder={input.placeholder}
-                          className="block w-full bg-white px-4 rounded-md border border-border py-1.5 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
+                          className="block w-full bg-white px-4 rounded-md border border-border py-3 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
                         />
                       }
                     </div>

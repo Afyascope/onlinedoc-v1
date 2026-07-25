@@ -13,7 +13,7 @@ export const Testimonials = ({ heading, sub_heading, testimonials }: { heading: 
   return (
     <div className="relative bg-neutral-50 overflow-hidden">
       <AmbientColor />
-      <div className="pb-20 relative z-10">
+      <div className="py-20 relative z-10">
         <FeatureIconContainer className="flex justify-center items-center overflow-hidden bg-brand/5 border-brand/20">
           {/* Medical Pulse Icon */}
           <TbActivity className="h-6 w-6 text-brand" />
