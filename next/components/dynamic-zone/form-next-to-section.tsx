@@ -20,21 +20,21 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
       title: "twitter",
       href: "https://twitter.com/strapijs",
       icon: (
-        <IconBrandX className="h-5 w-5 text-muted  hover:text-neutral-900" />
+        <IconBrandX className="h-5 w-5 text-neutral-500 hover:text-primary" />
       ),
     },
     {
       title: "github",
       href: "https://github.com/strapi",
       icon: (
-        <IconBrandGithub className="h-5 w-5 text-muted  hover:text-neutral-900" />
+        <IconBrandGithub className="h-5 w-5 text-neutral-500 hover:text-primary" />
       ),
     },
     {
       title: "linkedin",
       href: "https://linkedin.com/strapi",
       icon: (
-        <IconBrandLinkedin className="h-5 w-5 text-muted  hover:text-neutral-900" />
+        <IconBrandLinkedin className="h-5 w-5 text-neutral-500 hover:text-primary" />
       ),
     },
   ];
@@ -47,7 +47,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
             <h1 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-primary">
               {heading}
             </h1>
-            <p className="mt-4 text-muted   text-sm max-w-sm">
+            <p className="mt-4 text-secondary text-sm max-w-sm">
               {sub_heading}
             </p>
           </div>
@@ -74,7 +74,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
                           rows={5}
                           id="message"
                           placeholder={input.placeholder}
-                          className="block w-full bg-white px-4 rounded-md border-0 py-1.5  shadow-aceternity text-neutral-900 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 "
+                          className="block w-full bg-white px-4 rounded-md border border-border py-1.5 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
                         />
                       ) : input.type === 'submit' ? (
                         <div>
@@ -85,7 +85,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
                           id="name"
                           type={input.type}
                           placeholder={input.placeholder}
-                          className="block w-full bg-white px-4 rounded-md border-0 py-1.5  shadow-aceternity text-neutral-900 placeholder:text-neutral-400 focus:ring-2 focus:ring-neutral-400 focus:outline-none sm:text-sm sm:leading-6 "
+                          className="block w-full bg-white px-4 rounded-md border border-border py-1.5 shadow-aceternity text-primary placeholder:text-neutral-400 focus:ring-2 focus:ring-brand focus:outline-none sm:text-sm sm:leading-6"
                         />
                       }
                     </div>
@@ -112,7 +112,7 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
           </div>
           <p
             className={
-              "font-semibold text-xl text-center  text-muted text-balance"
+              "font-semibold text-xl text-center text-primary text-balance"
             }
           >
             {section.heading}

@@ -42,9 +42,9 @@ export const MobileNavbar = ({ leftNavbarItems, rightNavbarItems, logo, locale }
   return (
     <div
       className={cn(
-        "flex justify-between bg-transparent items-center w-full rounded-md px-2.5 py-1.5 transition duration-200",
+        "flex justify-between bg-surface items-center w-full rounded-md px-2.5 py-1.5 transition duration-200 shadow-[0px_-2px_0px_0px_var(--color-border),0px_2px_0px_0px_var(--color-border)]",
         showBackground &&
-        " bg-surface shadow-[0px_-2px_0px_0px_var(--color-border),0px_2px_0px_0px_var(--color-border)]"
+        "shadow-[0px_-2px_0px_0px_var(--color-border),0px_2px_0px_0px_var(--color-border),0px_4px_12px_rgba(0,0,0,0.06)]"
       )}
     >
       <Logo image={logo?.image} />

@@ -21,7 +21,7 @@ export const Subheading = ({
         // FIX 1: Increased text size for better readability (text-base instead of text-sm)
         "text-base md:text-lg max-w-4xl text-left my-4 mx-auto",
         // FIX 2: Removed 'text-muted' and added 'text-neutral-200' (High contrast for dark mode)
-        "text-neutral-200 text-center font-normal",
+        "text-secondary text-center font-normal",
         className
       )}
     >

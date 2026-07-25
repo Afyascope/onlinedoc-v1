@@ -12,7 +12,7 @@ export const Register = () => {
       <div className="flex-1 text-center md:text-left">
         <Logo />
         <h1 className="text-3xl md:text-5xl font-bold font-primary mt-8 text-primary leading-tight">
-          Get the <span className="text-cyan-400">AfyaScope</span> <br />
+          Get the           <span className="text-brand">AfyaScope</span> <br />
           Insider.
         </h1>
         <p className="text-neutral-600 text-lg mt-6 font-secondary leading-relaxed">
@@ -31,7 +31,7 @@ export const Register = () => {
       <div className="w-full max-w-md bg-white border border-border p-8 rounded-2xl shadow-2xl shadow-brand/5 relative overflow-hidden shadow-sm">
         
         {/* Glow Effect */}
-        <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-cyan-500/20 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 right-0 -mr-10 -mt-10 w-40 h-40 bg-brand/20 blur-[100px] rounded-full pointer-events-none" />
 
         <h3 className="text-xl font-bold text-primary mb-2 font-primary">
           Subscribe
@@ -46,7 +46,7 @@ export const Register = () => {
             <input
               type="text"
               placeholder="Full Name"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-neutral-100 border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
             />
           </div>
 
@@ -55,7 +55,7 @@ export const Register = () => {
             <input
               type="email"
               placeholder="Work Email Address"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-neutral-100 border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
             />
           </div>
 
@@ -64,12 +64,12 @@ export const Register = () => {
             <input
               type="text"
               placeholder="Organization (Optional)"
-              className="w-full pl-10 pr-4 py-3 rounded-xl bg-neutral-100 border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
+              className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-border text-primary placeholder-neutral-400 focus:outline-none focus:ring-1 focus:ring-brand focus:border-brand transition-all text-sm"
             />
           </div>
 
           {/* --- UPDATED BUTTON: White Default -> Cyan Hover --- */}
-          <button className="w-full bg-white text-black font-bold h-12 rounded-xl transition-all duration-300 text-sm uppercase tracking-wide mt-2 shadow-lg hover:bg-cyan-400 hover:shadow-[0_0_25px_-5px_rgba(6,182,212,0.6)] hover:-translate-y-0.5">
+          <button className="w-full bg-white text-primary font-bold h-12 rounded-xl transition-all duration-300 text-sm uppercase tracking-wide mt-2 shadow-lg border border-border hover:bg-brand hover:text-white hover:shadow-[0_0_25px_-5px_rgba(44,177,188,0.6)] hover:-translate-y-0.5 hover:border-brand">
             Subscribe
           </button>
           
@@ -86,8 +86,8 @@ export const Register = () => {
 
 const BenefitItem = ({ text }: { text: string }) => (
   <div className="flex items-center gap-3">
-    <div className="h-6 w-6 rounded-full bg-cyan-900/30 border border-cyan-500/30 flex items-center justify-center flex-shrink-0">
-      <IconCheck className="h-3.5 w-3.5 text-cyan-400 stroke-[3px]" />
+    <div className="h-6 w-6 rounded-full bg-[#E0FCFF] border border-brand flex items-center justify-center flex-shrink-0">
+      <IconCheck className="h-3.5 w-3.5 text-primary stroke-[3px]" />
     </div>
     <span className="text-neutral-700 font-medium">{text}</span>
   </div>

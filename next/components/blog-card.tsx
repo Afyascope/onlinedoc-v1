@@ -40,7 +40,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
             {article.categories?.map((category, idx) => (
               <span
                 key={`category-${idx}`}
-                className="bg-cyan-950/30 text-cyan-400 border border-cyan-500/20 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide"
+                className="bg-[#E0FCFF] text-primary border border-brand px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide"
               >
                 {category.name}
               </span>
@@ -48,7 +48,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
           </div>
 
           {/* Title */}
-          <h2 className="text-xl md:text-3xl font-bold mb-4 text-primary font-primary group-hover:text-cyan-400 transition-colors">
+          <h2 className="text-xl md:text-3xl font-bold mb-4 text-primary font-primary group-hover:text-brand transition-colors">
             <Balancer>{article.title}</Balancer>
           </h2>
 
@@ -60,7 +60,7 @@ export const BlogCard = ({ article, locale }: { article: Article, locale: string
 
         {/* Footer / Date */}
         <div className="flex items-center mt-6 pt-6 border-t border-border/50">
-          <div className="h-1.5 w-1.5 bg-cyan-500 rounded-full mr-3"></div>
+          <div className="h-1.5 w-1.5 bg-brand rounded-full mr-3"></div>
           <time className="text-neutral-600 text-sm font-medium">
             {format(new Date(article.publishedAt), "MMMM dd, yyyy")}
           </time>
@@ -103,15 +103,15 @@ export const BlogCardVertical = ({ article, locale }: { article: Article, locale
           {article.categories?.map((category, idx) => (
             <span
               key={`category-${idx}`}
-              className="bg-cyan-950/30 text-cyan-400 border border-cyan-500/20 px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
-            >
-              {category.name}
-            </span>
-          ))}
-        </div>
+                className="bg-[#E0FCFF] text-primary border border-brand px-2 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
+              >
+                {category.name}
+              </span>
+            ))}
+          </div>
 
-        {/* Title */}
-        <h3 className="text-lg md:text-xl font-bold mb-3 text-primary font-primary leading-tight group-hover:text-cyan-400 transition-colors">
+          {/* Title */}
+          <h3 className="text-lg md:text-xl font-bold mb-3 text-primary font-primary leading-tight group-hover:text-brand transition-colors">
           <Balancer>{article.title}</Balancer>
         </h3>
 
@@ -122,7 +122,7 @@ export const BlogCardVertical = ({ article, locale }: { article: Article, locale
 
         {/* Footer / Date (Pushed to bottom) */}
         <div className="mt-auto flex items-center pt-4 border-t border-border/50">
-          <div className="h-1.5 w-1.5 bg-cyan-500 rounded-full mr-2"></div>
+          <div className="h-1.5 w-1.5 bg-brand rounded-full mr-2"></div>
           <time className="text-neutral-500 text-xs font-medium uppercase tracking-wider">
             {format(new Date(article.publishedAt), "MMM dd, yyyy")}
           </time>

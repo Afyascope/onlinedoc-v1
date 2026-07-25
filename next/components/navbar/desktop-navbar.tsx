@@ -48,10 +48,10 @@ export const DesktopNavbar = ({ leftNavbarItems, rightNavbarItems, logo, locale 
       )}
       animate={{
         width: showBackground ? "80%" : "100%",
-        background: showBackground ? "rgba(255, 255, 255, 0.9)" : "transparent",
-        backdropFilter: showBackground ? "blur(12px)" : "blur(0px)",
-        border: showBackground ? "1px solid rgba(0, 0, 0, 0.08)" : "1px solid transparent",
-        boxShadow: showBackground ? "0px 10px 30px rgba(0,0,0,0.08)" : "none"
+        background: "rgba(255, 255, 255, 0.9)",
+        backdropFilter: "blur(12px)",
+        border: "1px solid rgba(0, 0, 0, 0.08)",
+        boxShadow: showBackground ? "0px 10px 30px rgba(0,0,0,0.08)" : "0px 1px 3px rgba(0,0,0,0.04)"
       }}
       transition={{
         duration: 0.4,

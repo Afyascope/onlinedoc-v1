@@ -43,7 +43,7 @@ export const CardDescription = ({
 }) => {
   return (
     <p
-      className={cn("text-sm font-normal text-neutral-400 max-w-sm", className)}
+      className={cn("text-sm font-normal text-secondary max-w-sm", className)}
     >
       {children}
     </p>

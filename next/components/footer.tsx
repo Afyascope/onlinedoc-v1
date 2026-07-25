@@ -26,14 +26,14 @@ export const Footer = async ({ data, locale }: { data: any, locale: string }) =>
               {data?.description}
             </div>
             
-            <div className="mt-8 font-secondary text-neutral-400 text-xs">
+            <div className="mt-8 font-secondary text-neutral-500 text-xs">
               {data?.copyright}
             </div>
             
-            <div className="mt-2 text-xs text-neutral-400 font-secondary">
+            <div className="mt-2 text-xs text-neutral-500 font-secondary">
               Designed and Developed by{" "}
               <a 
-                className="text-primary hover:text-brand transition-colors duration-200 font-bold font-primary" 
+                className="text-brand hover:text-brand-hover transition-colors duration-200 font-bold font-primary" 
                 href="https://afyascope.co.ke"
               >
                 Afyascope Digital

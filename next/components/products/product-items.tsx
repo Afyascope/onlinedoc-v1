@@ -81,7 +81,7 @@ const TrackSection = ({ title, products, locale }: { title: string, products: Pr
         <h3 className="text-xl md:text-2xl font-bold text-primary font-primary uppercase tracking-wider">
           {title}
         </h3>
-        <div className="h-1 bg-cyan-500 w-20 rounded-full hidden md:block" /> 
+        <div className="h-1 bg-brand w-20 rounded-full hidden md:block" /> 
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -118,14 +118,14 @@ const ProductItem = ({ product, locale }: { product: Product, locale: string }) 
         
         {/* Category Badge Floating on Image */}
         <div className="absolute top-3 right-3 z-20">
-          <span className="bg-cyan-500/90 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide backdrop-blur-sm">
+          <span className="bg-[#E0FCFF] text-primary border border-brand text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wide">
             {categoryName}
           </span>
         </div>
       </div>
 
       <div className="mt-5">
-        <h4 className="text-primary text-lg font-bold font-primary group-hover:text-cyan-400 transition-colors">
+        <h4 className="text-primary text-lg font-bold font-primary group-hover:text-brand transition-colors">
           {product.name}
         </h4>
         <p className="text-neutral-600 text-sm mt-2 font-secondary leading-relaxed line-clamp-2">

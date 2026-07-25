@@ -24,7 +24,7 @@ export const BlogPostRows = ({ articles }: { articles: Article[] }) => {
   return (
     <div className="w-full py-20">
       <div className="flex sm:flex-row flex-col justify-between gap-6 items-end sm:items-center mb-12 border-b border-border pb-8">
-        <h3 className="text-3xl font-bold font-primary text-primary">More Posts</h3>
+        <h3 className="text-3xl font-bold font-primary text-primary">All Posts</h3>
         
         {/* Search Bar */}
         <div className="relative w-full sm:w-96">
@@ -66,7 +66,7 @@ export const BlogPostRow = ({ article }: { article: Article }) => {
     >
       <div className="flex-1 pr-4">
         {/* Title */}
-        <h4 className="text-lg md:text-xl font-bold font-primary text-primary group-hover:text-cyan-400 transition-colors duration-200">
+        <h4 className="text-lg md:text-xl font-bold font-primary text-primary group-hover:text-brand transition-colors duration-200">
           {article.title}
         </h4>
         
@@ -82,14 +82,14 @@ export const BlogPostRow = ({ article }: { article: Article }) => {
              {format(new Date(article.publishedAt), "MMMM dd, yyyy")}
           </time>
           
-          <div className="h-1 w-1 rounded-full bg-cyan-500"></div>
+          <div className="h-1 w-1 rounded-full bg-brand"></div>
           
           {/* Categories */}
           <div className="flex gap-2">
             {article.categories?.map((category, idx) => (
               <span
                 key={`category-${idx}`}
-                className="text-[10px] font-bold text-cyan-400 bg-cyan-950/30 border border-cyan-500/20 px-2 py-1 rounded-full uppercase tracking-wide group-hover:border-cyan-500/40 transition-colors"
+                className="text-[10px] font-bold text-primary bg-[#E0FCFF] border border-brand px-2 py-1 rounded-full uppercase tracking-wide group-hover:bg-[#d0f0f5] transition-colors"
               >
                 {category.name}
               </span>
@@ -99,7 +99,7 @@ export const BlogPostRow = ({ article }: { article: Article }) => {
       </div>
 
       {/* Arrow Icon on the right */}
-      <div className="hidden md:block opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300 text-cyan-400">
+      <div className="hidden md:block opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300 text-brand">
          <IconArrowRight className="w-5 h-5" />
       </div>
     </Link>

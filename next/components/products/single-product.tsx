@@ -137,7 +137,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
           <h2 className="text-2xl font-semibold mb-4 text-primary">{product.name}</h2>
           
           {/* Category Pill (Replaces Price) */}
-          <p className="mb-6 bg-cyan-500/10 border border-cyan-500/20 text-xs px-4 py-1 rounded-full text-cyan-400 w-fit font-bold uppercase tracking-wider">
+          <p className="mb-6 bg-[#E0FCFF] border border-brand text-xs px-4 py-1 rounded-full text-primary w-fit font-bold uppercase tracking-wider">
             {categoryName}
           </p>
           
@@ -210,8 +210,8 @@ const Divider = () => {
 const Step = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex items-start justify-start gap-2 my-4">
-      <div className="h-4 w-4 rounded-full bg-neutral-700 flex items-center justify-center flex-shrink-0 mt-0.5">
-        <IconCheck className="h-3 w-3 [stroke-width:4px] text-neutral-700" />
+      <div className="h-4 w-4 rounded-full bg-brand flex items-center justify-center flex-shrink-0 mt-0.5">
+        <IconCheck className="h-3 w-3 [stroke-width:4px] text-white" />
       </div>
       <div className="font-medium text-primary text-sm">{children}</div>
     </div>

@@ -15,7 +15,7 @@ export const Featured = ({ products, locale }: { products: Product[], locale: st
         <h2 className="text-3xl md:text-5xl font-bold font-primary text-primary mb-4">
           Featured Innovations
         </h2>
-        <p className="text-neutral-400 font-secondary text-lg max-w-2xl">
+        <p className="text-neutral-500 font-secondary text-lg max-w-2xl">
           Highlights from our digital health ecosystem.
         </p>
       </div>
@@ -61,7 +61,7 @@ const FeaturedItem = ({ product, locale }: { product: Product, locale: string })
            {product.name}
         </span>
         {/* Category Pill */}
-        <span className="bg-cyan-500 text-black text-[10px] font-bold px-2 py-1.5 rounded-full uppercase tracking-wide shadow-lg">
+        <span className="bg-[#E0FCFF] text-primary border border-brand text-[10px] font-bold px-2 py-1.5 rounded-full uppercase tracking-wide shadow-lg">
           {categoryName}
         </span>
       </div>

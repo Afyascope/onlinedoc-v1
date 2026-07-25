@@ -24,7 +24,7 @@ export async function BlogLayout({
       <div className="flex justify-between items-center py-8">
         <Link 
           href="/blog" 
-          className="group flex space-x-2 items-center text-neutral-600 hover:text-cyan-400 transition-colors"
+          className="group flex space-x-2 items-center text-neutral-600 hover:text-brand transition-colors"
         >
           <IconArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           <span className="text-sm font-medium">Back to Articles</span>
@@ -61,7 +61,7 @@ export async function BlogLayout({
               {article.categories?.map((category, idx) => (
                 <span
                   key={`category-${idx}`}
-                  className="text-xs font-bold text-cyan-400 px-3 py-1 rounded-full bg-cyan-950/30 border border-cyan-500/20 uppercase tracking-wide"
+                  className="text-xs font-bold text-primary px-3 py-1 rounded-full bg-[#E0FCFF] border border-brand uppercase tracking-wide"
                 >
                   {category.name}
                 </span>
@@ -76,7 +76,7 @@ export async function BlogLayout({
             </header>
 
             {/* Content (Prose) */}
-            <div className="prose prose-lg prose-headings:font-primary prose-a:text-cyan-400 prose-img:rounded-xl">
+            <div className="prose prose-lg prose-headings:font-primary prose-a:text-brand prose-img:rounded-xl">
               {children}
             </div>
 
