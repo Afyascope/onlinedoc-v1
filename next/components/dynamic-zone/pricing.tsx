@@ -56,7 +56,7 @@ export const Pricing = ({ heading, sub_heading, plans }: { heading: string, sub_
         </Subheading>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 max-w-7xl mx-auto gap-6 py-20 lg:items-start">
-          {plans.map((plan) => (
+          {plans?.map((plan) => (
             <Card onClick={() => onClick(plan)} key={plan.name} plan={plan} />
           ))}
         </div>
@@ -118,7 +118,7 @@ const Card = ({ plan, onClick }: { plan: Plan; onClick: () => void }) => {
 
         {/* PERKS LIST */}
         <div className="mt-8 flex flex-col gap-4">
-          {plan.perks.map((feature, idx) => (
+          {plan.perks?.map((feature, idx) => (
             <Step featured={plan.featured} key={idx}>
               {feature.text}
             </Step>

@@ -21,15 +21,15 @@ export const ProductItems = ({
   
   // 1. FILTER LOGIC: Grouping your projects into the 3 Tracks
   // You can adjust these keywords based on your Strapi data
-  const flagshipProjects = products.filter(p => 
+  const flagshipProjects = (products ?? []).filter(p => 
     ["PataDawa", "HealthierKE", "PataDoc"].some(k => p.name.includes(k))
   );
   
-  const clinicalProjects = products.filter(p => 
+  const clinicalProjects = (products ?? []).filter(p => 
     ["AI Symptom", "Tool", "Calculator", "Triage"].some(k => p.name.includes(k))
   );
 
-  const creativeProjects = products.filter(p => 
+  const creativeProjects = (products ?? []).filter(p => 
     ["Media", "Poster", "Brand", "Portfolio", "Content"].some(k => p.name.includes(k))
   );
 
@@ -81,7 +81,7 @@ export const ProductItems = ({
 
 // 2. REUSABLE SECTION COMPONENT
 const TrackSection = ({ title, products, locale }: { title: string, products: Product[], locale: string }) => {
-  if (products.length === 0) return null; // Don't show empty sections
+  if (!products || products.length === 0) return null; // Don't show empty sections
 
   return (
     <div className="mb-24">
@@ -93,7 +93,7 @@ const TrackSection = ({ title, products, locale }: { title: string, products: Pr
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {products.map((product) => (
+        {products?.map((product) => (
           <ProductItem
             key={"track-item-" + product.id}
             product={product}

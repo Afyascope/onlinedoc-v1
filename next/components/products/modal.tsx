@@ -71,7 +71,7 @@ export default function AddToCartModal({ onClick }: { onClick: () => void }) {
                   <div className="text-black text-sm font-medium w-20">
                     ${formatNumber(item.product.price)}
                   </div>
-                  <button onClick={() => removeFromCart(item.product.id)}>
+                  <button onClick={() => removeFromCart(item.product.id)} aria-label={`Remove ${item.product.name} from cart`}>
                     <IconTrash className="w-4 h-4 text-neutral-900" />
                   </button>
                 </div>

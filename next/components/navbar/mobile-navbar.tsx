@@ -49,10 +49,13 @@ export const MobileNavbar = ({ leftNavbarItems, rightNavbarItems, logo, locale }
     >
       <Logo image={logo?.image} />
 
-      <IoIosMenu
-        className="text-primary h-6 w-6"
+      <button
         onClick={() => setOpen(!open)}
-      />
+        aria-label="Open menu"
+        className="text-primary h-6 w-6"
+      >
+        <IoIosMenu className="text-primary h-6 w-6" />
+      </button>
 
       {open && (
         <div className={cn(
@@ -63,10 +66,13 @@ export const MobileNavbar = ({ leftNavbarItems, rightNavbarItems, logo, locale }
             <Logo locale={locale} image={logo?.image} />
             <div className="flex items-center space-x-2">
               <LocaleSwitcher currentLocale={locale} />
-              <IoIosClose
-                className="h-8 w-8 text-primary"
+              <button
                 onClick={() => setOpen(!open)}
-              />
+                aria-label="Close menu"
+                className="h-8 w-8 text-primary"
+              >
+                <IoIosClose className="h-8 w-8 text-primary" />
+              </button>
             </div>
           </div>
           <div className="flex flex-col items-start justify-start gap-[14px] px-8">

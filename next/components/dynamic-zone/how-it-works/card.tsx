@@ -11,7 +11,12 @@ import {
   useMotionValueEvent,
   useSpring,
 } from "framer-motion";
-import { CanvasRevealEffect } from "../../ui/canvas-reveal-effect";
+import dynamic from "next/dynamic";
+
+const CanvasRevealEffect = dynamic(
+  () => import("../../ui/canvas-reveal-effect").then((m) => m.CanvasRevealEffect),
+  { ssr: false }
+);
 import Beam from "../../beam";
 import { strapiImage } from "@/lib/strapi/strapiImage"; // Ensure this import exists
 

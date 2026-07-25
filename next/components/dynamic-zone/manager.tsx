@@ -31,7 +31,7 @@ const DynamicZoneManager: React.FC<Props> = ({ dynamicZone, locale }) => {
   return (
     <div>
       {
-        dynamicZone.map((componentData) => {
+        dynamicZone?.map((componentData) => {
           const Component = componentMapping[componentData.__component];
           if (!Component) {
             console.warn(`No component found for: ${componentData.__component}`);

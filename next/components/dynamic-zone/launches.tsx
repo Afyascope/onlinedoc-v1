@@ -12,7 +12,7 @@ import { useScroll } from "framer-motion";
 
 
 export const Launches = ({ heading, sub_heading, launches }: { heading: string; sub_heading: string; launches: any[] }) => {
-  const launchesWithDecoration = launches.map(entry => ({
+  const launchesWithDecoration = launches?.map(entry => ({
     ...entry,
     icon: <IconRocket className="h-8 w-8 text-secondary" />,
     content: (
@@ -32,7 +32,7 @@ export const Launches = ({ heading, sub_heading, launches }: { heading: string; 
   const [gradient, setGradient] = useState(backgrounds[0]);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const cardsBreakpoints = launches.map((_, index) => index / launches.length);
+    const cardsBreakpoints = (launches ?? []).map((_, index) => index / launches.length);
     const closestBreakpointIndex = cardsBreakpoints.reduce(
       (acc, breakpoint, index) => {
         const distance = Math.abs(latest - breakpoint);

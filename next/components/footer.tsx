@@ -100,6 +100,7 @@ const SocialLinks = ({ links }: { links: { text: string; URL: string }[] }) => {
             rel="noopener noreferrer"
             className="text-neutral-500 hover:text-brand hover:scale-110 transition-all duration-200 text-xl"
             title={link.text}
+            aria-label={link.text}
           >
             {icon ? icon : <span className="text-xs">{link.text}</span>}
           </a>

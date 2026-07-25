@@ -41,6 +41,7 @@ export async function BlogLayout({
               className="object-cover"
               alt={article.title}
               priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
             />
             {/* Subtle Gradient Overlay for depth */}
             <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent" />

@@ -1,7 +1,12 @@
 "use client";
 import React, { useCallback, useId, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { SparklesCore } from "@/components/ui/sparkles";
+import dynamic from "next/dynamic";
+
+const SparklesCore = dynamic(
+  () => import("@/components/ui/sparkles").then((m) => m.SparklesCore),
+  { ssr: false }
+);
 
 export const SkeletonTwo = () => {
   const [sliderXPercent, setSliderXPercent] = useState(50);

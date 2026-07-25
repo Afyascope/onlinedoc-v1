@@ -65,7 +65,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
                     setActiveIndex(Math.round(scrollLeft / width));
                 }}
             >
-                {product.images.map((image, index) => (
+                {product.images?.map((image, index) => (
                     <div key={"slide-" + index} className="w-full flex-shrink-0 snap-center flex justify-center items-center bg-white">
                          {/* RESTORED: Specific width/height to prevent zoom */}
                          <Image
@@ -90,6 +90,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
                         activeIndex === 0 && "hidden"
                     )}
                     disabled={activeIndex === 0}
+                    aria-label="Previous image"
                   >
                     <IconChevronLeft className="w-6 h-6" />
                   </button>
@@ -100,6 +101,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
                         activeIndex === product.images.length - 1 && "hidden"
                     )}
                     disabled={activeIndex === product.images.length - 1}
+                    aria-label="Next image"
                   >
                     <IconChevronRight className="w-6 h-6" />
                   </button>
@@ -126,6 +128,7 @@ export const SingleProduct = ({ product }: { product: Product }) => {
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                   }}
+                  aria-label={`View image ${index + 1}`}
                 />
               ))}
             </div>

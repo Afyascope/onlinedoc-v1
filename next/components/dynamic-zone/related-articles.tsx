@@ -25,7 +25,7 @@ export const RelatedArticles = ({ heading, sub_heading, articles, locale }: { he
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {articles.map((article) => (
+        {articles?.map((article) => (
           <BlogCardVertical key={article.title} article={article} locale={locale} />
         ))}
       </div>
