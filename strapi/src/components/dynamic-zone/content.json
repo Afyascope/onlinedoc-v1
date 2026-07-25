@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_dynamic_zone_contents",
+  "info": {
+    "displayName": "Content"
+  },
+  "options": {},
+  "attributes": {
+    "content": {
+      "type": "blocks"
+    }
+  },
+  "config": {}
+}

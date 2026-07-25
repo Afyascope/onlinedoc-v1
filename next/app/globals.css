@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "./prism.css";
+
+/* 1. IMPORT FONTS (Montserrat + Inter) */
+/* We import these so your site uses the "Clinician-Developer" typography immediately */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@500;600;700;800&display=swap');
+
+:root {
+  /* 2. DEFINE FONT VARIABLES */
+  /* This maps to the fontFamily config we just set in tailwind.config.ts */
+  --font-montserrat: 'Montserrat', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+
+  /* 3. BASE COLORS */
+  --foreground-rgb: 255, 255, 255; /* White text for high contrast */
+  --background-start-rgb: 0, 31, 63; /* Afyascope Navy #001f3f */
+  --background-end-rgb: 0, 31, 63;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+  }
+}
+
+/* 4. APPLY GLOBAL STYLES */
+body {
+  color: rgb(var(--foreground-rgb));
+  /* Force the background to be your Navy Blue */
+  background-color: #001f3f;
+  /* Set default body font to Inter (Highly Readable for Medical Text) */
+  font-family: var(--font-inter);
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased; /* Makes text look sharper */
+}
+
+/* 5. HEADING STYLES */
+h1, h2, h3, h4, h5, h6 {
+  /* Set all headings to Montserrat (Tech/Authority) */
+  font-family: var(--font-montserrat);
+  /* Default to bold to match your "Modern Chief Resident" voice */
+  font-weight: 700; 
+}
+
+/* 6. TEXT SELECTION (Branding Touch) */
+::selection {
+  /* When a user highlights text, it turns Coral Red instead of generic blue */
+  background: #FF4D4D;
+  color: #ffffff;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
