@@ -4,7 +4,7 @@ import { LinkProps } from "next/link";
 
 interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   variant?: "simple" | "outline" | "primary" | "muted";
-  as?: any; // Changed to any to accept Link component easily
+  as?: any;
   className?: string;
   children?: React.ReactNode;
   href?: LinkProps["href"];
@@ -20,27 +20,20 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   
   const variants = {
-    // 1. SIMPLE: The one you want. No background, Cyan Text. 
-    // Removed 'text-secondary' (Red) and replaced with 'text-cyan-400'.
-    simple: "bg-transparent text-cyan-400 hover:text-cyan-300 border-none shadow-none hover:bg-cyan-950/30 px-0 md:px-4",
+    simple: "bg-transparent text-brand hover:text-brand-hover border-none shadow-none hover:bg-brand/5 px-0 md:px-4",
 
-    // 2. PRIMARY: Updated to White/Black (AfyaScope Brand)
-    // Removed 'bg-secondary' (Red).
-    primary: "bg-white text-black border border-white hover:bg-neutral-200 shadow-[0px_4px_10px_rgba(0,0,0,0.2)] hover:-translate-y-0.5",
+    primary: "bg-brand text-white border border-brand hover:bg-brand-hover shadow-[0px_4px_10px_rgba(44,177,188,0.3)] hover:-translate-y-0.5",
 
-    // 3. OUTLINE: Glassy look
-    outline: "bg-transparent border border-white/20 text-white hover:bg-white hover:text-black hover:border-white",
+    outline: "bg-transparent border border-border text-primary hover:bg-primary hover:text-white hover:border-primary",
 
-    // 4. MUTED: Dark Grey for secondary actions
-    muted: "bg-neutral-800 border border-transparent text-neutral-300 hover:bg-neutral-700 hover:text-white",
+    muted: "bg-neutral-100 border border-transparent text-neutral-600 hover:bg-neutral-200 hover:text-primary",
   };
 
   return (
     <Tag
       className={cn(
-        // Base Styles (Rounded-xl looks more modern than rounded-md)
         "relative z-10 text-sm md:text-sm font-bold rounded-xl px-6 py-3 flex items-center justify-center transition-all duration-200 cursor-pointer",
-        variants[variant] || variants.primary, // Fallback to primary if variant is typo'd
+        variants[variant] || variants.primary,
         className
       )}
       {...props}

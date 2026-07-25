@@ -1,7 +1,29 @@
 "use client";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useRef } from "react";
-import styles from "./styles.module.css"; // Ensure this file exists as discussed before
+
+const meteorKeyframes = `
+@keyframes meteor {
+  0% { left: 0; opacity: 0; }
+  70% { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+.meteor-beam {
+  transform: rotate(-180deg);
+  animation: meteor 3s linear;
+  animation-delay: var(--meteor-delay, 0s);
+  animation-duration: var(--meteor-duration, 2s);
+}
+.meteor-beam::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--meteor-width, 50px);
+  height: 1px;
+  background: linear-gradient(90deg, #2CB1BC, rgba(255, 255, 255, 0.4), transparent);
+}
+`;
 
 const Beam = ({
   showBeam = true,
@@ -51,18 +73,19 @@ const Beam = ({
   };
 
   return (
-    showBeam && (
-      <span
-        ref={meteorRef}
-        className={cn(
-          // FIX: Changed bg-blue-700 to bg-[#00c2cb] to match your AfyaScope Brand
-          // Also removed hardcoded 'rotate-[180deg]' since the CSS module handles rotation
-          "absolute z-[40] h-[0.1rem] w-[0.1rem] rounded-[9999px] bg-[#00c2cb] shadow-[0_0_0_1px_#ffffff10]",
-          styles.meteor,
-          className
-        )}
-      ></span>
-    )
+    <>
+      <style>{meteorKeyframes}</style>
+      {showBeam && (
+        <span
+          ref={meteorRef}
+          className={cn(
+            "absolute z-[40] h-[0.1rem] w-[0.1rem] rounded-[9999px] bg-brand shadow-[0_0_0_1px_#ffffff10]",
+            "meteor-beam",
+            className
+          )}
+        ></span>
+      )}
+    </>
   );
 };
 

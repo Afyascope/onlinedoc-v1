@@ -61,17 +61,14 @@ export default async function LocaleLayout({
     const pageData = await fetchContentType('global', { filters: { locale } }, true);
     
     return (
-        /* 4. Add bg-charcoal here to ensure full coverage */
-        <html lang={locale} className="bg-charcoal h-full">
+        <html lang={locale} className="bg-surface h-full">
             <ViewTransitions>
                 <CartProvider>
                     <body
                         className={cn(
-                            /* Inject both font variables */
                             inter.variable,
                             montserrat.variable,
-                            /* Force the background and primary font */
-                            "bg-charcoal antialiased h-full w-full font-secondary text-white"
+                            "bg-surface antialiased h-full w-full font-secondary text-[var(--color-text-primary)]"
                         )}
                     >
                         <Navbar data={pageData.navbar} locale={locale} />

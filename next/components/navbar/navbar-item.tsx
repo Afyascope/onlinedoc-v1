@@ -34,11 +34,9 @@ export function NavbarItem({
       href={href}
       className={cn(
         "flex items-center justify-center text-sm font-medium leading-[110%] px-4 py-2 rounded-full transition duration-200",
-        /* Default State */
-        "text-neutral-300 hover:text-white hover:bg-white/10",
+        "text-neutral-600 hover:text-primary hover:bg-primary/5",
         
-        /* Active State (Keeps the button 'lit' when you are on that page) */
-        isActive && "bg-white/10 text-white shadow-[0px_1px_0px_0px_rgba(255,255,255,0.1)_inset]",
+        isActive && "bg-primary/10 text-primary shadow-[0px_1px_0px_0px_rgba(15,42,67,0.1)_inset]",
         
         className
       )}

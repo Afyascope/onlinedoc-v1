@@ -14,30 +14,39 @@ const config: Config = {
   darkMode: "class",
   theme: {
     extend: {
-      // 1. DEFINING YOUR FONTS (Matches Brand Guidelines)
       fontFamily: {
-        primary: ["var(--font-montserrat)", "sans-serif"], // For Headings
-        secondary: ["var(--font-inter)", "sans-serif"],    // For Body text
+        primary: ["var(--font-montserrat)", "sans-serif"],
+        secondary: ["var(--font-inter)", "sans-serif"],
       },
       colors: {
-        // 2. YOUR BRAND COLORS (Verified)
-        charcoal: "#000033",      // Navy Blue (Backgrounds)
-        lightblack: "#00c2cb",    // Cyan (Icons/Highlights)
-        secondary: "#FF4D4D",     // Coral Red (Buttons/Actions)
-        
+        charcoal: "#0F2A43",
+        lightblack: "#2CB1BC",
+        secondary: "#E33935",
+        primary: "#0F2A43",
+        "primary-hover": "#133453",
+        brand: "#2CB1BC",
+        "brand-hover": "#13919B",
+        accent: "#E33935",
+        surface: "#FFFFFF",
+        border: "#E2E8F0",
+        "info-bg": "#E0FCFF",
+        success: "#10B981",
+        warning: "#F59E0B",
+        error: "#EF4444",
+        info: "#3B82F6",
        neutral: {
-        50: "#f0f4f8",  // Lightest Blue-White
-        100: "#d9e2ec",
-        200: "#bcccdc", // Light Blue-Gray (Your 'muted' text)
-        300: "#9fb3c8",
-        400: "#829ab1",
-        500: "#627d98",
-        600: "#486581",
-        700: "#334e68",
-        800: "#102a43", // Card Backgrounds (Lighter Navy)
-        900: "#001f3f", // Main Background (Matches your Charcoal)
-        950: "#001226", // Darkest Shadows
-      },
+         50: "#f0f4f8",
+         100: "#d9e2ec",
+         200: "#bcccdc",
+         300: "#9fb3c8",
+         400: "#829ab1",
+         500: "#627d98",
+         600: "#486581",
+         700: "#334e68",
+         800: "#102a43",
+         900: "#001f3f",
+         950: "#001226",
+       },
         muted: "var(--neutral-200)",
       },
       boxShadow: {
@@ -47,7 +56,6 @@ const config: Config = {
         0px 6px 6px -3px rgb(0 0 0 / 0.06),
         0px 12px 12px -6px rgb(0 0 0 / 0.06),
         0px 24px 24px -12px rgb(0 0 0 / 0.06)`,
-        // This shadow uses a Red tint, which is perfect for your brand
         aceternity: `0px 2px 3px -1px rgba(199, 25, 25, 0.1), 0px 1px 0px 0px rgba(25,28,33,0.02), 0px 0px 0px 1px rgba(25,28,33,0.08)`,
       },
       backgroundImage: {
@@ -75,19 +83,17 @@ const config: Config = {
     require("tailwindcss-animate"),
     require("@tailwindcss/typography"),
     addVariablesForColors,
-    // --- NEW: Scrollbar Hide Plugin ---
     function ({ addUtilities }: any) {
       addUtilities({
         '.no-scrollbar::-webkit-scrollbar': {
           'display': 'none',
         },
         '.no-scrollbar': {
-          '-ms-overflow-style': 'none',  /* IE and Edge */
-          'scrollbar-width': 'none',  /* Firefox */
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
         },
       });
     },
-    // --- Existing Pattern Plugin ---
     function ({ matchUtilities, theme }: any) {
       matchUtilities(
         {

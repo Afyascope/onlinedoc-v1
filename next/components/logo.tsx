@@ -21,8 +21,7 @@ export const Logo = ({ image, locale }: { image?: Image, locale?: string }) => {
           className="h-9 w-9 rounded-xl"
         />
         
-  {/* Brand text: responsive sizing so the logo matches navbar items */}
-  <span className="font-bold text-base md:text-lg lg:text-xl leading-none"><span className="text-white">Afya</span><span className="text-secondary">scope</span></span>
+  <span className="font-bold text-base md:text-lg lg:text-xl leading-none"><span className="text-primary">Afya</span><span className="text-accent">scope</span></span>
       </Link>
     );
   }
