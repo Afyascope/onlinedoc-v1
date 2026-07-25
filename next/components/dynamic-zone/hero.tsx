@@ -53,7 +53,7 @@ export const Hero = ({
       </div>
 
       {/* Gradient Overlay - Restored to 'from-charcoal' to match background */}
-      <div className="absolute inset-x-0 bottom-0 h-80 w-full bg-gradient-to-t from-transparent via-[#E0FCFF]/40 to-[#F8FAFC] pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-60 w-full bg-gradient-to-t from-transparent via-[#E0FCFF]/30 to-transparent pointer-events-none" />
     </div>
   );
 };
