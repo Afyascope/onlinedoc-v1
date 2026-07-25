@@ -17,12 +17,12 @@ export const Hero = ({
   locale: string 
 }) => {
   return (
-    <div className="h-screen overflow-hidden relative flex flex-col items-center justify-center bg-primary">
+    <div className="h-screen overflow-hidden relative flex flex-col items-center justify-center bg-neutral-50">
       
       {/* Heading */}
       <Heading
         as="h1"
-        className="text-4xl md:text-5xl lg:text-7xl font-bold font-primary text-white max-w-7xl mx-auto text-center mt-6 relative z-10 py-6 leading-tight"
+        className="text-4xl md:text-5xl lg:text-7xl font-bold font-primary text-primary max-w-7xl mx-auto text-center mt-6 relative z-10 py-6 leading-tight"
       >
         {/* Logic: Turns the LAST word Cyan */}
         {heading.substring(0, heading.lastIndexOf(" "))}{" "}
@@ -33,7 +33,7 @@ export const Hero = ({
 
       {/* Subheading */}
       <Subheading 
-        className="text-center mt-2 md:mt-6 text-base md:text-xl font-secondary text-neutral-300 max-w-3xl mx-auto relative z-10 leading-relaxed px-4"
+        className="text-center mt-2 md:mt-6 text-base md:text-xl font-secondary text-neutral-700 max-w-3xl mx-auto relative z-10 leading-relaxed px-4"
       >
         {sub_heading}
       </Subheading>
@@ -53,7 +53,7 @@ export const Hero = ({
       </div>
 
       {/* Gradient Overlay - Restored to 'from-charcoal' to match background */}
-      <div className="absolute inset-x-0 bottom-0 h-80 w-full bg-gradient-to-t from-primary via-primary/50 to-[#E0FCFF] pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-80 w-full bg-gradient-to-t from-transparent via-[#E0FCFF]/40 to-[#F8FAFC] pointer-events-none" />
     </div>
   );
 };
