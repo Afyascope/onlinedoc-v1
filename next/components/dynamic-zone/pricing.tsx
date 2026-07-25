@@ -75,7 +75,7 @@ const Card = ({ plan, onClick }: { plan: Plan; onClick: () => void }) => {
           {plan.featured && (
             <div
               className={cn(
-                "font-medium text-[10px] uppercase tracking-wider px-3 py-1 rounded-full relative bg-black text-white"
+                "font-medium text-[10px] uppercase tracking-wider px-3 py-1 rounded-full relative bg-brand text-white"
               )}
             >
               Recommended
@@ -100,7 +100,7 @@ const Card = ({ plan, onClick }: { plan: Plan; onClick: () => void }) => {
             "w-full mb-8 font-primary font-bold tracking-wide",
             plan.featured 
               ? "bg-[#FF4D4D] text-white hover:bg-[#FF4D4D]/90 border-transparent" 
-              : "bg-white/5 border-border text-white hover:bg-white/10"
+              : "bg-white border-border text-primary hover:bg-neutral-50"
           )}
           onClick={onClick}
         >

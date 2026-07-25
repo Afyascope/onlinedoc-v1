@@ -19,8 +19,8 @@ export const TestimonialsMarquee = ({ testimonials }: { testimonials: any }) => 
       {/* ROW 1: Scroll Left */}
       <div className="flex h-full relative">
         {/* FADE EFFECT: Using #020617 (Deep Navy) to match your site background */}
-        <div className="h-full absolute w-20 md:w-40 left-0 inset-y-0 z-30 bg-gradient-to-r from-[#020617] via-[#020617]/80 to-transparent pointer-events-none" />
-        <div className="h-full absolute w-20 md:w-40 right-0 inset-y-0 z-30 bg-gradient-to-l from-[#020617] via-[#020617]/80 to-transparent pointer-events-none" />
+        <div className="h-full absolute w-20 md:w-40 left-0 inset-y-0 z-30 bg-gradient-to-r from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none" />
+        <div className="h-full absolute w-20 md:w-40 right-0 inset-y-0 z-30 bg-gradient-to-l from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none" />
         
         <Marquee pauseOnHover gradient={false} speed={40}>
           {levelOne.map((testimonial: any, index: any) => (
@@ -29,7 +29,7 @@ export const TestimonialsMarquee = ({ testimonials }: { testimonials: any }) => 
               className="w-[350px] md:w-[450px] mx-4 h-full min-h-[220px] flex flex-col justify-between"
             >
               <Quote>{testimonial?.text}</Quote>
-              <div className="flex gap-3 items-center mt-6 border-t border-white/5 pt-4">
+              <div className="flex gap-3 items-center mt-6 border-t border-border/50 pt-4">
                 {testimonial?.user?.image?.url ? (
                    <Image
                      src={strapiImage(testimonial.user.image.url)}
@@ -61,8 +61,8 @@ export const TestimonialsMarquee = ({ testimonials }: { testimonials: any }) => 
       {/* ROW 2: Scroll Right (Only shows if you have enough data) */}
       {levelTwo.length > 0 && (
         <div className="flex h-full relative mt-8">
-           <div className="h-full absolute w-20 md:w-40 left-0 inset-y-0 z-30 bg-gradient-to-r from-[#020617] via-[#020617]/80 to-transparent pointer-events-none" />
-           <div className="h-full absolute w-20 md:w-40 right-0 inset-y-0 z-30 bg-gradient-to-l from-[#020617] via-[#020617]/80 to-transparent pointer-events-none" />
+           <div className="h-full absolute w-20 md:w-40 left-0 inset-y-0 z-30 bg-gradient-to-r from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none" />
+           <div className="h-full absolute w-20 md:w-40 right-0 inset-y-0 z-30 bg-gradient-to-l from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none" />
            
            <Marquee direction="right" pauseOnHover gradient={false} speed={30}>
             {levelTwo.map((testimonial: any, index: any) => (

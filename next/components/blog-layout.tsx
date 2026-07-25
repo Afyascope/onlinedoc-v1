@@ -99,7 +99,7 @@ export async function BlogLayout({
                   alt={article.author}
                   width={24}
                   height={24}
-                  className="rounded-full bg-neutral-800"
+                   className="rounded-full bg-neutral-200"
                 />
                 <p className="text-sm font-medium text-neutral-300">
                   {article.author}

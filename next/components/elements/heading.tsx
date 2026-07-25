@@ -30,7 +30,7 @@ export const Heading = ({
         "max-w-5xl mx-auto text-center tracking-tight",
         
         /* Afyascope Brand Typography */
-        "font-primary font-bold text-white",
+        "font-primary font-bold text-primary",
         
         /* Size Variant */
         sizeVariants[size],

@@ -12,7 +12,7 @@ export const Featured = ({ products, locale }: { products: Product[], locale: st
     <div className="py-20 relative">
       {/* Header */}
       <div className="mb-12">
-        <h2 className="text-3xl md:text-5xl font-bold font-primary text-white mb-4">
+        <h2 className="text-3xl md:text-5xl font-bold font-primary text-primary mb-4">
           Featured Innovations
         </h2>
         <p className="text-neutral-400 font-secondary text-lg max-w-2xl">
@@ -49,7 +49,7 @@ const FeaturedItem = ({ product, locale }: { product: Product, locale: string })
   return (
     <Link
       href={`/${locale}/products/${product.slug}` as never}
-      className="group border border-white/10 rounded-2xl overflow-hidden relative block h-full w-full"
+      className="group border border-border rounded-2xl overflow-hidden relative block h-full w-full"
     >
       {/* Gradient Overlay for Text Readability */}
       <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/10 to-transparent opacity-80 z-10 transition-opacity duration-300 group-hover:opacity-60" />

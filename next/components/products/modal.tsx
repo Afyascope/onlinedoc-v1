@@ -86,7 +86,7 @@ export default function AddToCartModal({ onClick }: { onClick: () => void }) {
           </div>
           <button
             disabled={!items.length}
-            className="bg-black text-white disabled:opacity-50 disabled:cursor-not-allowed text-sm px-2 py-1 rounded-md border border-black w-28"
+            className="bg-brand text-white disabled:opacity-50 disabled:cursor-not-allowed text-sm px-2 py-1 rounded-md border border-brand w-28"
           >
             Buy now
           </button>

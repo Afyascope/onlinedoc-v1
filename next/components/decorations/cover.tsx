@@ -16,9 +16,9 @@ export const Cover = ({
         // Base: Inline block with padding
         "relative inline-block px-2 py-1",
         // Color: Dark Navy background (matches your theme) instead of generic gray
-        "bg-[#001f3f] text-white",
+        "bg-brand text-white",
         // Optional: Add a subtle border to define edges
-        "border border-white/10 rounded-sm",
+        "border border-brand/20 rounded-sm",
         className
       )}
     >
