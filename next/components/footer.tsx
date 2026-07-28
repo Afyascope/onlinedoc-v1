@@ -63,9 +63,9 @@ export const Footer = async ({ data, locale }: { data: any, locale: string }) =>
   );
 };
 
-const LinkSection = ({ links, locale }: { links: { text: string; URL: never | string }[], locale: string }) => (
+const LinkSection = ({ links, locale }: { links?: { text: string; URL: never | string }[], locale: string }) => (
   <div className="flex flex-col space-y-3">
-    {links.map((link) => (
+    {links?.map((link) => (
       <Link
         key={link.text}
         className="transition-colors text-neutral-500 hover:text-brand text-sm font-secondary"
@@ -77,7 +77,7 @@ const LinkSection = ({ links, locale }: { links: { text: string; URL: never | st
   </div>
 );
 
-const SocialLinks = ({ links }: { links: { text: string; URL: string }[] }) => {
+const SocialLinks = ({ links }: { links?: { text: string; URL: string }[] }) => {
   const getIcon = (text: string) => {
     const lower = text.toLowerCase();
     if (lower.includes("twitter") || lower.includes("x")) return <FaXTwitter />;
@@ -90,7 +90,7 @@ const SocialLinks = ({ links }: { links: { text: string; URL: string }[] }) => {
 
   return (
     <div className="flex gap-4">
-      {links.map((link) => {
+      {links?.map((link) => {
         const icon = getIcon(link.text);
         return (
           <a

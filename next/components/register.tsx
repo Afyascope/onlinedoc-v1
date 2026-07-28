@@ -12,7 +12,7 @@ export const Register = () => {
       <div className="flex-1 text-center md:text-left">
         <Logo />
         <h1 className="text-3xl md:text-5xl font-bold font-primary mt-8 text-primary leading-tight">
-          Get the           <span className="text-brand">AfyaScope</span> <br />
+          Get the           <span className="text-brand">OnlineDoc</span> <br />
           Insider.
         </h1>
         <p className="text-neutral-600 text-lg mt-6 font-secondary leading-relaxed">
