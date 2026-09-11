@@ -2,17 +2,19 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { consultations, consultationStatusHistory, consultationNotes, consultationFiles, notifications } from "@/db/schema";
+import { consultations, consultationStatusHistory, consultationNotes, consultationFiles, notifications, user } from "@/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import crypto from "crypto";
-
-const CONSULTATION_FEE = process.env.CONSULTATION_FEE || "50";
+import { appUrl, sendEmail } from "@/lib/email/send";
+import { getClinicianStatus } from "@/lib/clinician-status";
+import { consultationFee } from "@/lib/config";
 
 async function getSession() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) throw new Error("Not authenticated");
+  if (session.user.role === "clinician" && getClinicianStatus(session.user) !== "APPROVED") throw new Error("Clinician approval required");
   return session;
 }
 
@@ -43,7 +45,7 @@ export async function createConsultation(data: {
     durationOfIllness: data.durationOfIllness || null,
     medicalHistory: data.medicalHistory || null,
     status: "draft",
-    fee: CONSULTATION_FEE,
+    fee: consultationFee(),
     createdAt: new Date(),
     updatedAt: new Date(),
   });
@@ -56,6 +58,7 @@ export async function createConsultation(data: {
     createdAt: new Date(),
   });
 
+  revalidatePath("/dashboard/patient/consultations");
   return { success: true, consultationId: id };
 }
 
@@ -126,6 +129,17 @@ export async function updateConsultationStatus(consultationId: string, newStatus
   if (existing.length === 0) throw new Error("Consultation not found");
 
   const currentStatus = existing[0].status;
+  const consultation = existing[0];
+
+  if (session.user.role === "patient" && consultation.patientId !== session.user.id) {
+    throw new Error("Access denied");
+  }
+  if (session.user.role === "clinician" && consultation.clinicianId !== session.user.id) {
+    throw new Error("Access denied");
+  }
+  if (session.user.role === "patient" && newStatus !== "awaiting_payment") {
+    throw new Error("Patients cannot perform this status transition");
+  }
   const allowed = validTransitions[currentStatus] || [];
 
   if (!allowed.includes(newStatus)) {
@@ -136,10 +150,6 @@ export async function updateConsultationStatus(consultationId: string, newStatus
 
   if (newStatus === "paid") updates.paidAt = new Date();
   if (newStatus === "completed") updates.completedAt = new Date();
-
-  if (newStatus === "waiting_for_clinician" && !existing[0].clinicianId) {
-    updates.clinicianId = session.user.id;
-  }
 
   await db.update(consultations).set(updates).where(eq(consultations.id, consultationId));
 
@@ -157,6 +167,7 @@ export async function updateConsultationStatus(consultationId: string, newStatus
       "Payment Received", "Your consultation payment has been confirmed.",
       `/dashboard/patient/consultations/${consultationId}`
     );
+    await sendEmail({ to: session.user.email, subject: "Your consultation is booked", template: "consultation-booked", props: { recipientName: session.user.name, title: existing[0].title, consultationUrl: appUrl(`/dashboard/patient/consultations/${consultationId}`), role: "patient" } });
   }
 
   if (newStatus === "waiting_for_clinician" && existing[0].clinicianId) {
@@ -165,6 +176,9 @@ export async function updateConsultationStatus(consultationId: string, newStatus
       "New Consultation", "A new consultation has been assigned to you.",
       `/dashboard/clinician/consultations/${consultationId}`
     );
+    const clinicianRows = await db.select().from(user).where(eq(user.id, existing[0].clinicianId)).limit(1);
+    const clinician = clinicianRows[0];
+    if (clinician) await sendEmail({ to: clinician.email, subject: "New consultation request", template: "consultation-booked", props: { recipientName: clinician.name, title: existing[0].title, consultationUrl: appUrl(`/dashboard/clinician/consultations/${consultationId}`), role: "clinician" } });
   }
 
   if (newStatus === "completed") {
@@ -173,6 +187,7 @@ export async function updateConsultationStatus(consultationId: string, newStatus
       "Consultation Completed", "Your consultation has been completed. View the notes.",
       `/dashboard/patient/consultations/${consultationId}`
     );
+    await sendEmail({ to: session.user.email, subject: "Your consultation is complete", template: "consultation-booked", props: { recipientName: session.user.name, title: existing[0].title, consultationUrl: appUrl(`/dashboard/patient/consultations/${consultationId}`), role: "patient" } });
   }
 
   revalidatePath("/dashboard");
@@ -187,6 +202,13 @@ export async function addConsultationNotes(consultationId: string, data: {
   followUpDate?: string;
 }) {
   const session = await getSession();
+
+  if (session.user.role !== "clinician") throw new Error("Clinician access required");
+
+  const consultationRows = await db.select().from(consultations).where(eq(consultations.id, consultationId)).limit(1);
+  if (consultationRows.length === 0 || consultationRows[0].clinicianId !== session.user.id) {
+    throw new Error("Access denied");
+  }
 
   const existing = await db.select().from(consultationNotes).where(
     and(
@@ -231,6 +253,8 @@ export async function getCommunicationLink(consultationId: string) {
   if (rows.length === 0) throw new Error("Consultation not found");
 
   const c = rows[0];
+  const canAccess = c.patientId === session.user.id || c.clinicianId === session.user.id;
+  if (!canAccess) throw new Error("Access denied");
   const patientName = session.user.role === "patient" ? "Patient" : "A patient";
 
   const message = encodeURIComponent(
@@ -250,5 +274,6 @@ export async function getCommunicationLink(consultationId: string) {
     .set({ communicationLink: whatsappUrl, updatedAt: new Date() })
     .where(eq(consultations.id, consultationId));
 
+  revalidatePath(`/dashboard/${session.user.role}/consultations/${consultationId}`);
   return { type: "whatsapp" as const, url: whatsappUrl };
 }

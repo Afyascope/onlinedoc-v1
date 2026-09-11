@@ -7,7 +7,7 @@ import { ActivityCard } from "@/components/dashboard/ActivityCard";
 import { IconFiles, IconStethoscope, IconFlask, IconClipboardList, IconPill } from "@tabler/icons-react";
 import { format } from "date-fns";
 
-interface Record {
+interface PatientRecord {
   id: string;
   clinicianId: string;
   type: string;
@@ -25,7 +25,7 @@ const typeConfig: Record<string, { icon: React.ReactNode; label: string }> = {
   prescription: { icon: <IconPill size={18} />, label: "Prescription" },
 };
 
-export function PatientRecordsClient({ records }: { records: Record[] }) {
+export function PatientRecordsClient({ records }: { records: PatientRecord[] }) {
   return (
     <AuthGuard allowedRoles={["patient"]}>
       <DashboardHeader

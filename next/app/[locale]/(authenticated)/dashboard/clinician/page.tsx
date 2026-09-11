@@ -7,9 +7,11 @@ import { EmptyState } from "@/components/dashboard/EmptyState";
 import { QuickActionsCard } from "@/components/dashboard/QuickActionsCard";
 import { ClinicianConsultationsList } from "./consultations-list";
 import { getClinicianOverview } from "./data";
+import { requireApprovedClinician } from "@/lib/clinician-access";
 import { IconUsers, IconCalendarDue, IconClipboardCheck, IconMessage, IconCalendarPlus, IconList, IconStethoscope, IconUserEdit, IconMessageChatbot } from "@tabler/icons-react";
 
 export default async function ClinicianDashboard() {
+  await requireApprovedClinician();
   const data = await getClinicianOverview();
 
   return (

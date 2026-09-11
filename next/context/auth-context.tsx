@@ -10,7 +10,7 @@ interface AuthContextValue {
   isLoading: boolean;
   isAuthenticated: boolean;
   role: UserRole | null;
-  login: (email: string, password: string, rememberMe?: boolean) => Promise<{ error?: string }>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<{ error?: string; user?: AuthUser }>;
   register: (name: string, email: string, password: string, role: UserRole) => Promise<{ error?: string; data?: any }>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [refresh]);
 
   const login = async (email: string, password: string, rememberMe?: boolean) => {
-    const { error } = await authClient.signIn.email({
+    const { data, error } = await authClient.signIn.email({
       email,
       password,
       rememberMe,
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: error.message || error.code || "Invalid credentials" };
     }
     await refresh();
-    return {};
+    return { user: data?.user as unknown as AuthUser };
   };
 
   const register = async (name: string, email: string, password: string, role: UserRole) => {
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
       role,
-    });
+    } as any);
     if (error) {
       return { error: error.message || error.code || "Registration failed" };
     }

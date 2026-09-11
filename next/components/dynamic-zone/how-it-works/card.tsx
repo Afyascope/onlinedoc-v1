@@ -1,130 +1,51 @@
-"use client";
+import { Button } from "../../elements/button";
+import { Link } from "next-view-transitions";
 
-import React, { MouseEvent as ReactMouseEvent, useRef } from "react";
-import Image from "next/image";
-import {
-  motion,
-  useMotionValue,
-  useMotionTemplate,
-  useScroll,
-  useTransform,
-  useMotionValueEvent,
-  useSpring,
-} from "framer-motion";
-import dynamic from "next/dynamic";
+export interface PathwayCTA {
+  id?: number;
+  text: string;
+  URL: string;
+  target?: string | null;
+  variant?: "simple" | "outline" | "primary" | "muted";
+}
 
-const CanvasRevealEffect = dynamic(
-  () => import("../../ui/canvas-reveal-effect").then((m) => m.CanvasRevealEffect),
-  { ssr: false }
-);
-import Beam from "../../beam";
-import { strapiImage } from "@/lib/strapi/strapiImage"; // Ensure this import exists
-
-export const Card = ({
-  title,
-  description,
-  index,
-  image,
-}: {
+export interface PathwayStep {
+  id?: number;
   title: string;
   description: string;
-  index: number;
-  image?: any;
+  CTA?: PathwayCTA | null;
+}
+
+export const Card = ({
+  step,
+  locale,
+}: {
+  step: PathwayStep;
+  locale: string;
 }) => {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  function handleMouseMove({
-    currentTarget,
-    clientX,
-    clientY,
-  }: ReactMouseEvent<HTMLDivElement>) {
-    let { left, top } = currentTarget.getBoundingClientRect();
-
-    mouseX.set(clientX - left);
-    mouseY.set(clientY - top);
-  }
-
-  const ref = useRef<HTMLDivElement>(null);
-
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["end end", "start start"],
-  });
-
-  const width = useSpring(useTransform(scrollYProgress, [0, 0.2], [0, 300]), {
-    stiffness: 500,
-    damping: 90,
-  });
+  const cta = step.CTA;
 
   return (
-    <div
-      ref={ref}
-      className="grid grid-cols-1 md:grid-cols-4 max-w-4xl mx-auto py-20 gap-8 items-center"
-    >
-      {/* LEFT SIDE: LOGO or NUMBER */}
-      <div className="flex justify-center md:justify-end md:pr-10">
-        {image?.url ? (
-          <div className="relative h-24 w-24 md:h-32 md:w-32 bg-white/5 rounded-2xl p-4 border border-border flex items-center justify-center backdrop-blur-sm shadow-xl">
-             <Image 
-               src={strapiImage(image.url)} 
-               alt={title} 
-               width={100} 
-               height={100} 
-               className="object-contain w-full h-full"
-             />
-          </div>
-        ) : (
-          <p className="text-9xl font-bold text-neutral-800 opacity-50 font-primary">
-            {"0" + index}
-          </p>
-        )}
-      </div>
-
-      {/* MIDDLE: CONNECTION BEAM */}
-      <motion.div
-        className="h-[2px] w-full hidden md:block bg-neutral-100 rounded-full mt-0 relative overflow-hidden"
-        style={{ width }}
-      >
-        <Beam className="top-[0.5px] bg-brand" /> {/* Cyan Beam */}
-      </motion.div>
-
-      {/* RIGHT SIDE: CONTENT CARD */}
-      <div
-        className="group p-8 rounded-xl border border-border bg-neutral-50 backdrop-blur-md relative z-40 col-span-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1"
-        onMouseMove={handleMouseMove}
-      >
-        {/* Hover Effect: Cyan & Red */}
-        <motion.div
-          className="pointer-events-none absolute z-10 -inset-px rounded-xl opacity-0 transition duration-300 group-hover:opacity-100"
-          style={{
-            maskImage: useMotionTemplate`
-            radial-gradient(
-              350px circle at ${mouseX}px ${mouseY}px,
-              var(--neutral-900),
-              transparent 80%
-            )
-          `,
-          }}
-        >
-          <CanvasRevealEffect
-            animationSpeed={3}
-            containerClassName="bg-transparent absolute inset-0 pointer-events-none"
-            colors={[
-              [44, 177, 188], // Brand Cyan
-              [255, 77, 77], // Afyascope Red
-            ]}
-            dotSize={2}
-          />
-        </motion.div>
-
-        <h3 className="text-2xl font-bold font-primary text-primary relative z-20 mt-2">
-          {title}
-        </h3>
-        <p className="text-neutral-700 font-secondary text-sm leading-relaxed mt-4 relative z-20">
-          {description}
-        </p>
-      </div>
+    <div className="flex flex-col h-full rounded-xl bg-white border border-border shadow-derek p-6 md:p-8">
+      <h3 className="text-lg md:text-xl font-bold font-primary text-primary leading-snug">
+        {step.title}
+      </h3>
+      <p className="mt-3 flex-1 text-sm md:text-base text-neutral-600 leading-relaxed font-secondary">
+        {step.description}
+      </p>
+      {cta && cta.text && cta.URL && (
+        <div className="mt-6">
+          <Button
+            as={Link}
+            href={cta.URL.startsWith("/") ? `/${locale}${cta.URL}` : cta.URL}
+            target={cta.target || undefined}
+            variant={cta.variant || "outline"}
+            className="w-full sm:w-auto"
+          >
+            {cta.text}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

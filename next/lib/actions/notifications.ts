@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { notifications } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
@@ -42,7 +42,7 @@ export async function markAsRead(notificationId: string) {
 
   await db.update(notifications)
     .set({ readAt: new Date() })
-    .where(eq(notifications.id, notificationId));
+    .where(and(eq(notifications.id, notificationId), eq(notifications.userId, session.user.id)));
 
   revalidatePath("/dashboard");
   return { success: true };

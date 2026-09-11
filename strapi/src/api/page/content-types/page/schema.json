@@ -54,7 +54,9 @@
         "dynamic-zone.cta",
         "dynamic-zone.form-next-to-section",
         "dynamic-zone.faq",
-        "dynamic-zone.content"
+        "dynamic-zone.content",
+        "dynamic-zone.related-products",
+        "dynamic-zone.related-articles"
       ]
     }
   }

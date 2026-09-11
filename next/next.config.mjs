@@ -1,24 +1,35 @@
+/**
+ * Derives the Next/Image remote pattern from the Strapi origin already defined
+ * by NEXT_PUBLIC_API_URL (the same origin that `strapiImage()` uses to build
+ * media URLs). This keeps the image configuration environment-driven without
+ * introducing a second configuration source.
+ *
+ * - Development: NEXT_PUBLIC_API_URL=http://localhost:1337 → http/localhost:1337
+ * - Production:  NEXT_PUBLIC_API_URL=https://cms.example.com → https/cms.example.com
+ *
+ * Only the Strapi/media origin is allowed. No wildcard and no arbitrary hosts.
+ */
+function strapiImageRemotePatterns() {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (!apiUrl) return [];
+  try {
+    const parsed = new URL(apiUrl);
+    return [
+      {
+        protocol: parsed.protocol.replace(":", ""),
+        hostname: parsed.hostname,
+        ...(parsed.port ? { port: parsed.port } : {}),
+      },
+    ];
+  } catch {
+    return [];
+  }
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // 1. FORCE SUCCESS: Ignore all linting/type errors during deployment
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-
-  // 2. IMAGES: Keep your Strapi/HostPinnacle image settings
   images: {
-    remotePatterns: [
-      { 
-        hostname: process.env.IMAGE_HOSTNAME || "localhost" 
-      },
-      {
-        protocol: "https",
-        hostname: "**", // Allows images from any domain (Strapi Cloud, etc)
-      },
-    ],
+    remotePatterns: strapiImageRemotePatterns(),
   },
 
   pageExtensions: ["ts", "tsx"],
@@ -26,6 +37,10 @@ const nextConfig = {
   // 3. REDIRECTS: Keep your dynamic redirect logic
   async redirects() {
     let redirections = [];
+    if (!process.env.NEXT_PUBLIC_API_URL && process.env.NODE_ENV === "production") {
+      throw new Error("NEXT_PUBLIC_API_URL must be configured in production");
+    }
+    if (!process.env.NEXT_PUBLIC_API_URL) return [];
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/redirections`

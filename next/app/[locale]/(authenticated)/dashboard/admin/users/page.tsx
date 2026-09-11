@@ -7,8 +7,8 @@ import { AdminUsersClient } from "./client";
 
 export default async function UsersPage() {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) return <AdminUsersClient users={[]} />;
+  if (!session?.user) return <AdminUsersClient users={[]} total={0} />;
 
   const allUsers = await db.select().from(user).orderBy(desc(user.createdAt));
-  return <AdminUsersClient users={allUsers} />;
+  return <AdminUsersClient users={allUsers} total={allUsers.length} />;
 }

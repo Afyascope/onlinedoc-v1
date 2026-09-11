@@ -1,0 +1,2 @@
+import { BaseTemplate, EmailHeading, EmailText } from "./BaseTemplate";
+export function PasswordChanged({ name }: { name?: string }) { return <BaseTemplate title="Your OnlineDoc password was changed"><EmailHeading>Password changed</EmailHeading><EmailText>Hi {name || "there"}, your OnlineDoc password was changed successfully. If you did not make this change, please contact support immediately.</EmailText></BaseTemplate>; }

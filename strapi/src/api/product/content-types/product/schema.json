@@ -36,6 +36,14 @@
         "videos"
       ]
     },
+    "file": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "files"
+      ]
+    },
     "perks": {
       "type": "component",
       "repeatable": true,

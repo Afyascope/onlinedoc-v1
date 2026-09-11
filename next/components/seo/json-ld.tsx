@@ -1,6 +1,7 @@
 import Script from "next/script";
+import { siteUrl as configuredSiteUrl } from "@/lib/config";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://onlinedoc.healthcare";
+const siteUrl = configuredSiteUrl();
 
 export function OrganizationSchema() {
   const schema = {

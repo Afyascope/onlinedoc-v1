@@ -7,6 +7,8 @@ export const pathnames = {};
 export const localePrefix = "always";
 
 export const port = process.env.PORT || 3000;
-export const host = process.env.WEBSITE_URL
-  ? `https://${process.env.WEBSITE_URL}`
-  : `http://localhost:${port}`;
+export const host = process.env.NEXT_PUBLIC_SITE_URL
+  ? process.env.NEXT_PUBLIC_SITE_URL
+  : process.env.NODE_ENV === "production"
+    ? undefined
+    : `http://localhost:${port}`;

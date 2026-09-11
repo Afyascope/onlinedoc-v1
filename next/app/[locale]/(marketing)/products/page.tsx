@@ -2,15 +2,13 @@ import { Metadata } from 'next';
 
 import { AmbientColor } from "@/components/decorations/ambient-color";
 import { Container } from "@/components/container";
-import { FeatureIconContainer } from "@/components/dynamic-zone/features/feature-icon-container";
-import { Heading } from "@/components/elements/heading";
 import { Featured } from "@/components/products/featured";
-import { ProductItems } from "@/components/products/product-items";
-import { Subheading } from "@/components/elements/subheading";
-import { IconShoppingCartUp } from "@tabler/icons-react";
+import { ProductsHero } from "@/components/products/products-hero";
 import fetchContentType from "@/lib/strapi/fetchContentType";
 import { fetchCached } from "@/lib/strapi/fetchCached";
+import { toClientProducts } from "@/lib/strapi/sanitizeProduct";
 import { generateMetadataObject } from '@/lib/shared/metadata';
+import { MarketplaceCatalog } from "./catalog";
 
 import ClientSlugHandler from '../ClientSlugHandler';
 
@@ -38,39 +36,36 @@ export default async function Products({
   params: { locale: string };
 }) {
 
-  // Fetch the product-page and products data
   const productPage = await fetchCached('product-page', {
     filters: {
       locale: params.locale,
     },
   }, true);
-  const products = await fetchContentType('products');
+  const strapiRes = await fetchContentType('products');
+  const products = toClientProducts(strapiRes?.data || []);
 
-  const localizedSlugs = productPage.localizations?.reduce(
+  const localizedSlugs = productPage?.localizations?.reduce(
     (acc: Record<string, string>, localization: any) => {
       acc[localization.locale] = "products";
       return acc;
     },
     { [params.locale]: "products" }
-  );
-  const featured = products?.data.filter((product: { featured: boolean }) => product.featured);
+  ) || { [params.locale]: "products" };
+  const featured = products?.filter((product: any) => product.featured);
 
   return (
     <div className="relative overflow-hidden w-full">
       <ClientSlugHandler localizedSlugs={localizedSlugs} />
       <AmbientColor />
-      <Container className="pt-40 pb-40">
-        <FeatureIconContainer className="flex justify-center items-center overflow-hidden">
-          <IconShoppingCartUp className="h-6 w-6 text-white" />
-        </FeatureIconContainer>
-        <Heading as="h1" className="pt-4">
-          {productPage.heading}
-        </Heading>
-        <Subheading className="max-w-3xl mx-auto">
-          {productPage.sub_heading}
-        </Subheading>
+      <Container className="pt-28 md:pt-32 pb-20">
+        <ProductsHero
+          heading={productPage?.heading || "Digital health resources, products and tools for better care."}
+          subHeading={productPage?.sub_heading || "Discover digital health products and resources created by OnlineDoc clinicians to support better care."}
+          products={products}
+          locale={params.locale}
+        />
         <Featured products={featured} locale={params.locale} />
-        <ProductItems products={products?.data} locale={params.locale} />
+        <MarketplaceCatalog products={products} locale={params.locale} />
       </Container>
     </div>
   );

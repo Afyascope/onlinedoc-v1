@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/config";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://onlinedoc.healthcare";
+  const baseUrl = siteUrl();
   return {
     rules: {
       userAgent: "*",

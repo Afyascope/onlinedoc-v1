@@ -11,7 +11,11 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#F8FAFC",
     icons: [
       { src: "/favicon.ico", sizes: "any", type: "image/x-icon" },
-      { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
+      // `app/icon.tsx` generates the brand icon and is served at /icon. The
+      // previous "/icon.svg" reference had no matching static route, so the
+      // browser request fell through to the [locale] route and rendered the
+      // homepage with locale=icon.svg.
+      { src: "/icon", sizes: "any", type: "image/png" },
     ],
   };
 }

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, boolean, integer, decimal, date, time, jsonb, uniqueIndex } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer, decimal, date, time, jsonb, uniqueIndex, type AnyPgColumn } from "drizzle-orm/pg-core";
 
 // ── Better Auth tables ──
 
@@ -12,6 +12,10 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updated_at").notNull(),
   role: text("role").notNull().default("patient"),
   clinicianApproved: boolean("clinician_approved").notNull().default(false),
+  clinicianStatus: text("clinician_status").notNull().default("PENDING"),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: text("approved_by").references((): AnyPgColumn => user.id),
+  banned: boolean("banned").notNull().default(false),
 });
 
 export const session = pgTable("session", {
@@ -105,17 +109,28 @@ export const payments = pgTable("payments", {
   id: text("id").primaryKey(),
   patientId: text("patient_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   appointmentId: text("appointment_id").references(() => appointments.id),
+  consultationId: text("consultation_id").references(() => consultations.id),
+  orderId: text("order_id").references(() => orders.id),
   amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
-  currency: text("currency").notNull().default("USD"),
+  currency: text("currency").notNull().default("KES"),
   status: text("status").notNull().default("pending"),
   method: text("method"),
+  channel: text("channel"),
   description: text("description"),
   invoiceNumber: text("invoice_number"),
+  transactionReference: text("transaction_reference"),
+  paystackReference: text("paystack_reference"),
+  providerResponse: jsonb("provider_response"),
+  receiptUrl: text("receipt_url"),
   dueDate: date("due_date"),
   paidAt: timestamp("paid_at"),
+  failedAt: timestamp("failed_at"),
+  failureReason: text("failure_reason"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => [
+  uniqueIndex("payments_paystack_reference_unique").on(table.paystackReference),
+]);
 
 // ── Phase 8: Consultations ──
 
@@ -131,6 +146,8 @@ export const consultations = pgTable("consultations", {
   status: text("status").notNull().default("draft"),
   fee: decimal("fee", { precision: 10, scale: 2 }).notNull().default("0"),
   stripeSessionId: text("stripe_session_id"),
+  paystackReference: text("paystack_reference"),
+  paymentChannel: text("payment_channel"),
   paidAt: timestamp("paid_at"),
   completedAt: timestamp("completed_at"),
   communicationChannel: text("communication_channel").notNull().default("whatsapp"),
@@ -190,7 +207,7 @@ export const clinicianProfiles = pgTable("clinician_profiles", {
   bio: text("bio"),
   yearsOfExperience: integer("years_of_experience"),
   consultationFee: decimal("consultation_fee", { precision: 10, scale: 2 }),
-  currency: text("currency").notNull().default("USD"),
+  currency: text("currency").notNull().default("KES"),
   isAcceptingPatients: boolean("is_accepting_patients").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -202,5 +219,73 @@ export const settings = pgTable("settings", {
   value: text("value").notNull(),
   type: text("type").notNull().default("string"),
   description: text("description"),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// ── Phase 9: Digital Health Marketplace (transactional only) ──
+
+export const orders = pgTable("orders", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => user.id),
+  orderType: text("order_type").notNull().default("digital_product"),
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("KES"),
+  paymentStatus: text("payment_status").notNull().default("pending"),
+  paymentProvider: text("payment_provider"),
+  paymentReference: text("payment_reference"),
+  paystackReference: text("paystack_reference"),
+  paymentChannel: text("payment_channel"),
+  receiptUrl: text("receipt_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => [
+  uniqueIndex("orders_payment_reference_unique").on(table.paymentReference),
+  uniqueIndex("orders_paystack_reference_unique").on(table.paystackReference),
+]);
+
+export const orderItems = pgTable("order_items", {
+  id: text("id").primaryKey(),
+  orderId: text("order_id").notNull().references(() => orders.id, { onDelete: "cascade" }),
+  productId: text("product_id").notNull(),
+  productName: text("product_name"),
+  productSlug: text("product_slug"),
+  quantity: integer("quantity").notNull().default(1),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const downloads = pgTable("downloads", {
+  id: text("id").primaryKey(),
+  orderItemId: text("order_item_id").notNull().references(() => orderItems.id, { onDelete: "cascade" }),
+  downloadCount: integer("download_count").notNull().default(0),
+  lastDownloadedAt: timestamp("last_downloaded_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  uniqueIndex("downloads_order_item_id_unique").on(table.orderItemId),
+]);
+
+// ── Phase 10: Platform Administration ──
+
+export const auditLogs = pgTable("audit_logs", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").references(() => user.id),
+  action: text("action").notNull(),
+  target: text("target"),
+  targetId: text("target_id"),
+  metadata: jsonb("metadata"),
+  ip: text("ip"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const platformSettings = pgTable("platform_settings", {
+  id: text("id").primaryKey(),
+  group: text("group").notNull().default("general"),
+  key: text("key").notNull().unique(),
+  value: text("value").notNull().default(""),
+  type: text("type").notNull().default("string"),
+  label: text("label"),
+  description: text("description"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

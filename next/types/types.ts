@@ -4,7 +4,11 @@ export interface Category {
 
 export interface Image {
   url: string;
-  alternativeText: string;
+  alternativeText?: string;
+  mime?: string;
+  ext?: string;
+  width?: number;
+  height?: number;
 }
 
 export interface Article {
@@ -17,7 +21,7 @@ export interface Article {
   updatedAt: string;
   publishedAt: string;
   locale: string;
-  image: Image;
+  image: Image | null;
   categories: Category[]
 }
 
@@ -32,4 +36,5 @@ export interface Product {
   featured?: boolean;
   images: any[];
   categories?: any[];
+  file?: any;
 };

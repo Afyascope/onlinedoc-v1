@@ -28,12 +28,15 @@ export function ConsultationForm({ onSuccess }: { onSuccess: (consultationId: st
     setSubmitting(true);
     setError("");
 
-    const result = await createConsultation(form);
-    if (result.error) {
-      setError(result.error);
+    try {
+      const result = await createConsultation(form);
+      if (result.consultationId) {
+        onSuccess(result.consultationId);
+      }
+    } catch (e: any) {
+      setError(e?.message || "Failed to create consultation");
+    } finally {
       setSubmitting(false);
-    } else if (result.consultationId) {
-      onSuccess(result.consultationId);
     }
   };
 

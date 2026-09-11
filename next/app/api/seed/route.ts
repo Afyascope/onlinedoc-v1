@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { user, appointments, medicalRecords, prescriptions, payments, consultations, clinicianProfiles, settings, consultationStatusHistory, consultationNotes, notifications } from "@/db/schema";
+import { user, appointments, medicalRecords, prescriptions, payments, consultations, clinicianProfiles, settings, consultationStatusHistory, consultationNotes, notifications, orders, orderItems, downloads } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
@@ -10,15 +10,33 @@ function daysAgo(n: number) { const d = new Date(); d.setDate(d.getDate() - n); 
 function daysFromNow(n: number) { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().split("T")[0]; }
 
 const SEED_USERS = [
-  { name: "Admin User", email: "admin@onlinedoc.com", password: "Admin@123", role: "admin" as const, clinicianApproved: true },
-  { name: "Dr. Sarah Smith", email: "clinician@onlinedoc.com", password: "Clinician@123", role: "clinician" as const, clinicianApproved: true },
-  { name: "Dr. James Wilson", email: "wilson@onlinedoc.com", password: "Wilson@123", role: "clinician" as const, clinicianApproved: true },
-  { name: "John Doe", email: "patient@onlinedoc.com", password: "Patient@123", role: "patient" as const, clinicianApproved: false },
-  { name: "Emily Johnson", email: "emily@onlinedoc.com", password: "Emily@123", role: "patient" as const, clinicianApproved: false },
-  { name: "Michael Brown", email: "michael@onlinedoc.com", password: "Michael@123", role: "patient" as const, clinicianApproved: false },
+  { name: "Admin User", email: "admin@onlinedoc.com", password: "", role: "admin" as const, clinicianApproved: true },
+  { name: "Dr. Sarah Smith", email: "clinician@onlinedoc.com", password: "", role: "clinician" as const, clinicianApproved: true },
+  { name: "Dr. James Wilson", email: "wilson@onlinedoc.com", password: "", role: "clinician" as const, clinicianApproved: true },
+  { name: "John Doe", email: "patient@onlinedoc.com", password: "", role: "patient" as const, clinicianApproved: false },
+  { name: "Emily Johnson", email: "emily@onlinedoc.com", password: "", role: "patient" as const, clinicianApproved: false },
+  { name: "Michael Brown", email: "michael@onlinedoc.com", password: "", role: "patient" as const, clinicianApproved: false },
 ];
 
 export async function POST() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  const clinicianPassword = process.env.SEED_CLINICIAN_PASSWORD;
+  const patientPassword = process.env.SEED_PATIENT_PASSWORD;
+  if (!adminPassword || !clinicianPassword || !patientPassword) {
+    return NextResponse.json({ error: "Development seed credentials are not configured" }, { status: 503 });
+  }
+
+  SEED_USERS[0].password = adminPassword;
+  SEED_USERS[1].password = clinicianPassword;
+  SEED_USERS[2].password = clinicianPassword;
+  SEED_USERS[3].password = patientPassword;
+  SEED_USERS[4].password = patientPassword;
+  SEED_USERS[5].password = patientPassword;
+
   const results: { email: string; role: string; status: string }[] = [];
   const userIds: Record<string, string> = {};
 
@@ -27,7 +45,7 @@ export async function POST() {
       const existing = await db.select().from(user).where(eq(user.email, u.email)).limit(1);
       if (existing.length > 0) {
         userIds[u.email] = existing[0].id;
-        await db.update(user).set({ emailVerified: true, clinicianApproved: u.clinicianApproved, updatedAt: new Date() }).where(eq(user.id, existing[0].id));
+        await db.update(user).set({ emailVerified: true, clinicianApproved: u.clinicianApproved, clinicianStatus: u.role === "clinician" && u.clinicianApproved ? "APPROVED" : "PENDING", updatedAt: new Date() }).where(eq(user.id, existing[0].id));
         results.push({ email: u.email, role: u.role, status: "already exists" });
         continue;
       }
@@ -38,9 +56,9 @@ export async function POST() {
         headers,
       });
 
-      const createdUserId = signUpRes.data?.user?.id;
+      const createdUserId = signUpRes.user?.id;
       if (!createdUserId) {
-        results.push({ email: u.email, role: u.role, status: `signup failed: ${JSON.stringify(signUpRes.error || signUpRes)}` });
+        results.push({ email: u.email, role: u.role, status: "signup failed: no user id returned" });
         continue;
       }
 
@@ -50,6 +68,7 @@ export async function POST() {
         role: u.role,
         emailVerified: true,
         clinicianApproved: u.clinicianApproved,
+        clinicianStatus: u.role === "clinician" && u.clinicianApproved ? "APPROVED" : "PENDING",
         updatedAt: new Date(),
       }).where(eq(user.id, createdUserId));
 
@@ -72,13 +91,13 @@ export async function POST() {
     if (sarahId) {
       const existingProfile = await db.select().from(clinicianProfiles).where(eq(clinicianProfiles.userId, sarahId)).limit(1);
       if (existingProfile.length === 0) {
-        await db.insert(clinicianProfiles).values({ userId: sarahId, specialization: "Cardiology", qualifications: "MD, FACC", bio: "Board-certified cardiologist with 15+ years.", yearsOfExperience: 15, consultationFee: "200", currency: "USD", isAcceptingPatients: true, createdAt: now, updatedAt: now });
+        await db.insert(clinicianProfiles).values({ userId: sarahId, specialization: "Cardiology", qualifications: "MD, FACC", bio: "Board-certified cardiologist with 15+ years.", yearsOfExperience: 15, consultationFee: "200", currency: "KES", isAcceptingPatients: true, createdAt: now, updatedAt: now });
       }
     }
     if (wilsonId) {
       const existingProfile = await db.select().from(clinicianProfiles).where(eq(clinicianProfiles.userId, wilsonId)).limit(1);
       if (existingProfile.length === 0) {
-        await db.insert(clinicianProfiles).values({ userId: wilsonId, specialization: "Pediatrics", qualifications: "MD, FAAP", bio: "Dedicated pediatrician with 10+ years.", yearsOfExperience: 10, consultationFee: "150", currency: "USD", isAcceptingPatients: true, createdAt: now, updatedAt: now });
+        await db.insert(clinicianProfiles).values({ userId: wilsonId, specialization: "Pediatrics", qualifications: "MD, FAAP", bio: "Dedicated pediatrician with 10+ years.", yearsOfExperience: 10, consultationFee: "150", currency: "KES", isAcceptingPatients: true, createdAt: now, updatedAt: now });
       }
     }
 
@@ -115,9 +134,9 @@ export async function POST() {
     const existingPayments = await db.select().from(payments).limit(1);
     if (existingPayments.length === 0) {
       await db.insert(payments).values([
-        { id: uid(), patientId: johnId, amount: "200", currency: "USD", status: "completed", method: "card", description: "Cardiology Consultation", invoiceNumber: "INV-2024-001", dueDate: daysAgo(30), paidAt: new Date(Date.now() - 20 * 86400000), createdAt: now, updatedAt: now },
-        { id: uid(), patientId: johnId, amount: "150", currency: "USD", status: "pending", description: "Follow-up Visit", invoiceNumber: "INV-2024-002", dueDate: daysFromNow(15), createdAt: now, updatedAt: now },
-        { id: uid(), patientId: emilyId, amount: "150", currency: "USD", status: "completed", method: "card", description: "Annual Physical", invoiceNumber: "INV-2024-003", dueDate: daysAgo(14), paidAt: new Date(Date.now() - 10 * 86400000), createdAt: now, updatedAt: now },
+        { id: uid(), patientId: johnId, amount: "200", currency: "KES", status: "completed", method: "card", description: "Cardiology Consultation", invoiceNumber: "INV-2024-001", dueDate: daysAgo(30), paidAt: new Date(Date.now() - 20 * 86400000), createdAt: now, updatedAt: now },
+        { id: uid(), patientId: johnId, amount: "150", currency: "KES", status: "pending", description: "Follow-up Visit", invoiceNumber: "INV-2024-002", dueDate: daysFromNow(15), createdAt: now, updatedAt: now },
+        { id: uid(), patientId: emilyId, amount: "150", currency: "KES", status: "completed", method: "card", description: "Annual Physical", invoiceNumber: "INV-2024-003", dueDate: daysAgo(14), paidAt: new Date(Date.now() - 10 * 86400000), createdAt: now, updatedAt: now },
       ]);
     }
 
@@ -129,31 +148,30 @@ export async function POST() {
       const consult4Id = uid();
       const consult5Id = uid();
       await db.insert(consultations).values([
-        { id: consult1Id, patientId: johnId, clinicianId: sarahId, title: "Chest Pain Evaluation", description: "Experiencing mild chest pain after exercise", status: "in_consultation", fee: "50", urgency: "medium", specialty: "Cardiology", createdAt: new Date(Date.now() - 3 * 86400000), updatedAt: now },
-        { id: consult2Id, patientId: emilyId, clinicianId: sarahId, title: "Headache Follow-up", description: "Persistent migraines for the past week", status: "paid", fee: "50", urgency: "low", specialty: "Neurology", createdAt: new Date(Date.now() - 1 * 86400000), updatedAt: now },
-        { id: consult3Id, patientId: michaelId, clinicianId: wilsonId, title: "Child Fever Consultation", description: "My 3-year-old has had a fever for 2 days", status: "waiting_for_clinician", fee: "50", urgency: "high", specialty: "Pediatrics", createdAt: new Date(Date.now() - 2 * 86400000), updatedAt: now },
-        { id: consult4Id, patientId: johnId, clinicianId: sarahId, title: "Blood Pressure Review", description: "Need to review blood pressure medication", status: "completed", fee: "50", urgency: "low", specialty: "Cardiology", clinicianNotes: "Blood pressure is stable. Continue current medication.", diagnosis: "Essential hypertension, controlled", treatmentPlan: "Continue Lisinopril 10mg daily. Follow up in 3 months.", completedAt: new Date(Date.now() - 14 * 86400000), createdAt: new Date(Date.now() - 21 * 86400000), updatedAt: new Date(Date.now() - 14 * 86400000) },
-        { id: consult5Id, patientId: emilyId, clinicianId: sarahId, title: "General Health Inquiry", description: "Feeling fatigued and low energy", status: "draft", fee: "50", urgency: "low", specialty: "General", createdAt: now, updatedAt: now },
+        { id: consult1Id, patientId: johnId, clinicianId: sarahId, title: "Chest Pain Evaluation", status: "in_consultation", fee: "50", createdAt: new Date(Date.now() - 3 * 86400000), updatedAt: now },
+        { id: consult2Id, patientId: emilyId, clinicianId: sarahId, title: "Headache Follow-up", status: "paid", fee: "50", createdAt: new Date(Date.now() - 1 * 86400000), updatedAt: now },
+        { id: consult3Id, patientId: michaelId, clinicianId: wilsonId, title: "Child Fever Consultation", status: "waiting_for_clinician", fee: "50", createdAt: new Date(Date.now() - 2 * 86400000), updatedAt: now },
+        { id: consult4Id, patientId: johnId, clinicianId: sarahId, title: "Blood Pressure Review", status: "completed", fee: "50", completedAt: new Date(Date.now() - 14 * 86400000), createdAt: new Date(Date.now() - 21 * 86400000), updatedAt: new Date(Date.now() - 14 * 86400000) },
+        { id: consult5Id, patientId: emilyId, title: "General Health Inquiry", status: "draft", fee: "50", createdAt: now, updatedAt: now },
       ]);
 
       await db.insert(consultationStatusHistory).values([
-        { id: uid(), consultationId: consult1Id, fromStatus: "awaiting_payment", toStatus: "paid", changedBy: "system", createdAt: new Date(Date.now() - 3 * 86400000 + 60000) },
-        { id: uid(), consultationId: consult1Id, fromStatus: "paid", toStatus: "waiting_for_clinician", changedBy: "system", createdAt: new Date(Date.now() - 3 * 86400000 + 120000) },
-        { id: uid(), consultationId: consult1Id, fromStatus: "waiting_for_clinician", toStatus: "in_consultation", changedBy: sarahId, createdAt: new Date(Date.now() - 3 * 86400000 + 180000) },
-        { id: uid(), consultationId: consult2Id, fromStatus: "awaiting_payment", toStatus: "paid", changedBy: "system", createdAt: new Date(Date.now() - 1 * 86400000 + 60000) },
-        { id: uid(), consultationId: consult3Id, fromStatus: "awaiting_payment", toStatus: "paid", changedBy: "system", createdAt: new Date(Date.now() - 2 * 86400000 + 60000) },
-        { id: uid(), consultationId: consult3Id, fromStatus: "paid", toStatus: "waiting_for_clinician", changedBy: "system", createdAt: new Date(Date.now() - 2 * 86400000 + 120000) },
-        { id: uid(), consultationId: consult4Id, fromStatus: "draft", toStatus: "awaiting_payment", changedBy: "system", createdAt: new Date(Date.now() - 21 * 86400000 + 30000) },
-        { id: uid(), consultationId: consult4Id, fromStatus: "awaiting_payment", toStatus: "paid", changedBy: "system", createdAt: new Date(Date.now() - 21 * 86400000 + 60000) },
-        { id: uid(), consultationId: consult4Id, fromStatus: "paid", toStatus: "waiting_for_clinician", changedBy: "system", createdAt: new Date(Date.now() - 21 * 86400000 + 120000) },
-        { id: uid(), consultationId: consult4Id, fromStatus: "waiting_for_clinician", toStatus: "in_consultation", changedBy: sarahId, createdAt: new Date(Date.now() - 21 * 86400000 + 180000) },
-        { id: uid(), consultationId: consult4Id, fromStatus: "in_consultation", toStatus: "completed", changedBy: sarahId, createdAt: new Date(Date.now() - 14 * 86400000) },
+        { id: uid(), consultationId: consult1Id, status: "paid", changedBy: adminId, createdAt: new Date(Date.now() - 3 * 86400000 + 60000) },
+        { id: uid(), consultationId: consult1Id, status: "waiting_for_clinician", changedBy: adminId, createdAt: new Date(Date.now() - 3 * 86400000 + 120000) },
+        { id: uid(), consultationId: consult1Id, status: "in_consultation", changedBy: sarahId, createdAt: new Date(Date.now() - 3 * 86400000 + 180000) },
+        { id: uid(), consultationId: consult2Id, status: "paid", changedBy: adminId, createdAt: new Date(Date.now() - 1 * 86400000 + 60000) },
+        { id: uid(), consultationId: consult3Id, status: "paid", changedBy: adminId, createdAt: new Date(Date.now() - 2 * 86400000 + 60000) },
+        { id: uid(), consultationId: consult3Id, status: "waiting_for_clinician", changedBy: adminId, createdAt: new Date(Date.now() - 2 * 86400000 + 120000) },
+        { id: uid(), consultationId: consult4Id, status: "awaiting_payment", changedBy: adminId, createdAt: new Date(Date.now() - 21 * 86400000 + 30000) },
+        { id: uid(), consultationId: consult4Id, status: "paid", changedBy: adminId, createdAt: new Date(Date.now() - 21 * 86400000 + 60000) },
+        { id: uid(), consultationId: consult4Id, status: "waiting_for_clinician", changedBy: adminId, createdAt: new Date(Date.now() - 21 * 86400000 + 120000) },
+        { id: uid(), consultationId: consult4Id, status: "in_consultation", changedBy: sarahId, createdAt: new Date(Date.now() - 21 * 86400000 + 180000) },
+        { id: uid(), consultationId: consult4Id, status: "completed", changedBy: sarahId, createdAt: new Date(Date.now() - 14 * 86400000) },
       ]);
 
       await db.insert(consultationNotes).values([
-        { id: uid(), consultationId: consult1Id, authorId: sarahId, content: "Patient reports mild chest pain during exercise. EKG normal. Recommended stress test.", isPrivate: false, createdAt: new Date(Date.now() - 3 * 86400000 + 3600000), updatedAt: new Date(Date.now() - 3 * 86400000 + 3600000) },
-        { id: uid(), consultationId: consult1Id, authorId: johnId, content: "The chest pain usually lasts about 5 minutes and goes away with rest.", isPrivate: false, createdAt: new Date(Date.now() - 3 * 86400000 + 7200000), updatedAt: new Date(Date.now() - 3 * 86400000 + 7200000) },
-        { id: uid(), consultationId: consult4Id, authorId: sarahId, content: "Blood pressure reading today: 128/82. Improved from last visit.", isPrivate: false, createdAt: new Date(Date.now() - 14 * 86400000 + 3600000), updatedAt: new Date(Date.now() - 14 * 86400000 + 3600000) },
+        { id: uid(), consultationId: consult1Id, clinicianId: sarahId, diagnosis: "EKG normal. Recommended stress test.", createdAt: new Date(Date.now() - 3 * 86400000 + 3600000), updatedAt: new Date(Date.now() - 3 * 86400000 + 3600000) },
+        { id: uid(), consultationId: consult4Id, clinicianId: sarahId, diagnosis: "Essential hypertension, controlled", treatment: "Continue current medication.", createdAt: new Date(Date.now() - 14 * 86400000 + 3600000), updatedAt: new Date(Date.now() - 14 * 86400000 + 3600000) },
       ]);
 
       await db.insert(notifications).values([
@@ -175,6 +193,8 @@ export async function POST() {
         { id: uid(), key: "consultation_duration", value: "30", type: "number", description: "Default consultation duration in minutes", updatedAt: now },
       ]);
     }
+
+
   }
 
   return NextResponse.json({ message: "Seed complete", results });

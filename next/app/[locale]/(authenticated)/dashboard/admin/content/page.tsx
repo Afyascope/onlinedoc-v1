@@ -3,6 +3,7 @@ import { DashboardHeader } from "@/components/dashboard/Header";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { ActivityCard } from "@/components/dashboard/ActivityCard";
 import { IconPencil, IconExternalLink, IconArticle, IconPageBreak, IconSettings } from "@tabler/icons-react";
+import { apiUrl } from "@/lib/config";
 
 export default function ContentPage() {
   return (
@@ -41,7 +42,7 @@ export default function ContentPage() {
               Pages and content created there are automatically reflected on the site.
             </p>
             <a
-              href="http://localhost:1337/admin"
+              href={`${apiUrl()}/admin`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-xl transition-colors"

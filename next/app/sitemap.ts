@@ -1,9 +1,10 @@
 import { MetadataRoute } from "next";
 import fetchContentType from "@/lib/strapi/fetchContentType";
 import { i18n } from "@/i18n.config";
+import { siteUrl } from "@/lib/config";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://onlinedoc.healthcare";
+  const baseUrl = siteUrl();
   const entries: MetadataRoute.Sitemap = [];
 
   for (const locale of i18n.locales) {
@@ -80,7 +81,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Products
     try {
       const products = await fetchContentType("products", {
-        filters: { locale },
         fields: "slug,updatedAt",
       });
       const productList = products?.data;

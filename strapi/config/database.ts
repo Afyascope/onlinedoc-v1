@@ -1,7 +1,15 @@
 import path from 'path';
 
 export default ({ env }: { env: any }) => {
-  const client = env('DATABASE_CLIENT', 'sqlite');
+  const isProduction = env('NODE_ENV', 'development') === 'production';
+  const configuredClient = env('DATABASE_CLIENT', isProduction ? 'postgres' : 'sqlite');
+  if (isProduction && configuredClient !== 'postgres') {
+    throw new Error('Production Strapi requires DATABASE_CLIENT=postgres');
+  }
+  if (isProduction && !env('DATABASE_URL')) {
+    throw new Error('DATABASE_URL is required for production Strapi');
+  }
+  const client = configuredClient;
 
   const connections = {
     postgres: {

@@ -1,0 +1,2 @@
+import { BaseTemplate, EmailButton, EmailHeading, EmailText } from "./BaseTemplate";
+export function ProductDownload({ name, productName, downloadUrl }: { name?: string; productName: string; downloadUrl: string }) { return <BaseTemplate title="Your OnlineDoc download"><EmailHeading>Your product is ready</EmailHeading><EmailText>Hi {name || "there"}, “{productName}” is now available in your OnlineDoc library.</EmailText><EmailButton href={downloadUrl}>Download product</EmailButton></BaseTemplate>; }

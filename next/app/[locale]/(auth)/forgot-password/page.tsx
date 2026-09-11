@@ -14,10 +14,14 @@ export default function ForgotPasswordPage() {
     setError("");
 
     try {
-      const { authClient } = await import("@/lib/auth-client");
-      const { error: err } = await authClient.forgetPassword({ email });
-      if (err) {
-        setError(err.message || "Something went wrong");
+      const res = await fetch("/api/auth/request-password-reset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, redirectTo: `${window.location.origin}/reset-password` }),
+      });
+      const body = await res.json();
+      if (!res.ok || body.error) {
+        setError(body.error?.message || body.statusText || "Something went wrong");
         return;
       }
       setSent(true);

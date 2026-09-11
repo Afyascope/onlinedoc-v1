@@ -1,3 +1,7 @@
+const production = process.env.NODE_ENV === 'production';
+const corsOrigins = (process.env.CORS_ORIGINS || '').split(',').map((origin) => origin.trim()).filter(Boolean);
+if (production && corsOrigins.length === 0) throw new Error('CORS_ORIGINS is required in production');
+
 export default [
   'strapi::errors',
   {
@@ -17,7 +21,12 @@ export default [
   'strapi::logger',
   'strapi::errors',
   'strapi::security',
-  'strapi::cors',
+  {
+    name: 'strapi::cors',
+    config: {
+      origin: corsOrigins.length > 0 ? corsOrigins : ['http://localhost:3000'],
+    },
+  },
   'strapi::poweredBy',
   'strapi::query',
   'strapi::body',

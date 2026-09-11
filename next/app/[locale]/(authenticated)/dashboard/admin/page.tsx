@@ -4,9 +4,17 @@ import { DashboardShell, MetricGrid, ContentGrid } from "@/components/dashboard/
 import { MetricCard } from "@/components/dashboard/MetricCard";
 import { ActivityCard } from "@/components/dashboard/ActivityCard";
 import { QuickActionsCard } from "@/components/dashboard/QuickActionsCard";
-import { IconUsers, IconStethoscope, IconClock, IconCalendarDue, IconUserCog, IconClipboardCheck, IconSettings, IconReport } from "@tabler/icons-react";
+import {
+  IconUsers, IconStethoscope, IconMessageChatbot, IconCurrencyDollar,
+  IconShoppingCart, IconDownload, IconClock, IconCheck,
+  IconUserCog, IconClipboardCheck, IconSettings, IconReport,
+  IconActivity, IconCalendarDue,
+} from "@tabler/icons-react";
+import { getAdminMetrics } from "@/lib/actions/admin";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const metrics = await getAdminMetrics();
+
   return (
     <AuthGuard allowedRoles={["admin"]}>
       <DashboardHeader
@@ -16,52 +24,19 @@ export default function AdminDashboard() {
 
       <DashboardShell>
         <MetricGrid>
-          <MetricCard
-            title="Total Users"
-            value="0"
-            description="Registered"
-            icon={<IconUsers size={20} />}
-          />
-          <MetricCard
-            title="Clinicians"
-            value="0"
-            description="Approved"
-            icon={<IconStethoscope size={20} />}
-          />
-          <MetricCard
-            title="Pending Approval"
-            value="0"
-            description="Clinicians awaiting review"
-            icon={<IconClock size={20} />}
-          />
-          <MetricCard
-            title="Appointments"
-            value="0"
-            description="This month"
-            icon={<IconCalendarDue size={20} />}
-          />
+          <MetricCard title="Total Users" value={metrics.totalUsers.toLocaleString()} description="All registered" icon={<IconUsers size={20} />} />
+          <MetricCard title="Patients" value={metrics.totalPatients.toLocaleString()} description="Patient accounts" icon={<IconUsers size={20} />} />
+          <MetricCard title="Clinicians" value={metrics.totalClinicians.toLocaleString()} description="Registered" icon={<IconStethoscope size={20} />} />
+          <MetricCard title="Pending Approval" value={metrics.pendingClinicians.toLocaleString()} description="Clinicians awaiting review" icon={<IconClock size={20} />} />
+          <MetricCard title="Active Consultations" value={metrics.activeConsultations.toLocaleString()} description="In progress" icon={<IconMessageChatbot size={20} />} />
+          <MetricCard title="Today&apos;s Consultations" value={metrics.todayConsultations.toLocaleString()} description="Started today" icon={<IconCalendarDue size={20} />} />
+          <MetricCard title="Completed" value={metrics.completedConsultations.toLocaleString()} description="All time" icon={<IconCheck size={20} />} />
+          <MetricCard title="Total Revenue" value={`KES ${metrics.totalRevenue.toLocaleString()}`} description="From paid orders" icon={<IconCurrencyDollar size={20} />} />
+          <MetricCard title="Products Sold" value={metrics.productsSold.toLocaleString()} description="Items ordered" icon={<IconShoppingCart size={20} />} />
+          <MetricCard title="Downloads" value={metrics.totalDownloads.toLocaleString()} description="Digital products" icon={<IconDownload size={20} />} />
+          <MetricCard title="Active Sessions" value={metrics.activeSessions.toLocaleString()} description="Right now" icon={<IconActivity size={20} />} />
+          <MetricCard title="Total Consultations" value={metrics.totalConsultations.toLocaleString()} description={`${metrics.completedConsultations} completed`} icon={<IconMessageChatbot size={20} />} />
         </MetricGrid>
-
-        <ContentGrid>
-          <ActivityCard title="Clinician Approval Queue">
-            <div className="space-y-4">
-              <div className="flex items-center justify-center py-8 text-neutral-400">
-                <IconClipboardCheck size={32} stroke={1.5} />
-              </div>
-              <p className="text-center text-sm text-neutral-500 font-secondary">
-                No clinicians awaiting approval.
-              </p>
-            </div>
-          </ActivityCard>
-          <ActivityCard title="Platform Overview">
-            <div className="space-y-4">
-              <OverviewRow label="Active Patients" value="0" />
-              <OverviewRow label="Active Clinicians" value="0" />
-              <OverviewRow label="Total Appointments" value="0" />
-              <OverviewRow label="System Health" value="Operational" status="success" />
-            </div>
-          </ActivityCard>
-        </ContentGrid>
 
         <QuickActionsCard
           actions={[
@@ -73,22 +48,5 @@ export default function AdminDashboard() {
         />
       </DashboardShell>
     </AuthGuard>
-  );
-}
-
-function OverviewRow({ label, value, status }: { label: string; value: string; status?: "success" | "warning" | "error" }) {
-  const statusColors = {
-    success: "text-green-600",
-    warning: "text-amber-600",
-    error: "text-red-600",
-  };
-
-  return (
-    <div className="flex items-center justify-between py-2.5 border-b border-border last:border-0">
-      <span className="text-sm text-neutral-600 font-secondary">{label}</span>
-      <span className={`text-sm font-medium ${status ? statusColors[status] : "text-primary"}`}>
-        {value}
-      </span>
-    </div>
   );
 }

@@ -96,7 +96,7 @@ export function PatientConsultationDetailClient({
                 </div>
                 <div>
                   <p className="text-xs text-neutral-500">Fee</p>
-                  <p className="text-sm font-medium text-primary mt-0.5">${c.fee}</p>
+                  <p className="text-sm font-medium text-primary mt-0.5">KES {c.fee}</p>
                 </div>
                 <div>
                   <p className="text-xs text-neutral-500">Submitted</p>

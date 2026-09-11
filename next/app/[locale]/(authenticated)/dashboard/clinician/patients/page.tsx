@@ -4,8 +4,10 @@ import { user, appointments } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
 import { headers } from "next/headers";
 import { ClinicianPatientsClient } from "./client";
+import { requireApprovedClinician } from "@/lib/clinician-access";
 
 export default async function PatientsPage() {
+  await requireApprovedClinician();
   const session = await auth.api.getSession({ headers: await headers() });
   const userId = session?.user?.id;
 
@@ -17,7 +19,7 @@ export default async function PatientsPage() {
       .from(appointments)
       .where(eq(appointments.clinicianId, userId));
 
-    const ids = [...new Set(patientIds.map((p) => p.id).filter(Boolean))];
+    const ids = Array.from(new Set(patientIds.map((p) => p.id).filter(Boolean)));
 
     if (ids.length > 0) {
       patientsList = await db

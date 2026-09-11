@@ -3,10 +3,10 @@ import { type Metadata } from "next";
 import { Container } from "@/components/container";
 import { Heading } from "@/components/elements/heading";
 import { Subheading } from "@/components/elements/subheading";
-import { BlogCard } from "@/components/blog-card";
+import { ArticleCard } from "@/components/blog/article-card";
+import { AllPosts } from "@/components/blog/all-posts";
 import { FeatureIconContainer } from "@/components/dynamic-zone/features/feature-icon-container";
 import { IconClipboardText } from "@tabler/icons-react";
-import { BlogPostRows } from "@/components/blog-post-rows";
 import { AmbientColor } from "@/components/decorations/ambient-color";
 import fetchContentType from "@/lib/strapi/fetchContentType";
 import { fetchCached } from "@/lib/strapi/fetchCached";
@@ -42,6 +42,9 @@ export default async function Blog({
     filters: { locale: params.locale },
   }, false)
 
+  const articleList: Article[] = articles?.data ?? [];
+  const [featured, ...rest] = articleList;
+
   const localizedSlugs = blogPage.localizations?.reduce(
     (acc: Record<string, string>, localization: any) => {
       acc[localization.locale] = "blog";
@@ -67,11 +70,20 @@ export default async function Blog({
           </Subheading>
         </div>
 
-        {articles.data.slice(0, 1).map((article: Article) => (
-          <BlogCard article={article} locale={params.locale} key={article.title} />
-        ))}
+        {featured && (
+          <section className="relative z-20 w-full mt-8 md:mt-12">
+            <p className="text-sm font-bold uppercase tracking-wide text-brand mb-4">
+              Featured Article
+            </p>
+            <ArticleCard
+              article={featured}
+              locale={params.locale}
+              variant="featured"
+            />
+          </section>
+        )}
 
-        <BlogPostRows articles={articles.data} />
+        {rest.length > 0 && <AllPosts articles={rest} locale={params.locale} />}
       </Container>
     </div>
   );

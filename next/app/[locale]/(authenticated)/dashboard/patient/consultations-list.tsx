@@ -14,7 +14,7 @@ interface Consultation {
 
 export function PatientConsultationsList({ consultations }: { consultations: Consultation[] }) {
   return (
-    <ActivityCard title="Recent Consultations" viewAllHref="/dashboard/patient/consultations">
+    <ActivityCard title="Recent Consultations" action={<a href="/dashboard/patient/consultations" className="text-sm text-brand hover:text-brand-hover">View all</a>}>
       {consultations.length === 0 ? (
         <EmptyState
           icon={<IconMessageChatbot size={24} />}

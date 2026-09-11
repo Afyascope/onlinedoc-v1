@@ -4,8 +4,10 @@ import { consultations, consultationStatusHistory, consultationNotes, consultati
 import { eq, desc } from "drizzle-orm";
 import { headers } from "next/headers";
 import { ClinicianConsultationDetailClient } from "./client";
+import { requireApprovedClinician } from "@/lib/clinician-access";
 
 export default async function ClinicianConsultationDetailPage({ params }: { params: { id: string } }) {
+  await requireApprovedClinician();
   const session = await auth.api.getSession({ headers: await headers() });
   const userId = session?.user?.id;
 
@@ -18,6 +20,12 @@ export default async function ClinicianConsultationDetailPage({ params }: { para
   }
 
   const c = consultationRows[0];
+
+  // A consultation ID is not an authorization credential. Clinicians may only
+  // view consultations explicitly assigned to their server-side identity.
+  if (c.clinicianId !== userId) {
+    return <div className="p-8 text-center text-neutral-500">Consultation not found.</div>;
+  }
 
   const statusHistory = await db
     .select()
@@ -43,7 +51,7 @@ export default async function ClinicianConsultationDetailPage({ params }: { para
     .where(eq(user.id, c.patientId))
     .limit(1);
 
-  const canAssign = !c.clinicianId || c.clinicianId === userId;
+  const canAssign = c.clinicianId === userId;
 
   return (
     <ClinicianConsultationDetailClient

@@ -15,7 +15,7 @@ interface ProfileUser {
   email: string;
   role: string;
   emailVerified: boolean;
-  clinicianApproved: boolean;
+  clinicianApproved: boolean | null;
 }
 
 interface ClinicianProfile {

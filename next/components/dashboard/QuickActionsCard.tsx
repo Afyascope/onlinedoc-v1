@@ -5,6 +5,7 @@ interface QuickAction {
   label: string;
   icon?: React.ReactNode;
   onClick?: () => void;
+  href?: string;
 }
 
 interface QuickActionsCardProps {
@@ -24,16 +25,18 @@ export function QuickActionsCard({ title = "Quick Actions", actions, columns = 4
         columns === 3 && "grid-cols-2 sm:grid-cols-3",
         columns === 4 && "grid-cols-2 sm:grid-cols-4",
       )}>
-        {actions.map((action) => (
-          <button
-            key={action.label}
-            onClick={action.onClick}
-            className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-xl transition-all duration-200"
-          >
-            {action.icon}
-            {action.label}
-          </button>
-        ))}
+        {actions.map((action) => {
+          const content = (
+            <span className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-xl transition-all duration-200">
+              {action.icon}
+              {action.label}
+            </span>
+          );
+          if (action.href) {
+            return <a key={action.label} href={action.href}>{content}</a>;
+          }
+          return <button key={action.label} onClick={action.onClick}>{content}</button>;
+        })}
       </div>
     </div>
   );

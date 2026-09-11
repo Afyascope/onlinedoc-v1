@@ -14,8 +14,10 @@ export async function getPatientOverview() {
   if (!userId) return { activeConsultations: 0, upcomingAppointments: 0, prescriptions: 0, medicalRecords: 0, recentConsultations: [], appointments: [] };
 
   const now = new Date();
-  const thirtyDays = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString().split("T")[0];
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split("T")[0];
+  const thirtyDaysDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+  const startOfDayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dateStr = startOfDayDate.toISOString().split("T")[0];
+  const thirtyDaysStr = thirtyDaysDate.toISOString().split("T")[0];
 
   const [activeCons] = await db
     .select({ count: count() })
@@ -29,8 +31,8 @@ export async function getPatientOverview() {
     .from(appointments)
     .where(and(
       eq(appointments.patientId, userId),
-      gte(appointments.date, startOfDay),
-      lte(appointments.date, thirtyDays)
+      gte(appointments.date, dateStr),
+      lte(appointments.date, thirtyDaysStr)
     ));
   const [rxCount] = await db
     .select({ count: count() })
@@ -56,7 +58,7 @@ export async function getPatientOverview() {
     .from(appointments)
     .where(and(
       eq(appointments.patientId, userId),
-      gte(appointments.date, startOfDay)
+      gte(appointments.date, dateStr)
     ))
     .orderBy(appointments.date)
     .limit(5);

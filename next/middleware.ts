@@ -10,7 +10,7 @@ function getLocale(request: NextRequest): string | undefined {
   const negotiatorHeaders: Record<string, string> = {}
   request.headers.forEach((value, key) => (negotiatorHeaders[key] = value))
 
-  const locales: string[] = i18n.locales
+  const locales = [...i18n.locales]
   const languages = new Negotiator({ headers: negotiatorHeaders })
     .languages()
     .filter(l => l !== '*')
@@ -53,12 +53,9 @@ export function middleware(request: NextRequest) {
   // Layer 1: i18n (existing logic)
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request)
-    return NextResponse.redirect(
-      new URL(
-        `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`,
-        request.url
-      )
-    )
+    const redirectUrl = request.nextUrl.clone()
+    redirectUrl.pathname = `/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`
+    return NextResponse.redirect(redirectUrl)
   }
 
   // Layer 2: Auth protection — only for routes WITH a locale prefix
@@ -94,5 +91,7 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icon|apple-icon|manifest.webmanifest|robots.txt|sitemap.xml).*)']
+  // Exclude API routes, Next.js internals, and static assets so they are never
+  // treated as locale-prefixed pages (and never matched by the [locale] route).
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|icon|apple-icon|manifest.webmanifest|robots.txt|sitemap.xml|images|uploads|logo\\.png|favicon).*)']
 }

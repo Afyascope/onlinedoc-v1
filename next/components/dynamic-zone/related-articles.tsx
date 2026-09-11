@@ -1,35 +1,71 @@
-"use client";
-import React from "react";
-import { motion } from "framer-motion";
-import { BlogCardVertical } from "../blog-card";
+import { ArticleCard } from "@/components/blog/article-card";
+import { Button } from "@/components/elements/button";
 import { Container } from "../container";
+import { Link } from "next-view-transitions";
 
-export const RelatedArticles = ({ heading, sub_heading, articles, locale }: { heading: string; sub_heading: string; articles: any[], locale: string }) => {
+interface RelatedArticlesCTA {
+  text: string;
+  URL: string;
+  target?: string | null;
+  variant?: "simple" | "outline" | "primary" | "muted";
+}
+
+export const RelatedArticles = ({
+  heading,
+  sub_heading,
+  articles,
+  CTA,
+  locale,
+}: {
+  heading: string;
+  sub_heading: string;
+  articles: any[];
+  CTA?: RelatedArticlesCTA | null;
+  locale: string;
+}) => {
+  if (!articles || articles.length === 0) return null;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-    >
-      <Container className="py-20 relative z-20 border-t border-border/50">
-      <div className="flex flex-col mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-primary font-primary">
-          {heading}
-        </h2>
-        {sub_heading && (
-          <p className="mt-4 text-lg text-neutral-600 max-w-2xl font-secondary">
-            {sub_heading}
-          </p>
+    <section className="relative bg-neutral-50">
+      <Container className="py-20 md:py-24">
+        <div className="max-w-2xl">
+          <h2 className="font-primary font-bold text-primary text-left tracking-tight text-3xl md:text-4xl leading-tight">
+            {heading}
+          </h2>
+          {sub_heading && (
+            <p className="mt-4 text-base md:text-lg text-neutral-700 leading-relaxed">
+              {sub_heading}
+            </p>
+          )}
+        </div>
+
+        <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articles.slice(0, 3).map((article) => (
+            <ArticleCard
+              key={article.slug}
+              article={article}
+              locale={locale}
+            />
+          ))}
+        </div>
+
+        {CTA?.text && CTA.URL && (
+          <div className="mt-10 text-center">
+            <Button
+              as={Link}
+              href={
+                CTA.URL.startsWith("/")
+                  ? `/${locale}${CTA.URL}`
+                  : CTA.URL
+              }
+              target={CTA.target || undefined}
+              variant={CTA.variant || "outline"}
+            >
+              {CTA.text}
+            </Button>
+          </div>
         )}
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-        {articles?.map((article) => (
-          <BlogCardVertical key={article.title} article={article} locale={locale} />
-        ))}
-      </div>
-    </Container>
-    </motion.div>
+      </Container>
+    </section>
   );
 };

@@ -6,6 +6,8 @@ import { AuthProvider } from '@/context/auth-context';
 import { cn } from '@/lib/utils';
 import { ViewTransitions } from 'next-view-transitions';
 import { Analytics } from '@vercel/analytics/react';
+import { notFound } from 'next/navigation';
+import { isValidLocale } from '@/lib/i18n/locale';
 import SetLang from './SetLang';
 
 const inter = Inter({
@@ -29,6 +31,14 @@ export default function LocaleLayout({
     children: React.ReactNode;
     params: { locale: string };
 }) {
+    // Static assets such as /icon.svg, /favicon.ico, /images/*, and /uploads/*
+    // are excluded from the i18n middleware, so they can still reach this
+    // dynamic [locale] segment. Reject any value that is not a configured
+    // locale so those assets are never rendered as a locale route.
+    if (!isValidLocale(locale)) {
+        notFound();
+    }
+
     return (
         <ViewTransitions>
             <CartProvider>

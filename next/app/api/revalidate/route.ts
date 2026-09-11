@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
   const secret = req.nextUrl.searchParams.get('secret');
 
   // Security check to ensure only Strapi can trigger this
-  if (secret !== process.env.REVALIDATE_SECRET) {
+  if (!process.env.REVALIDATE_SECRET || !secret || secret !== process.env.REVALIDATE_SECRET) {
     return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
   }
 

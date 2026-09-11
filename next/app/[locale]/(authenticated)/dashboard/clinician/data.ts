@@ -14,9 +14,10 @@ export async function getClinicianOverview() {
   if (!userId) return { totalPatients: 0, todayConsultations: 0, awaitingClinician: 0, completedConsultations: 0, recentConsultations: [], appointments: [] };
 
   const now = new Date();
-  const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString().split("T")[0];
-  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString().split("T")[0];
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split("T")[0];
+  const startOfDayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endOfDayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const startOfMonthDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  const dateStr = startOfDayDate.toISOString().split("T")[0];
 
   const [patCount] = await db
     .select({ count: count() })
@@ -28,8 +29,8 @@ export async function getClinicianOverview() {
     .from(consultations)
     .where(and(
       eq(consultations.clinicianId, userId),
-      gte(consultations.updatedAt, startOfDay),
-      lte(consultations.updatedAt, endOfDay)
+      gte(consultations.updatedAt, startOfDayDate),
+      lte(consultations.updatedAt, endOfDayDate)
     ));
 
   const [awaitingCount] = await db
@@ -46,7 +47,7 @@ export async function getClinicianOverview() {
     .where(and(
       eq(consultations.clinicianId, userId),
       eq(consultations.status, "completed"),
-      gte(consultations.updatedAt, startOfMonth)
+      gte(consultations.updatedAt, startOfMonthDate)
     ));
 
   const recent = await db
@@ -61,7 +62,7 @@ export async function getClinicianOverview() {
     .from(appointments)
     .where(and(
       eq(appointments.clinicianId, userId),
-      gte(appointments.date, startOfDay)
+      gte(appointments.date, dateStr)
     ))
     .orderBy(appointments.date)
     .limit(5);

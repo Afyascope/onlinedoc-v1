@@ -1,0 +1,2 @@
+import { BaseTemplate, EmailButton, EmailHeading, EmailText } from "./BaseTemplate";
+export function WelcomeEmail({ name, dashboardUrl }: { name?: string; dashboardUrl: string }) { return <BaseTemplate title="Welcome to OnlineDoc"><EmailHeading>Welcome to OnlineDoc</EmailHeading><EmailText>Hi {name || "there"}, your email is verified and your OnlineDoc account is ready.</EmailText><EmailButton href={dashboardUrl}>Open dashboard</EmailButton><EmailText>Our Help & Support team is here whenever you need us. Reply to this email for assistance.</EmailText></BaseTemplate>; }

@@ -83,17 +83,33 @@ export default (config, { strapi }: { strapi: Core.Strapi }) => {
   return async (ctx, next) => {
     if (ctx.request.url.startsWith('/api/') && ctx.request.method === 'GET' && !ctx.query.populate && !ctx.request.url.includes('/api/users') && !ctx.request.url.includes('/api/seo')
     ) {
-      strapi.log.info('Using custom Dynamic-Zone population Middleware...');
-
       const contentType = extractPathSegment(ctx.request.url);
       const singular = pluralize.singular(contentType)
-      const uid = `api::${singular}.${singular}`;
+      const uid = `api::${singular}.${singular}` as UID.Schema;
 
-      ctx.query.populate = {
-        // @ts-ignores 
-        ...getDeepPopulate(uid),
-        ...(!ctx.request.url.includes("products") && { localizations: { populate: {} } })
-      };
+      let model;
+      try {
+        model = strapi.getModel(uid);
+      } catch {
+        model = null;
+      }
+
+      if (model) {
+        const populate = getDeepPopulate(uid);
+
+        // `localizations` is only a valid populate target for i18n-enabled
+        // content types. Injecting it for non-localized types (e.g. the
+        // `redirection` collection) made Strapi reject the request with a 400.
+        const hasLocalizations = Boolean(model.pluginOptions?.i18n?.localized);
+        if (!ctx.request.url.includes('products') && hasLocalizations) {
+          populate.localizations = { populate: {} };
+        }
+
+        if (Object.keys(populate).length > 0) {
+          strapi.log.info('Using custom Dynamic-Zone population Middleware...');
+          ctx.query.populate = populate;
+        }
+      }
     }
     await next();
   };

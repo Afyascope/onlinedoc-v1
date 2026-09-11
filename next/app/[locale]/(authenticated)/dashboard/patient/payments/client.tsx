@@ -10,26 +10,39 @@ import { format } from "date-fns";
 
 interface Payment {
   id: string;
+  patientId: string;
+  appointmentId: string | null;
+  consultationId: string | null;
+  orderId: string | null;
   amount: string;
   currency: string;
   status: string;
   method: string | null;
+  channel: string | null;
   description: string | null;
   invoiceNumber: string | null;
+  transactionReference: string | null;
+  paystackReference: string | null;
+  providerResponse: unknown;
+  receiptUrl: string | null;
   dueDate: string | null;
-  paidAt: string | null;
-  createdAt: string;
+  paidAt: Date | null;
+  failedAt: Date | null;
+  failureReason: string | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const statusColors: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700",
+  successful: "bg-green-50 text-green-700",
   completed: "bg-green-50 text-green-700",
   refunded: "bg-blue-50 text-blue-700",
   failed: "bg-red-50 text-red-600",
 };
 
 export function PatientPaymentsClient({ payments: list }: { payments: Payment[] }) {
-  const totalPaid = list.filter((p) => p.status === "completed").reduce((sum, p) => sum + Number(p.amount), 0);
+  const totalPaid = list.filter((p) => p.status === "successful" || p.status === "completed").reduce((sum, p) => sum + Number(p.amount), 0);
   const pendingAmount = list.filter((p) => p.status === "pending").reduce((sum, p) => sum + Number(p.amount), 0);
 
   return (
@@ -43,12 +56,12 @@ export function PatientPaymentsClient({ payments: list }: { payments: Payment[] 
         <MetricGrid columns={2}>
           <MetricCard
             title="Total Paid"
-            value={`$${totalPaid.toFixed(2)}`}
+              value={`KES ${totalPaid.toFixed(2)}`}
             icon={<IconCurrencyDollar size={20} />}
           />
           <MetricCard
             title="Pending"
-            value={`$${pendingAmount.toFixed(2)}`}
+              value={`KES ${pendingAmount.toFixed(2)}`}
             icon={<IconCreditCard size={20} />}
           />
         </MetricGrid>
@@ -72,7 +85,7 @@ export function PatientPaymentsClient({ payments: list }: { payments: Payment[] 
                   </div>
                   <div className="text-right">
                     <p className="text-sm font-bold text-primary">
-                      ${Number(p.amount).toFixed(2)}
+                      KES {Number(p.amount).toFixed(2)}
                     </p>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${statusColors[p.status] || "bg-neutral-100 text-neutral-600"}`}>
                       {p.status}

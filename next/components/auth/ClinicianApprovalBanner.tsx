@@ -1,11 +1,12 @@
 "use client";
 
 import { useAuth } from "@/context/auth-context";
+import { getClinicianStatus } from "@/lib/clinician-status";
 
 export function ClinicianApprovalBanner() {
   const { user } = useAuth();
 
-  if (!user || user.role !== "clinician" || user.clinicianApproved) {
+  if (!user || user.role !== "clinician" || getClinicianStatus(user) !== "PENDING") {
     return null;
   }
 

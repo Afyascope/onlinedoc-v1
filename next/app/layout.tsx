@@ -3,6 +3,7 @@ import type { Viewport, Metadata } from "next";
 import "./globals.css";
 
 import { SlugProvider } from "./context/SlugContext";
+import { siteUrl } from "@/lib/config";
 
 export const viewport: Viewport = {
   themeColor: [
@@ -12,7 +13,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://onlinedoc.healthcare"),
+  metadataBase: new URL(siteUrl()),
 };
 
 export default function RootLayout({

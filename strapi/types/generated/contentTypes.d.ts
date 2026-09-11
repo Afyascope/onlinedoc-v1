@@ -703,6 +703,8 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'dynamic-zone.form-next-to-section',
         'dynamic-zone.faq',
         'dynamic-zone.content',
+        'dynamic-zone.related-products',
+        'dynamic-zone.related-articles',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{
@@ -860,6 +862,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
       ['dynamic-zone.related-products', 'dynamic-zone.cta']
     >;
     featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    file: Schema.Attribute.Media<'files'>;
     images: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<

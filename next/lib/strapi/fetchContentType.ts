@@ -1,5 +1,6 @@
 import { draftMode } from "next/headers";
 import qs from "qs";
+import { apiUrl } from "@/lib/config";
 
 /**
  * Fetches data for a specified Strapi content type.
@@ -35,6 +36,7 @@ export default async function fetchContentType(
   contentType: string,
   params: Record<string, unknown> = {},
   spreadData?: boolean,
+  fresh?: boolean,
 ): Promise<any> {
   // 1. Check if we are in "Draft Mode" (Next.js Preview)
   const { isEnabled } = await draftMode();
@@ -48,7 +50,7 @@ export default async function fetchContentType(
     }
 
     // Construct the URL
-    const url = new URL(`api/${contentType}`, process.env.NEXT_PUBLIC_API_URL);
+    const url = new URL(`api/${contentType}`, `${apiUrl()}/`);
 
     // 3. CRITICAL FIX: Add Authorization Header
     // You cannot view drafts without a token.
@@ -64,7 +66,7 @@ export default async function fetchContentType(
     const response = await fetch(`${url.href}?${qs.stringify(queryParams)}`, {
       method: "GET",
       headers: headers,
-      ...(isEnabled
+      ...(isEnabled || fresh
         ? { cache: "no-store" }
         : { next: { revalidate: 60 } }),
     });

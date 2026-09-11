@@ -1,10 +1,10 @@
 import { IconArrowLeft } from "@tabler/icons-react";
 import { Container } from "./container";
-import Image from "next/image";
 import { Link } from "next-view-transitions";
 import { format } from "date-fns";
-import { strapiImage } from "@/lib/strapi/strapiImage";
 import DynamicZoneManager from "./dynamic-zone/manager";
+import { ArticleMedia } from "./blog/article-media";
+import { CategoryBadge } from "./blog/article-card";
 import { Article } from "@/types/types";
 
 export async function BlogLayout({
@@ -19,12 +19,12 @@ export async function BlogLayout({
 
   return (
     <Container className="mt-20 lg:mt-32 mb-20">
-      
+
       {/* Navigation */}
       <div className="flex justify-between items-center py-8">
-        <Link 
-          href="/blog" 
-          className="group flex space-x-2 items-center text-neutral-600 hover:text-brand transition-colors"
+        <Link
+          href={`/${locale}/blog`}
+          className="group flex space-x-2 items-center text-neutral-600 hover:text-brand transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand rounded"
         >
           <IconArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           <span className="text-sm font-medium">Back to Articles</span>
@@ -33,41 +33,27 @@ export async function BlogLayout({
 
       {/* Main Banner Image */}
       <div className="w-full mx-auto mb-10">
-        {article.image ? (
-          <div className="relative w-full aspect-video md:h-[500px] rounded-2xl overflow-hidden border border-border bg-white shadow-2xl shadow-sm">
-            <Image
-              src={strapiImage(article.image.url)}
-              fill
-              className="object-cover"
-              alt={article.title}
-              priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-            />
-            {/* Subtle Gradient Overlay for depth */}
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/60 to-transparent" />
-          </div>
-        ) : (
-          <div className="h-64 md:h-96 w-full rounded-2xl border border-border bg-white shadow-sm flex items-center justify-center animate-pulse">
-             <span className="text-neutral-700">No Cover Image</span>
-          </div>
-        )}
+        <ArticleMedia
+          media={article.image}
+          alt={article.title}
+          priority
+          className="w-full aspect-video md:h-[500px] rounded-2xl border border-border bg-white shadow-sm"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+        />
       </div>
 
       <div className="xl:relative">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-[720px]">
           <article className="pb-8">
-            
+
             {/* Categories */}
-            <div className="flex gap-3 flex-wrap mb-6">
-              {article.categories?.map((category, idx) => (
-                <span
-                  key={`category-${idx}`}
-                  className="text-xs font-bold text-primary px-3 py-1 rounded-full bg-[#E0FCFF] border border-brand uppercase tracking-wide"
-                >
-                  {category.name}
-                </span>
-              ))}
-            </div>
+            {article.categories?.length > 0 && (
+              <div className="flex gap-3 flex-wrap mb-6">
+                {article.categories?.map((category, idx) => (
+                  <CategoryBadge key={`category-${idx}`} name={category.name} />
+                ))}
+              </div>
+            )}
 
             {/* Title */}
             <header className="flex flex-col mb-8">
@@ -77,7 +63,7 @@ export async function BlogLayout({
             </header>
 
             {/* Content (Prose) */}
-            <div className="prose prose-lg prose-headings:font-primary prose-a:text-brand prose-img:rounded-xl">
+            <div className="prose prose-lg prose-headings:font-primary prose-a:text-brand prose-img:rounded-xl max-w-none">
               {children}
             </div>
 
@@ -89,23 +75,6 @@ export async function BlogLayout({
               >
                 Published on {format(new Date(article.publishedAt), "MMMM dd, yyyy")}
               </time>
-              
-              {/* Optional: Divider if you add author later */}
-              {/* <div className="h-4 w-px bg-neutral-700" /> */}
-
-              {/* Author Section (Ready for use) */}
-              {/* <div className="flex space-x-2 items-center">
-                <Image
-                  src={article.authorAvatar || "/placeholder-avatar.jpg"}
-                  alt={article.author}
-                  width={24}
-                  height={24}
-                   className="rounded-full bg-neutral-200"
-                />
-                <p className="text-sm font-medium text-neutral-300">
-                  {article.author}
-                </p> 
-              </div> */}
             </div>
 
           </article>

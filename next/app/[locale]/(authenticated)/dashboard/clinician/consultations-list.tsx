@@ -14,7 +14,7 @@ interface Consultation {
 
 export function ClinicianConsultationsList({ consultations }: { consultations: Consultation[] }) {
   return (
-    <ActivityCard title="Recent Consultations" viewAllHref="/dashboard/clinician/consultations">
+    <ActivityCard title="Recent Consultations" action={<a href="/dashboard/clinician/consultations" className="text-sm text-brand hover:text-brand-hover">View all</a>}>
       {consultations.length === 0 ? (
         <EmptyState
           icon={<IconStethoscope size={24} />}

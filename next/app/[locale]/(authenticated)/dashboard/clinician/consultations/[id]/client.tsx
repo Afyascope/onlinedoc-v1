@@ -210,7 +210,7 @@ export function ClinicianConsultationDetailClient({
                 </div>
                 <div className="flex justify-between">
                   <span className="text-xs text-neutral-500">Fee</span>
-                  <span className="text-sm font-medium text-primary">${c.fee}</span>
+                  <span className="text-sm font-medium text-primary">KES {c.fee}</span>
                 </div>
               </div>
             </ActivityCard>

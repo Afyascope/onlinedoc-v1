@@ -4,6 +4,7 @@ import PageContent from '@/lib/shared/PageContent';
 import fetchContentType from '@/lib/strapi/fetchContentType';
 import { fetchCached } from '@/lib/strapi/fetchCached';
 import { generateMetadataObject } from '@/lib/shared/metadata';
+import { isValidLocale } from '@/lib/i18n/locale';
 import ClientSlugHandler from '../ClientSlugHandler';
 
 export async function generateMetadata({
@@ -11,6 +12,8 @@ export async function generateMetadata({
 }: {
   params: { locale: string; slug: string };
 }): Promise<Metadata> {
+  if (!isValidLocale(params.locale)) return {};
+
   const pageData = await fetchContentType(
     "pages",
     {
@@ -35,6 +38,8 @@ export async function generateMetadata({
 }
 
 export default async function Page({ params }: { params: { locale: string, slug: string } }) {
+  if (!isValidLocale(params.locale)) notFound();
+
   const pageData = await fetchCached(
     "pages",
     {

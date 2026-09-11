@@ -4,8 +4,10 @@ import { clinicianProfiles } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { ClinicianProfileClient } from "./client";
+import { requireApprovedClinician } from "@/lib/clinician-access";
 
 export default async function ProfilePage() {
+  await requireApprovedClinician();
   const session = await auth.api.getSession({ headers: await headers() });
   const user = session?.user;
   const userId = user?.id;
@@ -16,5 +18,5 @@ export default async function ProfilePage() {
     profile = rows[0] ?? null;
   }
 
-  return <ClinicianProfileClient user={user ? { id: user.id, name: user.name, email: user.email, role: user.role, emailVerified: user.emailVerified, clinicianApproved: user.clinicianApproved } : null} profile={profile} />;
+  return <ClinicianProfileClient user={user ? { id: user.id, name: user.name, email: user.email, role: user.role, emailVerified: user.emailVerified, clinicianApproved: user.clinicianApproved ?? null } : null} profile={profile} />;
 }

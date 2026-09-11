@@ -12,6 +12,7 @@ import { useCart } from "@/context/cart-context";
 import { formatNumber } from "@/lib/utils";
 import { IconTrash } from "@tabler/icons-react";
 import { strapiImage } from "@/lib/strapi/strapiImage";
+import { detectMediaKind } from "@/lib/strapi/media";
 
 export default function AddToCartModal({ onClick }: { onClick: () => void }) {
   const { items, updateQuantity, getCartTotal, removeFromCart } = useCart();
@@ -38,13 +39,17 @@ export default function AddToCartModal({ onClick }: { onClick: () => void }) {
                 className="flex gap-2 justify-between items-center py-4"
               >
                 <div className="flex items-center gap-4">
-                  <Image
-                    src={strapiImage(item.product.images[0].url)}
-                    alt={item.product.name}
-                    width={60}
-                    height={60}
-                    className="rounded-lg hidden md:block"
-                  />
+                  {detectMediaKind(item.product.images?.[0]) === "image" && item.product.images?.[0]?.url ? (
+                    <Image
+                      src={strapiImage(item.product.images[0].url)}
+                      alt={item.product.name}
+                      width={60}
+                      height={60}
+                      className="rounded-lg hidden md:block"
+                    />
+                  ) : (
+                    <div className="rounded-lg hidden md:block w-[60px] h-[60px] bg-neutral-200" />
+                  )}
                   <span className="text-black text-sm md:text-base font-medium">
                     {" "}
                     {item.product.name}
@@ -69,7 +74,7 @@ export default function AddToCartModal({ onClick }: { onClick: () => void }) {
                     }}
                   />
                   <div className="text-black text-sm font-medium w-20">
-                    ${formatNumber(item.product.price)}
+                    KES {formatNumber(item.product.price)}
                   </div>
                   <button onClick={() => removeFromCart(item.product.id)} aria-label={`Remove ${item.product.name} from cart`}>
                     <IconTrash className="w-4 h-4 text-neutral-900" />
@@ -82,7 +87,7 @@ export default function AddToCartModal({ onClick }: { onClick: () => void }) {
         <ModalFooter className="gap-4 items-center">
           <div className="text-neutral-700 ">
             total amount{" "}
-            <span className="font-bold">${formatNumber(getCartTotal())}</span>
+            <span className="font-bold">KES {formatNumber(getCartTotal())}</span>
           </div>
           <button
             disabled={!items.length}

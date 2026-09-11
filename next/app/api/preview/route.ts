@@ -10,9 +10,7 @@ export const GET = async (request: Request) => {
   const uid = searchParams.get('uid')
   const status = searchParams.get('status');
 
-  if (
-    secret !== process.env.PREVIEW_SECRET
-  ) {
+  if (!process.env.PREVIEW_SECRET || !secret || secret !== process.env.PREVIEW_SECRET) {
     return new Response('Invalid token', { status: 401 })
   }
 

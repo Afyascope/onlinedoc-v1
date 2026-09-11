@@ -1,4 +1,5 @@
 export type UserRole = "patient" | "clinician" | "admin";
+export type ClinicianStatus = "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
 
 export interface AuthUser {
   id: string;
@@ -7,6 +8,9 @@ export interface AuthUser {
   role: UserRole;
   emailVerified: boolean;
   clinicianApproved: boolean;
+  clinicianStatus: ClinicianStatus;
+  approvedAt?: Date | null;
+  approvedBy?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

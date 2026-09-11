@@ -5,6 +5,6 @@ export default defineConfig({
   out: "./drizzle",
   dialect: "postgresql",
   dbCredentials: {
-    url: "postgresql://tosh@localhost:5433/onlinedoc",
+    url: process.env.DATABASE_URL || "",
   },
 });

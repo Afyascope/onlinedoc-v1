@@ -216,6 +216,7 @@ export interface DynamicZoneRelatedArticles extends Struct.ComponentSchema {
   };
   attributes: {
     articles: Schema.Attribute.Relation<'oneToMany', 'api::article.article'>;
+    CTA: Schema.Attribute.Component<'shared.button', false>;
     heading: Schema.Attribute.String;
     sub_heading: Schema.Attribute.String;
   };
@@ -228,6 +229,7 @@ export interface DynamicZoneRelatedProducts extends Struct.ComponentSchema {
     icon: 'stack';
   };
   attributes: {
+    CTA: Schema.Attribute.Component<'shared.button', false>;
     heading: Schema.Attribute.String;
     products: Schema.Attribute.Relation<'oneToMany', 'api::product.product'>;
     sub_heading: Schema.Attribute.String;
@@ -495,6 +497,7 @@ export interface SharedSteps extends Struct.ComponentSchema {
     icon: 'bulletList';
   };
   attributes: {
+    CTA: Schema.Attribute.Component<'shared.button', false>;
     description: Schema.Attribute.String;
     title: Schema.Attribute.String;
   };

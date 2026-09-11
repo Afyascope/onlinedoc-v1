@@ -4,16 +4,18 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import type { UserRole } from "@/types/auth";
+import { getClinicianStatus } from "@/lib/clinician-status";
 
 interface AuthGuardProps {
   children: React.ReactNode;
   allowedRoles?: UserRole[];
+  requiredClinicianStatus?: "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
   fallback?: React.ReactNode;
 }
 
-export function AuthGuard({ children, allowedRoles, fallback }: AuthGuardProps) {
+export function AuthGuard({ children, allowedRoles, requiredClinicianStatus, fallback }: AuthGuardProps) {
   const router = useRouter();
-  const { isAuthenticated, isLoading, role } = useAuth();
+  const { isAuthenticated, isLoading, role, user } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -21,6 +23,24 @@ export function AuthGuard({ children, allowedRoles, fallback }: AuthGuardProps) 
       router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
     }
   }, [isLoading, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (isLoading || !isAuthenticated || !user) return;
+    const path = window.location.pathname;
+    const status = user.role === "clinician" ? getClinicianStatus(user) : null;
+    if (user.role === "clinician" && status !== "APPROVED") {
+      const target = status === "REJECTED" ? "/dashboard/clinician/rejected" : "/dashboard/clinician/pending";
+      if (!path.endsWith(target)) router.replace(target);
+      return;
+    }
+    if (role === "clinician" && path.startsWith("/dashboard/patient")) router.replace("/dashboard/clinician");
+    if (requiredClinicianStatus && status !== requiredClinicianStatus) {
+      router.replace(status === "APPROVED" ? "/dashboard/clinician" : `/dashboard/clinician/${status?.toLowerCase() || "pending"}`);
+      return;
+    }
+    if (role === "patient" && path.startsWith("/dashboard/clinician")) router.replace("/dashboard/patient");
+    if (role === "admin" && !path.startsWith("/dashboard/admin")) router.replace("/dashboard/admin");
+  }, [isLoading, isAuthenticated, user, role, requiredClinicianStatus, router]);
 
   if (isLoading) {
     return (

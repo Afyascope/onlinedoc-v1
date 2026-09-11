@@ -5,11 +5,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
+import { getDashboardPath } from "@/lib/clinician-status";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/dashboard/patient";
+  const verified = searchParams.get("verified") === "true";
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
@@ -31,7 +33,7 @@ export function LoginForm() {
       return;
     }
 
-    router.push(redirectTo);
+    router.push(result.user ? getDashboardPath(result.user) : redirectTo);
   };
 
   return (
@@ -45,6 +47,7 @@ export function LoginForm() {
             <p className="text-neutral-600 mt-2 text-sm font-secondary">
               Sign in to your OnlineDoc account
             </p>
+            {verified && <p className="mt-3 rounded-xl bg-[#E0FCFF] px-3 py-2 text-sm text-primary">Email verified successfully.</p>}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

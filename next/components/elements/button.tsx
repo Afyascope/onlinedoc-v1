@@ -8,6 +8,7 @@ interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   className?: string;
   children?: React.ReactNode;
   href?: LinkProps["href"];
+  target?: React.HTMLAttributeAnchorTarget;
   onClick?: () => void;
 }
 

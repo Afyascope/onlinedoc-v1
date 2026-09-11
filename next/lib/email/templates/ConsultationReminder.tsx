@@ -1,0 +1,2 @@
+import { BaseTemplate, EmailButton, EmailHeading, EmailText } from "./BaseTemplate";
+export function ConsultationReminder({ name, title, date, url }: { name?: string; title: string; date: string; url: string }) { return <BaseTemplate title="Consultation reminder"><EmailHeading>Consultation reminder</EmailHeading><EmailText>Hi {name || "there"}, this is a reminder about “{title}” scheduled for {date}.</EmailText><EmailButton href={url}>View consultation</EmailButton></BaseTemplate>; }

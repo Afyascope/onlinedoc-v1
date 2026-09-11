@@ -1,0 +1,2 @@
+import { BaseTemplate, EmailButton, EmailHeading, EmailText } from "./BaseTemplate";
+export function OrderStatus({ name, orderId, status, url }: { name?: string; orderId: string; status: string; url: string }) { return <BaseTemplate title="Order status update"><EmailHeading>Order status updated</EmailHeading><EmailText>Hi {name || "there"}, order {orderId} is now <strong>{status}</strong>.</EmailText><EmailButton href={url}>View order</EmailButton></BaseTemplate>; }
