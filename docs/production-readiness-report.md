@@ -93,9 +93,21 @@ hardcoded because they were not supplied.
 
 ## Backup Status
 
-Not configured or independently verified in this repository. The required
-frequency, retention, restore, ownership, and verification process is defined
-in `docs/02-database/production-readiness.md`.
+The repository provides no backup or restore mechanism: no `pg_dump`/`pg_restore`
+scripts, no backup schedule, no retention config, and no CI/CD backup job.
+A backup *requirement* is documented, but **no production backup has been
+created or verified**.
+
+- PostgreSQL point-in-time recovery: REQUIRES OPERATOR ACTION (Neon
+  dashboard — not visible from the repository).
+- Automated daily / encrypted backups: NOT VERIFIED.
+- 30-day daily and 12-month monthly retention: NOT VERIFIED.
+- Restricted restore credentials: NOT VERIFIED.
+- Monthly isolated restore verification: NOT CONFIGURED (never recorded).
+
+The backup/restore procedures, validation checklist, and the conditions that
+must be met before baseline reconciliation are defined in
+`docs/02-database/production-readiness.md`.
 
 ## Validation Status
 

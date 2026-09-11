@@ -74,7 +74,8 @@ A migration should be applied to a clean database to verify correctness.
 
 Before applying any migration:
 
-- Create a database backup.
+- Create and verify a database backup (currently **not configured** — see
+  `production-readiness.md`; a documented requirement is not a verified backup).
 - Review migration changes.
 - Verify compatibility with the current application version.
 - Ensure the baseline has already been recorded as applied (see

@@ -52,7 +52,9 @@ re-executed against it. Instead, the baseline is recorded as "already applied"
 with a metadata-only insert into the Drizzle ledger. This does not touch any
 application table or data and is reversible.
 
-1. Take and verify a PostgreSQL backup first. Do not proceed without one.
+1. Take and verify a PostgreSQL backup first (see "Backup and Restore
+   Readiness"). This precondition is **not yet satisfied**; do not proceed
+   without a verified, restorable backup.
 2. Verify the ledger table exists:
 
    ```sql
@@ -127,12 +129,112 @@ Run all commands from the `next/` directory.
 - For full recovery, restore from the managed PostgreSQL backup into an
   isolated database, validate, and switch the connection only after approval.
 
-## Backups
+## Backup and Restore Readiness
 
-Backups are not configured by this repository and must not be represented as
-available until the operator confirms them. The production owner should
-configure managed PostgreSQL point-in-time recovery plus daily encrypted full
-backups, retain daily backups for 30 days and monthly backups for 12 months,
-and restrict restore credentials to the infrastructure owner and designated
-on-call engineer. At least monthly, restore into an isolated database, run the
-health check and migration validation, and record the result.
+### Verified
+
+- The production database is a Neon PostgreSQL 17 instance (`neondb`).
+- The connection is configured only through `DATABASE_URL`
+  (`next/drizzle.config.ts`, `next/db/index.ts`, `strapi/config/database.ts`).
+- The application schema (20 tables) and the Drizzle baseline are correct and
+  reproduce production exactly (see "Current State").
+
+That is the full extent of what is verified. **No production backup has been
+created or verified as part of this work.**
+
+### Not verified / not configured in this repository
+
+The repository provides **no backup or restore mechanism** of its own. There
+are no `pg_dump`/`pg_restore` scripts, no backup cron, no retention
+configuration, no restore runbook, and no CI/CD backup job
+(`.github/workflows/deploy-demo.yaml` only triggers a GitLab Strapi image
+build). A requirement is documented; that is not the same as a working backup.
+
+Neon account-level settings are not visible from this repository and require
+operator verification in the Neon dashboard.
+
+| Backup policy item | Status |
+| --- | --- |
+| PostgreSQL point-in-time recovery | REQUIRES OPERATOR ACTION — Neon offers managed PITR/branching, but its enablement and retention must be confirmed in the Neon dashboard |
+| Automated daily backups | NOT VERIFIED |
+| Encrypted backups | NOT VERIFIED |
+| 30-day daily retention | NOT VERIFIED |
+| 12-month monthly retention | NOT VERIFIED |
+| Restricted restore credentials | NOT VERIFIED |
+| Monthly isolated restore verification | NOT CONFIGURED (no restore test has ever been recorded) |
+| A real, verified production backup exists | NOT VERIFIED — no evidence |
+
+### Operator actions required
+
+1. In the Neon dashboard, enable and record **point-in-time recovery**
+   retention for the production project, and note the retention window.
+2. Establish a **logical backup** schedule (e.g. daily `pg_dump`) with encrypted
+   storage, or confirm an equivalent managed snapshot schedule.
+3. Configure **restore credentials** separate from the application connection,
+   restricted to the infrastructure owner and on-call engineer.
+4. Perform and record a **restore test** into an isolated database (below)
+   before any production reconciliation step.
+
+### Safe backup procedure (logical)
+
+Run from a machine with `pg_dump` 17+ and network access to the production
+database. Do not store the backup next to the database or in the application
+repo.
+
+```bash
+pg_dump "$DATABASE_URL" \
+  --no-owner --no-privileges \
+  --format=custom \
+  --file=onlinedoc_prod_$(date -u +%Y%m%dT%H%M%SZ).dump
+```
+
+Verify the dump is non-empty and can be read back:
+
+```bash
+pg_restore --list onlinedoc_prod_*.dump | head
+```
+
+Encrypt before transport/storage and record the checksum.
+
+### Safe isolated restore procedure
+
+Never restore over the live production database. Restore into either (a) a new
+Neon branch created from a point in time, or (b) a separate throwaway database.
+
+For a logical-dump restore into an isolated database:
+
+```bash
+createdb onlinedoc_restore_test
+pg_restore --no-owner --no-privileges --dbname onlinedoc_restore_test onlinedoc_prod_*.dump
+```
+
+Then validate the restored database against `next/db/schema.ts` and the current
+production schema:
+
+1. Confirm the object count matches the known-good catalog (288 catalog objects:
+   20 tables, their columns, primary keys, 27 foreign keys, unique constraints,
+   and indexes).
+2. Spot-check row counts for each domain:
+   - Better Auth: `user`, `session`, `account`, `verification`
+   - Consultation: `consultations`, `consultation_notes`,
+     `consultation_status_history`, `consultation_files`
+   - Commerce: `orders`, `order_items`, `downloads`, `payments`
+   - Marketplace/administration: `audit_logs`, `platform_settings`,
+     `clinician_profiles`, `appointments`, `medical_records`, `prescriptions`,
+     `notifications`, `settings`
+3. Point the application at the isolated database (read-only) and run the health
+   check (`GET /api/health`) and `npm run migrate:validate`.
+
+### Conditions required before baseline reconciliation
+
+The metadata-only baseline insert (see "Existing Database Procedure") must be
+run **only after all of the following are true**:
+
+1. A real production backup has been created **and** verified restorable into an
+   isolated database.
+2. Point-in-time recovery and retention are confirmed in the Neon dashboard.
+3. Restore credentials are restricted and documented.
+4. A restore test has passed and the result is recorded.
+
+Until those conditions are met, the production Drizzle ledger must remain empty
+and the baseline insert must not be executed.
