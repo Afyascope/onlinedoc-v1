@@ -53,9 +53,12 @@ export async function GET(
   }
 
   // Resolve the current downloadable file from the authoritative Strapi record.
+  // `fresh` forces a no-store lookup so an unpublished product cannot remain
+  // downloadable because of the application's Strapi response cache.
   const product = await fetchContentType(
     "products",
     { filters: { slug: item.productSlug || "" } },
+    true,
     true,
   );
 

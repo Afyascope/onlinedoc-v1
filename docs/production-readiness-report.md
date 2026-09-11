@@ -60,6 +60,29 @@ Nothing in this report was deleted or reset during the readiness phase.
   private R2 upload provider are configured.
 - Next production builds no longer suppress TypeScript or ESLint failures.
 
+### R2 code hardening (completed, no production configuration)
+
+The following code-level R2 fixes are implemented in the repository. None of
+them provision the R2 bucket, configure real credentials, migrate product
+files, or test against a real bucket — those remain operator tasks.
+
+- `server-only` is now an explicit `next` dependency (it guards the modules
+  that hold the R2 client and credentials).
+- `next/app/api/media/[...key]/route.ts` now restricts the public media proxy
+  to the `R2_PRODUCT_PREFIX` namespace, rejects traversal/empty segments, and
+  continues to stream only `image/*`/`video/*` objects (protected PDFs are
+  never returned through this route).
+- `next/lib/storage/product-files.ts` now derives the canonical object key from
+  Strapi `provider_metadata.key` (with a hardened, prefix-validated fallback)
+  and applies consistent traversal + prefix validation to both the protected
+  download path and the media proxy.
+- `next/app/api/download/[orderItemId]/route.ts` now re-resolves the product
+  from Strapi with a fresh/no-store lookup so an unpublished product cannot
+  remain downloadable via the application cache.
+- `@strapi/provider-upload-aws-s3` (already declared) is verified installed.
+- `next/.env.example` and `strapi/.env.example` now clearly distinguish R2
+  secret credentials from non-secret configuration.
+
 ## Database Changes
 
 No production database changes were executed.
@@ -111,7 +134,7 @@ must be met before baseline reconciliation are defined in
 
 ## Validation Status
 
-- PASS: Next TypeScript check, ESLint, production build, migration-file validation, and 7 targeted static security tests.
+- PASS: Next TypeScript check, ESLint, production build, migration-file validation, and 17 targeted static security tests (7 original + 10 R2 hardening).
 - PASS: Strapi build with complete production-shaped placeholder configuration.
 - PASS: Read-only PostgreSQL connectivity and schema inspection.
 - PASS: Live production seed guard returned HTTP 404.

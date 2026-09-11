@@ -26,8 +26,14 @@ export default ({ env }: { env: any }) => {
               endpoint: env('R2_ENDPOINT'),
               region: 'auto',
               forcePathStyle: false,
+              params: {
+                Bucket: env('R2_BUCKET'),
+                // Cloudflare R2 is a private bucket and does not support S3
+                // object ACLs. The provider otherwise defaults to public-read,
+                // which R2 rejects; private keeps uploads fail-closed.
+                ACL: 'private',
+              },
             },
-            params: { Bucket: env('R2_BUCKET') },
           }
         : undefined,
       sizeLimit: 262144000,
