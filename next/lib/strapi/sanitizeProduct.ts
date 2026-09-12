@@ -7,8 +7,9 @@
  * re-resolves the file authoritatively from Strapi. The browser only needs to
  * know whether a file exists and its type label (`mime` / `ext`).
  *
- * Product images are intentionally left untouched — their URLs are required to
- * render the marketplace.
+ * Product images are kept (their URLs are required to render the marketplace),
+ * but private Cloudflare R2 image URLs are rewritten to the internal
+ * `/api/media` proxy so the browser never receives a raw R2 object URL.
  *
  * `dynamic_zone` is also dropped from client-bound products: it is rendered
  * server-side via `DynamicZoneManager`, and dropping it avoids serializing the
@@ -48,11 +49,26 @@ export function sanitizeProductDynamicZone(dynamicZone: any[]): any[] {
 }
 function clientMedia(media: any): any {
   if (!media || typeof media !== "object") return media;
-  if (process.env.R2_ENDPOINT && media.url) {
-    const source = String(media.url).split("?")[0];
-    const filename = source.split("/").filter(Boolean).pop();
-    const prefix = (process.env.R2_PRODUCT_PREFIX || "products/").replace(/\/$/, "");
-    if (filename) return { ...media, url: `/api/media/${encodeURIComponent(`${prefix}/${filename}`)}` };
+  const url = media.url;
+  if (typeof url === "string" && isR2ObjectUrl(url)) {
+    const filename = url.split("?")[0].split("/").filter(Boolean).pop();
+    const prefix = (process.env.R2_PRODUCT_PREFIX || "products/").replace(/^\/+|\/+$/g, "");
+    if (filename && prefix) {
+      return { ...media, url: `/api/media/${prefix}/${encodeURIComponent(filename)}` };
+    }
   }
   return media;
+}
+
+/**
+ * True when a Strapi media URL points at a Cloudflare R2 object (raw or
+ * signed). These are private bucket URLs and must be served through the
+ * internal `/api/media` proxy rather than exposed to the browser directly.
+ */
+function isR2ObjectUrl(url: string): boolean {
+  try {
+    return new URL(url).hostname.endsWith(".r2.cloudflarestorage.com");
+  } catch {
+    return false;
+  }
 }

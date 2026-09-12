@@ -40,7 +40,14 @@ function smtpConfig() {
 
 export function getSmtpTransporter(): Transporter {
   if (!transporter) {
-    transporter = nodemailer.createTransport(smtpConfig());
+    transporter = nodemailer.createTransport({
+      ...smtpConfig(),
+      // Fail fast when the SMTP server is unreachable so email delivery can
+      // never block a request for minutes (Nodemailer defaults are far longer).
+      connectionTimeout: 10000,
+      socketTimeout: 10000,
+      greetingTimeout: 10000,
+    });
     emailTrace("smtp.transporter.created");
   }
   return transporter;

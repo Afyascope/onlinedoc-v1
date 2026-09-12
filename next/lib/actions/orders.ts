@@ -89,7 +89,10 @@ export async function initiateProductPayment(productSlug: string) {
       link: "/dashboard/patient/library",
       createdAt: new Date(),
     });
-    await sendEmail({
+    // Email is a best-effort notification and must never block the free
+    // entitlement response or the patient redirect. Fire-and-forget with a
+    // swallowed failure so an SMTP outage cannot fail the claim.
+    void sendEmail({
       to: session.user.email,
       subject: "Your OnlineDoc download is ready",
       template: "product-download",
@@ -98,6 +101,8 @@ export async function initiateProductPayment(productSlug: string) {
         productName: product.name,
         downloadUrl: appUrl("/dashboard/patient/library"),
       },
+    }).catch((error) => {
+      console.error("[orders] free product download email failed:", error instanceof Error ? error.message : "unknown email error");
     });
     revalidatePath("/dashboard/patient/library");
     return { success: true, url: null, free: true };
