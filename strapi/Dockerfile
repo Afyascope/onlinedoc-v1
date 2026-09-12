@@ -9,7 +9,10 @@ COPY scripts ./scripts
 RUN npm ci
 
 COPY . .
-ENV NODE_ENV=production
+# Do not set NODE_ENV=production here: `strapi build` loads the server config,
+# and its production validation (DATABASE_URL, R2, CORS, APP_KEYS) would fail
+# because no runtime environment is available at build time. NODE_ENV=production
+# is applied in the runtime stage below.
 RUN npm run build
 RUN npm prune --omit=dev
 
