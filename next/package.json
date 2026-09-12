@@ -29,6 +29,7 @@
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.5.0",
     "@types/fuzzy-search": "^2.1.5",
+    "@vercel/analytics": "^1.6.1",
     "bcryptjs": "^3.0.3",
     "better-auth": "^1.6.25",
     "class-variance-authority": "^0.7.0",
