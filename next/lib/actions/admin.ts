@@ -13,11 +13,13 @@ import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import crypto from "crypto";
 import { appUrl, sendEmail } from "@/lib/email/send";
+import { validateConsultationFee } from "@/lib/config";
+import { assertAdminRole } from "@/lib/admin-authorization";
 
 async function getAdminSession() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) throw new Error("Not authenticated");
-  if (session.user.role !== "admin") throw new Error("Forbidden");
+  assertAdminRole(session.user.role);
   return session;
 }
 
@@ -654,6 +656,15 @@ export async function getPlatformSettings() {
 
 export async function updatePlatformSetting(id: string, value: string) {
   const session = await getAdminSession();
+  if (typeof value !== "string") throw new Error("Setting value must be a string");
+  const [setting] = await db
+    .select({ key: platformSettings.key })
+    .from(platformSettings)
+    .where(eq(platformSettings.id, id))
+    .limit(1);
+  if (!setting) throw new Error("Platform setting not found");
+  if (setting.key === "consultation_fee") validateConsultationFee(value);
+
   await db.update(platformSettings).set({ value, updatedAt: new Date() }).where(eq(platformSettings.id, id));
   await audit("setting_updated", "setting", id, { settingId: id }, session.user.id);
   revalidatePath("/dashboard/admin/settings");
@@ -662,12 +673,15 @@ export async function updatePlatformSetting(id: string, value: string) {
 
 export async function seedPlatformSettings() {
   await getAdminSession();
+  // This is an explicit dashboard initialization action. It inserts defaults
+  // only when absent and never resets an existing production setting.
+  const initialConsultationFee = validateConsultationFee(process.env.CONSULTATION_FEE || "50");
   const defaults = [
     { group: "general", key: "platform_name", value: "OnlineDoc", type: "string", label: "Platform Name" },
     { group: "general", key: "support_email", value: "support@onlinedoc.co.ke", type: "string", label: "Support Email" },
     { group: "general", key: "support_phone", value: "+254-700-000-000", type: "string", label: "Support Phone" },
     { group: "general", key: "maintenance_mode", value: "false", type: "boolean", label: "Maintenance Mode" },
-    { group: "consultations", key: "consultation_fee", value: "50", type: "number", label: "Default Consultation Fee" },
+    { group: "consultations", key: "consultation_fee", value: initialConsultationFee, type: "number", label: "Default Consultation Fee" },
     { group: "payments", key: "currency", value: "KES", type: "string", label: "Currency" },
     { group: "payments", key: "payment_provider", value: "paystack", type: "string", label: "Payment Provider" },
     { group: "branding", key: "brand_name", value: "OnlineDoc", type: "string", label: "Brand Name" },

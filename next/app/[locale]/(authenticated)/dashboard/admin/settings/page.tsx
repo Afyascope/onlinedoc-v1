@@ -16,6 +16,7 @@ function SettingsClient() {
   const [settings, setSettings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
+  const [updateError, setUpdateError] = useState<string | null>(null);
   const [activeGroup, setActiveGroup] = useState("general");
 
   const fetch = useCallback(async () => {
@@ -31,9 +32,17 @@ function SettingsClient() {
 
   const handleUpdate = async (id: string, value: string) => {
     setSaving(id);
+    setUpdateError(null);
+    const previous = settings.find((setting) => setting.id === id)?.value;
     setSettings((prev) => prev.map((s) => s.id === id ? { ...s, value } : s));
-    await updatePlatformSetting(id, value);
-    setSaving(null);
+    try {
+      await updatePlatformSetting(id, value);
+    } catch (error) {
+      setSettings((prev) => prev.map((s) => s.id === id ? { ...s, value: previous ?? s.value } : s));
+      setUpdateError(error instanceof Error ? error.message : "Unable to update setting.");
+    } finally {
+      setSaving(null);
+    }
   };
 
   const handleSeed = async () => {
@@ -47,6 +56,7 @@ function SettingsClient() {
   }, []);
 
   const filtered = settings.filter((s) => s.group === activeGroup);
+  const hasConsultationFeeSetting = settings.some((setting) => setting.key === "consultation_fee");
 
   return (
     <AuthGuard allowedRoles={["admin"]}>
@@ -67,15 +77,16 @@ function SettingsClient() {
               {g}
             </button>
           ))}
-          {settings.length === 0 && !loading && (
+          {!hasConsultationFeeSetting && !loading && (
             <button onClick={handleSeed}
               className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-xl transition-colors">
-              <IconRefresh size={16} /> Seed Default Settings
+              <IconRefresh size={16} /> Initialize Default Settings
             </button>
           )}
         </div>
 
         <ActivityCard title={activeGroup.charAt(0).toUpperCase() + activeGroup.slice(1)}>
+          {updateError && <p role="alert" className="mb-3 text-sm text-red-700">{updateError}</p>}
           {loading ? (
             <div className="flex justify-center py-8">
               <div className="h-6 w-6 border-2 border-brand border-t-transparent rounded-full animate-spin" />
@@ -84,10 +95,10 @@ function SettingsClient() {
             <div className="flex flex-col items-center justify-center py-8 text-neutral-400">
               <IconSettings size={40} stroke={1.5} />
               <p className="mt-2 text-sm text-neutral-500">No settings in this group</p>
-              <button onClick={handleSeed}
+              {!hasConsultationFeeSetting && <button onClick={handleSeed}
                 className="mt-4 px-4 py-2 text-sm font-medium text-brand bg-brand/5 hover:bg-brand/10 rounded-xl transition-colors">
-                Seed Default Settings
-              </button>
+                Initialize Default Settings
+              </button>}
             </div>
           ) : (
             <div className="space-y-4">

@@ -2,7 +2,7 @@
 
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { consultations, consultationStatusHistory, consultationNotes, consultationFiles, notifications, user } from "@/db/schema";
+import { consultations, consultationStatusHistory, consultationNotes, consultationFiles, notifications, user, platformSettings } from "@/db/schema";
 import { eq, desc, and } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
@@ -35,6 +35,12 @@ export async function createConsultation(data: {
 }) {
   const session = await getSession();
   const id = crypto.randomUUID();
+  const [feeSetting] = await db
+    .select({ value: platformSettings.value })
+    .from(platformSettings)
+    .where(eq(platformSettings.key, "consultation_fee"))
+    .limit(1);
+  const fee = consultationFee(feeSetting?.value);
 
   await db.transaction(async (tx) => {
     await tx.insert(consultations).values({
@@ -46,7 +52,7 @@ export async function createConsultation(data: {
       durationOfIllness: data.durationOfIllness || null,
       medicalHistory: data.medicalHistory || null,
       status: "draft",
-      fee: consultationFee(),
+      fee,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
