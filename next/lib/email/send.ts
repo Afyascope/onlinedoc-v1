@@ -49,7 +49,21 @@ export async function sendEmail(input: SendEmailInput): Promise<SendEmailResult>
     };
     emailTrace("email.rendered", { recipient: input.to, template: input.template, subject: input.subject, htmlBytes: Buffer.byteLength(message.html) });
     const result = await getProvider().send(message);
-    console.info(JSON.stringify({ template: input.template, timestamp, success: result.success, deliveryId: result.id, error: result.error, code: result.code }));
+    // NOTE: Better Auth awaits sendVerificationEmail inside runInBackgroundOrAwait
+    // but swallows the error (logs "Failed to run background task") and still
+    // returns HTTP 200 for sign-up. These logs are therefore the source of truth
+    // for whether the message was actually accepted by the SMTP server.
+    emailTrace("sendEmail.result", {
+      recipient: input.to,
+      template: input.template,
+      success: result.success,
+      deliveryId: result.id,
+      error: result.error,
+      code: result.code,
+      retryable: result.retryable,
+      smtpResponse: typeof result.response === "string" ? result.response.slice(0, 300) : undefined,
+    });
+    console.info(JSON.stringify({ template: input.template, timestamp, success: result.success, deliveryId: result.id, error: result.error, code: result.code, retryable: result.retryable, smtpResponse: typeof result.response === "string" ? result.response.slice(0, 300) : undefined }));
     return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Email delivery failed";

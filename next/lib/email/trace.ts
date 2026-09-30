@@ -9,6 +9,11 @@ export function emailTrace(event: string, fields: Record<string, unknown> = {}):
   delete safeFields.verificationUrl;
   delete safeFields.token;
   delete safeFields.response;
+  // NOTE: `smtpResponse` (truncated SMTP server reply, e.g. "535 Incorrect
+  // authentication data") is intentionally kept: it contains no credentials,
+  // tokens, or URLs and is required to diagnose delivery failures in Vercel
+  // logs, where Better Auth otherwise returns HTTP 200 for sign-up even when
+  // the verification email fails (see runInBackgroundOrAwait).
   console.info(JSON.stringify({
     scope: "email-verification-debug",
     event,
