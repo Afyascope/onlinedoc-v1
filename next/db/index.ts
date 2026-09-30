@@ -28,16 +28,18 @@ function databaseUrlDiagnostics() {
 
 function databaseError(error: unknown) {
   if (error instanceof Error) {
-    return { name: error.name, message: error.message, stack: error.stack, code: (error as Error & { code?: string }).code, ...Object.fromEntries(Object.entries(error)) };
+    return { name: error.name, message: error.message, code: (error as Error & { code?: string }).code };
   }
-  return { value: error };
+  return { name: "UnknownError" };
 }
 
 if (!globalForDb.queryClient) {
   globalForDb.queryClient = postgres(process.env.DATABASE_URL!, {
     ssl: "require",
     connect_timeout: 10,
-    max: 10,
+    // Vercel may run many function instances. Keep each instance to one
+    // connection so a direct Neon endpoint cannot be exhausted by scaling.
+    max: 1,
     idle_timeout: 30,
     max_lifetime: 300,
   });
@@ -53,7 +55,7 @@ if (process.env.NODE_ENV !== "test" && process.env.NEXT_PHASE !== "phase-product
   globalForDb.diagnosticStarted = true;
   void (async () => {
     const startedAt = Date.now();
-    console.info(JSON.stringify({ event: "database.startup.diagnostic.started", startedAt: new Date(startedAt).toISOString(), config: databaseUrlDiagnostics(), postgres: { ssl: "require", connect_timeout: 10, idle_timeout: 30, max: 10 } }));
+    console.info(JSON.stringify({ event: "database.startup.diagnostic.started", startedAt: new Date(startedAt).toISOString(), config: databaseUrlDiagnostics(), postgres: { ssl: "require", connect_timeout: 10, idle_timeout: 30, max: 1 } }));
     try {
       const result = await db.execute(sql`SELECT 1 AS connected, current_database() AS database, current_user AS user, version() AS version`);
       const completedAt = Date.now();

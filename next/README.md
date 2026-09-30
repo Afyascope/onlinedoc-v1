@@ -73,7 +73,7 @@ Returns `{"status":"healthy","database":"connected","latency":"...","timestamp":
 Neon PostgreSQL → single DATABASE_URL → shared Drizzle instance → Better Auth + Server Actions + Dashboards
 ```
 
-- One `postgres` client (pooled, max 10 connections)
+- One `postgres` client (max 1 connection per serverless instance)
 - One `drizzle` instance (shared across all modules)
 - Global singleton via `globalThis` for hot-reload safety
 - No manual database startup required

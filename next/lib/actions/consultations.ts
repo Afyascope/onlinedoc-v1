@@ -36,26 +36,28 @@ export async function createConsultation(data: {
   const session = await getSession();
   const id = crypto.randomUUID();
 
-  await db.insert(consultations).values({
-    id,
-    patientId: session.user.id,
-    consultationType: data.consultationType,
-    title: data.title,
-    symptoms: data.symptoms || null,
-    durationOfIllness: data.durationOfIllness || null,
-    medicalHistory: data.medicalHistory || null,
-    status: "draft",
-    fee: consultationFee(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  });
+  await db.transaction(async (tx) => {
+    await tx.insert(consultations).values({
+      id,
+      patientId: session.user.id,
+      consultationType: data.consultationType,
+      title: data.title,
+      symptoms: data.symptoms || null,
+      durationOfIllness: data.durationOfIllness || null,
+      medicalHistory: data.medicalHistory || null,
+      status: "draft",
+      fee: consultationFee(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-  await db.insert(consultationStatusHistory).values({
-    id: crypto.randomUUID(),
-    consultationId: id,
-    status: "draft",
-    changedBy: session.user.id,
-    createdAt: new Date(),
+    await tx.insert(consultationStatusHistory).values({
+      id: crypto.randomUUID(),
+      consultationId: id,
+      status: "draft",
+      changedBy: session.user.id,
+      createdAt: new Date(),
+    });
   });
 
   revalidatePath("/dashboard/patient/consultations");
