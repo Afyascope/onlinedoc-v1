@@ -5,6 +5,7 @@ import { useAuth } from "@/context/auth-context";
 import { usePathname } from "next/navigation";
 import { Link } from "next-view-transitions";
 import { cn } from "@/lib/utils";
+import { stripLocalePrefix } from "@/lib/admin-route-path.mjs";
 import type { UserRole } from "@/types/auth";
 import {
   IconDashboard,
@@ -80,6 +81,7 @@ const navConfig: Record<UserRole, NavItem[]> = {
 export function DashboardSidebar() {
   const pathname = usePathname();
   const locale = pathname.split('/')[1] || 'en';
+  const routePathname = stripLocalePrefix(pathname);
   const { role } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -111,7 +113,7 @@ export function DashboardSidebar() {
 
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto no-scrollbar">
           {items.map((item) => {
-            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+            const isActive = routePathname === item.href || routePathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}

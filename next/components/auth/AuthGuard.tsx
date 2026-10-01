@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import type { UserRole } from "@/types/auth";
 import { getClinicianStatus } from "@/lib/clinician-status";
+import { isAdminPath } from "@/lib/admin-route-path.mjs";
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -39,7 +40,10 @@ export function AuthGuard({ children, allowedRoles, requiredClinicianStatus, fal
       return;
     }
     if (role === "patient" && path.startsWith("/dashboard/clinician")) router.replace("/dashboard/patient");
-    if (role === "admin" && !path.startsWith("/dashboard/admin")) router.replace("/dashboard/admin");
+    if (role === "admin" && !isAdminPath(path)) {
+      const locale = path.match(/^\/(en|fr)(?:\/|$)/)?.[1];
+      router.replace(`${locale ? `/${locale}` : ""}/dashboard/admin`);
+    }
   }, [isLoading, isAuthenticated, user, role, requiredClinicianStatus, router]);
 
   if (isLoading) {
