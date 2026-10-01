@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 # The postinstall lifecycle hook (`node ./scripts/updateUuid.js`) runs during
 # `npm ci`, so the scripts directory must exist in the image first.
 COPY scripts ./scripts
+COPY patches ./patches
 RUN npm ci
 
 COPY . .

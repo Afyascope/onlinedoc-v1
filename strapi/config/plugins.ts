@@ -28,9 +28,9 @@ export default ({ env }: { env: any }) => {
               forcePathStyle: false,
               params: {
                 Bucket: env('R2_BUCKET'),
-                // Cloudflare R2 is a private bucket and does not support S3
-                // object ACLs. The provider otherwise defaults to public-read,
-                // which R2 rejects; private keeps uploads fail-closed.
+                // Keep private mode so Strapi signs reads for this private
+                // bucket. The local provider patch omits ACL on PutObject,
+                // because R2 does not support x-amz-acl.
                 ACL: 'private',
               },
             },
