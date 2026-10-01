@@ -13,5 +13,5 @@ import { ConsultationsClient } from "./client";
 
 export default async function ConsultationsPage() {
   const data = await getAllConsultations(1, 100);
-  return <ConsultationsClient initialConsultations={data.consultations} total={data.total} />;
+  return <ConsultationsClient initialConsultations={data.consultations} total={data.total} approvedClinicians={data.approvedClinicians} />;
 }

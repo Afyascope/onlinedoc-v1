@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
 import { consultations, consultationStatusHistory, consultationNotes, consultationFiles, notifications, user, platformSettings } from "@/db/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, isNull, isNotNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import crypto from "crypto";
@@ -117,6 +117,76 @@ export async function listConsultations(role: "patient" | "clinician") {
     .orderBy(desc(consultations.createdAt));
 
   return rows;
+}
+
+export async function claimConsultation(consultationId: string) {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) return { success: false as const, error: "Not authenticated" };
+  if (session.user.role !== "clinician") return { success: false as const, error: "Clinician access required" };
+  if (getClinicianStatus(session.user) !== "APPROVED") {
+    return { success: false as const, error: "Your clinician account is not approved for consultations." };
+  }
+
+  let approvedClinicians: { id: string }[];
+  try {
+    approvedClinicians = await db.select({ id: user.id })
+      .from(user)
+      .where(and(
+        eq(user.id, session.user.id),
+        eq(user.role, "clinician"),
+        eq(user.clinicianStatus, "APPROVED")
+      ))
+      .limit(1);
+  } catch {
+    return { success: false as const, error: "Unable to verify clinician eligibility right now." };
+  }
+  if (approvedClinicians.length === 0) {
+    return { success: false as const, error: "Your clinician account is not approved for consultations." };
+  }
+
+  try {
+    const claimed = await db.transaction(async (tx) => {
+      const rows = await tx.update(consultations).set({
+        clinicianId: session.user.id,
+        status: "waiting_for_clinician",
+        updatedAt: new Date(),
+      }).where(and(
+        eq(consultations.id, consultationId),
+        eq(consultations.status, "paid"),
+        isNull(consultations.clinicianId),
+        isNotNull(consultations.paidAt)
+      )).returning({ id: consultations.id });
+
+      if (rows.length === 0) return false;
+
+      await tx.insert(consultationStatusHistory).values({
+        id: crypto.randomUUID(),
+        consultationId,
+        status: "waiting_for_clinician",
+        changedBy: session.user.id,
+        createdAt: new Date(),
+      });
+      await tx.insert(notifications).values({
+        id: crypto.randomUUID(),
+        userId: session.user.id,
+        type: "consultation_assigned",
+        title: "Consultation assigned to you",
+        body: "You accepted a paid consultation. It is ready to start.",
+        link: `/dashboard/clinician/consultations/${consultationId}`,
+        createdAt: new Date(),
+      });
+      return true;
+    });
+
+    if (!claimed) return { success: false as const, error: "This consultation is no longer available." };
+  } catch {
+    return { success: false as const, error: "Unable to accept this consultation right now." };
+  }
+
+  revalidatePath("/dashboard/clinician");
+  revalidatePath("/dashboard/clinician/consultations");
+  revalidatePath("/dashboard/admin/consultations");
+  return { success: true as const };
 }
 
 export async function updateConsultationStatus(consultationId: string, newStatus: string) {

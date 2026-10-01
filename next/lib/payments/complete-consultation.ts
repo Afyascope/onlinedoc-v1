@@ -113,6 +113,22 @@ export async function completeConsultationPaymentByReference(
       link: `/dashboard/patient/consultations/${consultation.id}`,
       createdAt: new Date(),
     });
+
+    const eligibleClinicians = await tx.select({ id: user.id })
+      .from(user)
+      .where(and(eq(user.role, "clinician"), eq(user.clinicianStatus, "APPROVED")));
+    if (eligibleClinicians.length > 0) {
+      const notifiedAt = new Date();
+      await tx.insert(notifications).values(eligibleClinicians.map((clinician) => ({
+        id: crypto.randomUUID(),
+        userId: clinician.id,
+        type: "consultation_available",
+        title: "Paid consultation available",
+        body: "A paid consultation is waiting for an available clinician.",
+        link: "/dashboard/clinician/consultations",
+        createdAt: notifiedAt,
+      })));
+    }
     return true;
   });
 

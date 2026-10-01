@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { consultations, appointments } from "@/db/schema";
-import { eq, and, gte, lte, count } from "drizzle-orm";
+import { eq, and, gte, lte, count, isNull, isNotNull } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
@@ -11,7 +11,7 @@ async function getUserId() {
 
 export async function getClinicianOverview() {
   const userId = await getUserId();
-  if (!userId) return { totalPatients: 0, todayConsultations: 0, awaitingClinician: 0, completedConsultations: 0, recentConsultations: [], appointments: [] };
+  if (!userId) return { totalPatients: 0, todayConsultations: 0, availableConsultations: 0, completedConsultations: 0, recentConsultations: [], appointments: [] };
 
   const now = new Date();
   const startOfDayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -33,12 +33,13 @@ export async function getClinicianOverview() {
       lte(consultations.updatedAt, endOfDayDate)
     ));
 
-  const [awaitingCount] = await db
+  const [availableCount] = await db
     .select({ count: count() })
     .from(consultations)
     .where(and(
-      eq(consultations.clinicianId, userId),
-      eq(consultations.status, "waiting_for_clinician")
+      eq(consultations.status, "paid"),
+      isNull(consultations.clinicianId),
+      isNotNull(consultations.paidAt)
     ));
 
   const [completedCount] = await db
@@ -70,7 +71,7 @@ export async function getClinicianOverview() {
   return {
     totalPatients: patCount?.count ?? 0,
     todayConsultations: todayCount?.count ?? 0,
-    awaitingClinician: awaitingCount?.count ?? 0,
+    availableConsultations: availableCount?.count ?? 0,
     completedConsultations: completedCount?.count ?? 0,
     recentConsultations: recent,
     appointments: apts,

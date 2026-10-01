@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { DashboardHeader } from "@/components/dashboard/Header";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
@@ -12,7 +13,7 @@ import {
   IconMessageChatbot, IconSearch, IconEye, IconX, IconCheck,
 } from "@tabler/icons-react";
 import { format } from "date-fns";
-import { cancelConsultation, closeConsultation } from "@/lib/actions/admin";
+import { assignConsultationClinician, cancelConsultation, closeConsultation } from "@/lib/actions/admin";
 
 const statusLabels = [
   "draft", "awaiting_payment", "paid", "waiting_for_clinician",
@@ -29,17 +30,42 @@ interface Consultation {
   status: string;
   fee: string;
   createdAt: Date;
+  paidAt: Date | null;
   patient: { id: string; name: string; email: string } | null;
   clinician: { id: string; name: string; email: string } | null;
 }
 
-export function ConsultationsClient({ initialConsultations, total }: { initialConsultations: Consultation[]; total: number }) {
+interface ApprovedClinician { id: string; name: string }
+
+export function ConsultationsClient({ initialConsultations, total, approvedClinicians }: { initialConsultations: Consultation[]; total: number; approvedClinicians: ApprovedClinician[] }) {
+  const router = useRouter();
   const [consultations, setConsultations] = useState(initialConsultations);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [confirmState, setConfirmState] = useState<{ action: string; id: string } | null>(null);
   const [acting, setActing] = useState(false);
   const [detailCon, setDetailCon] = useState<Consultation | null>(null);
+  const [selectedClinicians, setSelectedClinicians] = useState<Record<string, string>>({});
+  const [assignmentError, setAssignmentError] = useState("");
+  const [assigningId, setAssigningId] = useState<string | null>(null);
+
+  const handleAssign = async (consultation: Consultation) => {
+    const clinicianId = selectedClinicians[consultation.id];
+    if (!clinicianId) return;
+    setAssignmentError("");
+    setAssigningId(consultation.id);
+    const result = await assignConsultationClinician(consultation.id, clinicianId);
+    setAssigningId(null);
+    if (!result.success) {
+      setAssignmentError(result.error || "Unable to assign this consultation.");
+      return;
+    }
+    const clinician = approvedClinicians.find((candidate) => candidate.id === clinicianId);
+    setConsultations((current) => current.map((item) => item.id === consultation.id
+      ? { ...item, clinicianId, clinician: clinician ? { ...clinician, email: "" } : null, status: "waiting_for_clinician" }
+      : item));
+    router.refresh();
+  };
 
   const filtered = consultations.filter((c) => {
     const matchesSearch = !search ||
@@ -53,6 +79,9 @@ export function ConsultationsClient({ initialConsultations, total }: { initialCo
     acc[s] = consultations.filter((c) => c.status === s).length;
     return acc;
   }, {} as Record<string, number>);
+  const unassignedPaidCount = consultations.filter((c) =>
+    c.status === "paid" && !c.clinicianId && c.paidAt !== null
+  ).length;
 
   const handleConfirm = useCallback(async () => {
     if (!confirmState) return;
@@ -108,6 +137,26 @@ export function ConsultationsClient({ initialConsultations, total }: { initialCo
       label: "Actions",
       render: (c) => (
         <div className="flex items-center gap-1.5">
+          {c.status === "paid" && !c.clinicianId && c.paidAt && (
+            <div className="flex items-center gap-1.5">
+              <select
+                aria-label={`Choose clinician for ${c.title}`}
+                value={selectedClinicians[c.id] || ""}
+                onChange={(event) => setSelectedClinicians((current) => ({ ...current, [c.id]: event.target.value }))}
+                className="max-w-40 rounded-lg border border-border bg-white px-2 py-1.5 text-xs text-primary"
+              >
+                <option value="">Choose clinician</option>
+                {approvedClinicians.map((clinician) => <option key={clinician.id} value={clinician.id}>{clinician.name}</option>)}
+              </select>
+              <button
+                onClick={() => handleAssign(c)}
+                disabled={!selectedClinicians[c.id] || assigningId !== null}
+                className="rounded-lg bg-brand px-2.5 py-1.5 text-xs font-medium text-white hover:bg-brand-hover disabled:opacity-50"
+              >
+                {assigningId === c.id ? "Assigning..." : "Assign"}
+              </button>
+            </div>
+          )}
           <button onClick={() => setDetailCon(detailCon?.id === c.id ? null : c)}
             className="p-1.5 rounded-lg text-neutral-400 hover:text-brand hover:bg-brand/5 transition-colors" title="View">
             <IconEye size={16} />
@@ -134,13 +183,21 @@ export function ConsultationsClient({ initialConsultations, total }: { initialCo
       <DashboardHeader title="Consultations" description="Manage all platform consultations" />
 
       <DashboardShell>
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">
+        {assignmentError && <p role="alert" className="text-sm text-red-600">{assignmentError}</p>}
+        {consultations.every((c) => !(c.status === "paid" && !c.clinicianId && c.paidAt)) && (
+          <p className="text-sm text-neutral-500">No unassigned paid consultations.</p>
+        )}
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-9 gap-2">
           {statusLabels.map((s) => (
             <div key={s} className="bg-white border border-border rounded-xl p-3 text-center shadow-sm">
               <p className="text-xs text-neutral-500 capitalize truncate">{s.replace(/_/g, " ")}</p>
               <p className="text-lg font-bold text-primary">{statusCounts[s] || 0}</p>
             </div>
           ))}
+          <div className="bg-white border border-border rounded-xl p-3 text-center shadow-sm">
+            <p className="text-xs text-neutral-500 truncate">Unassigned</p>
+            <p className="text-lg font-bold text-primary">{unassignedPaidCount}</p>
+          </div>
         </div>
 
         <ActivityCard

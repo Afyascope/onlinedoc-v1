@@ -8,7 +8,8 @@ import { QuickActionsCard } from "@/components/dashboard/QuickActionsCard";
 import { ClinicianConsultationsList } from "./consultations-list";
 import { getClinicianOverview } from "./data";
 import { requireApprovedClinician } from "@/lib/clinician-access";
-import { IconUsers, IconCalendarDue, IconClipboardCheck, IconMessage, IconCalendarPlus, IconList, IconStethoscope, IconUserEdit, IconMessageChatbot } from "@tabler/icons-react";
+import { IconUsers, IconCalendarDue, IconClipboardCheck, IconCalendarPlus, IconList, IconStethoscope, IconUserEdit, IconMessageChatbot } from "@tabler/icons-react";
+import Link from "next/link";
 
 export default async function ClinicianDashboard() {
   await requireApprovedClinician();
@@ -35,12 +36,15 @@ export default async function ClinicianDashboard() {
             description="Scheduled"
             icon={<IconCalendarDue size={20} />}
           />
-          <MetricCard
-            title="Awaiting You"
-            value={String(data.awaitingClinician)}
-            description="Ready to start"
-            icon={<IconMessageChatbot size={20} />}
-          />
+          <Link href="/dashboard/clinician/consultations" className="block h-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand">
+            <MetricCard
+              title="Available Consultations"
+              value={String(data.availableConsultations)}
+              description="Paid consultations waiting to be claimed"
+              icon={<IconMessageChatbot size={20} />}
+              className="h-full cursor-pointer"
+            />
+          </Link>
           <MetricCard
             title="Completed"
             value={String(data.completedConsultations)}

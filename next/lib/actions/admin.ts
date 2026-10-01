@@ -8,7 +8,7 @@ import {
   orders, orderItems, payments, downloads,
   notifications, auditLogs, platformSettings, settings as oldSettings,
 } from "@/db/schema";
-import { eq, and, or, like, desc, asc, sql, count, gte, lte, inArray } from "drizzle-orm";
+import { eq, and, or, like, desc, asc, sql, count, gte, lte, inArray, isNull, isNotNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import crypto from "crypto";
@@ -337,8 +337,15 @@ export async function getAllConsultations(page = 1, pageSize = 25) {
     .limit(pageSize)
     .offset(offset);
 
+  const unassignedPaid = await db.select().from(consultations).where(and(
+    eq(consultations.status, "paid"),
+    isNull(consultations.clinicianId),
+    isNotNull(consultations.paidAt)
+  )).orderBy(desc(consultations.paidAt));
+  const consultationsToDisplay = Array.from(new Map([...rows, ...unassignedPaid].map((c) => [c.id, c])).values());
+
   const userIds = new Set<string>();
-  rows.forEach((c) => {
+  consultationsToDisplay.forEach((c) => {
     if (c.patientId) userIds.add(c.patientId);
     if (c.clinicianId) userIds.add(c.clinicianId);
   });
@@ -347,13 +354,18 @@ export async function getAllConsultations(page = 1, pageSize = 25) {
     ? await db.select().from(user).where(inArray(user.id, Array.from(userIds)))
     : [];
   const userMap = new Map(userRows.map((u) => [u.id, u]));
+  const approvedClinicians = await db.select({ id: user.id, name: user.name })
+    .from(user)
+    .where(and(eq(user.role, "clinician"), eq(user.clinicianStatus, "APPROVED")))
+    .orderBy(asc(user.name));
 
   return {
-    consultations: rows.map((c) => ({
+    consultations: consultationsToDisplay.map((c) => ({
       ...c,
       patient: userMap.get(c.patientId) ?? null,
       clinician: c.clinicianId ? userMap.get(c.clinicianId) ?? null : null,
     })),
+    approvedClinicians,
     total,
     page,
     pageSize,
@@ -385,29 +397,81 @@ export async function getConsultationsByStatus(status: string, page = 1, pageSiz
 export async function assignConsultationClinician(consultationId: string, clinicianId: string) {
   const session = await getAdminSession();
 
-  const [clinician] = await db.select({ id: user.id })
-    .from(user)
-    .where(and(eq(user.id, clinicianId), eq(user.role, "clinician"), eq(user.clinicianStatus, "APPROVED")))
-    .limit(1);
-  if (!clinician) throw new Error("Clinician not found or not approved");
+  let clinician: { id: string } | undefined;
+  try {
+    [clinician] = await db.select({ id: user.id })
+      .from(user)
+      .where(and(eq(user.id, clinicianId), eq(user.role, "clinician"), eq(user.clinicianStatus, "APPROVED")))
+      .limit(1);
+  } catch {
+    return { success: false as const, error: "Unable to verify the selected clinician." };
+  }
+  if (!clinician) return { success: false as const, error: "Clinician not found or not approved." };
 
-  await db.update(consultations).set({
-    clinicianId,
-    status: "waiting_for_clinician",
-    updatedAt: new Date(),
-  }).where(eq(consultations.id, consultationId));
+  let assigned: boolean;
+  try {
+    assigned = await db.transaction(async (tx) => {
+      const rows = await tx.update(consultations).set({
+        clinicianId,
+        status: "waiting_for_clinician",
+        updatedAt: new Date(),
+      }).where(and(
+        eq(consultations.id, consultationId),
+        eq(consultations.status, "paid"),
+        isNull(consultations.clinicianId),
+        isNotNull(consultations.paidAt)
+      )).returning({ id: consultations.id });
 
-  await db.insert(consultationStatusHistory).values({
-    id: crypto.randomUUID(),
-    consultationId,
-    status: "waiting_for_clinician",
-    changedBy: session.user.id,
-    createdAt: new Date(),
-  });
+      if (rows.length === 0) return false;
 
-  await audit("consultation_assigned", "consultation", consultationId, { clinicianId }, session.user.id);
+      await tx.insert(consultationStatusHistory).values({
+        id: crypto.randomUUID(),
+        consultationId,
+        status: "waiting_for_clinician",
+        changedBy: session.user.id,
+        createdAt: new Date(),
+      });
+      await tx.insert(notifications).values({
+        id: crypto.randomUUID(),
+        userId: clinicianId,
+        type: "consultation_assigned",
+        title: "Consultation assigned to you",
+        body: "An admin assigned a paid consultation to you. It is ready to start.",
+        link: `/dashboard/clinician/consultations/${consultationId}`,
+        createdAt: new Date(),
+      });
+      await tx.insert(auditLogs).values({
+        id: crypto.randomUUID(),
+        action: "consultation_assigned",
+        target: "consultation",
+        targetId: consultationId,
+        userId: session.user.id,
+        metadata: { clinicianId },
+        createdAt: new Date(),
+      });
+      return true;
+    });
+  } catch {
+    return { success: false as const, error: "Unable to assign this consultation right now." };
+  }
+
+  if (!assigned) {
+    let current: { clinicianId: string | null } | undefined;
+    try {
+      [current] = await db.select({ clinicianId: consultations.clinicianId })
+        .from(consultations).where(eq(consultations.id, consultationId)).limit(1);
+    } catch {
+      return { success: false as const, error: "Unable to verify consultation availability." };
+    }
+    if (!current) return { success: false, error: "Consultation not found." };
+    if (current.clinicianId) return { success: false, error: "This consultation has already been assigned." };
+    return { success: false, error: "Only paid consultations awaiting assignment can be assigned." };
+  }
+
   revalidatePath("/dashboard/admin/consultations");
-  return { success: true };
+  revalidatePath("/dashboard/clinician");
+  revalidatePath("/dashboard/clinician/consultations");
+  return { success: true as const };
 }
 
 export async function cancelConsultation(consultationId: string) {

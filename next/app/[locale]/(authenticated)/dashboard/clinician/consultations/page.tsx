@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { consultations, consultationStatusHistory } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { consultations } from "@/db/schema";
+import { eq, desc, and, isNull, isNotNull } from "drizzle-orm";
 import { headers } from "next/headers";
 import { ClinicianConsultationsClient } from "./client";
 import { requireApprovedClinician } from "@/lib/clinician-access";
@@ -17,5 +17,18 @@ export default async function ClinicianConsultationsPage() {
         .orderBy(desc(consultations.createdAt))
     : [];
 
-  return <ClinicianConsultationsClient consultations={all} unassigned={[]} clinicianId={userId || ""} />;
+  const unassigned = await db.select({
+    id: consultations.id,
+    title: consultations.title,
+    consultationType: consultations.consultationType,
+    status: consultations.status,
+    createdAt: consultations.createdAt,
+    paidAt: consultations.paidAt,
+  }).from(consultations).where(and(
+    eq(consultations.status, "paid"),
+    isNull(consultations.clinicianId),
+    isNotNull(consultations.paidAt)
+  )).orderBy(desc(consultations.paidAt));
+
+  return <ClinicianConsultationsClient consultations={all} unassigned={unassigned} />;
 }
