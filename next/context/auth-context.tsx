@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { authClient } from "@/lib/auth-client";
-import type { AuthSession, AuthUser, UserRole } from "@/types/auth";
+import type { AuthSession, AuthUser, PublicRegistrationRole, UserRole } from "@/types/auth";
 
 interface AuthContextValue {
   user: AuthUser | null;
@@ -11,7 +11,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   role: UserRole | null;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<{ error?: string; user?: AuthUser }>;
-  register: (name: string, email: string, password: string, role: UserRole) => Promise<{ error?: string; data?: any }>;
+  register: (name: string, email: string, password: string, role: PublicRegistrationRole) => Promise<{ error?: string; data?: any }>;
   logout: () => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { user: data?.user as unknown as AuthUser };
   };
 
-  const register = async (name: string, email: string, password: string, role: UserRole) => {
+  const register = async (name: string, email: string, password: string, role: PublicRegistrationRole) => {
     const { data, error } = await authClient.signUp.email({
       name,
       email,

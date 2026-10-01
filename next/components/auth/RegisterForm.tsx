@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
-import type { UserRole } from "@/types/auth";
+import type { PublicRegistrationRole } from "@/types/auth";
 
 export function RegisterForm() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<UserRole>("patient");
+  const [role, setRole] = useState<PublicRegistrationRole>("patient");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);

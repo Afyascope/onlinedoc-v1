@@ -7,6 +7,7 @@ import { appUrl, sendEmail } from "@/lib/email/send";
 import { emailRateLimit } from "@/lib/email/rate-limit";
 import { emailTrace, serializeEmailError } from "@/lib/email/trace";
 import { appUrl as configuredAppUrl } from "@/lib/config";
+import { isPublicRegistrationRole } from "@/lib/public-registration-role.mjs";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -16,12 +17,23 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
+        before: async (newUser) => {
+          // Public sign-up may choose only these roles. Administrative roles
+          // continue to be assigned through trusted server-side provisioning.
+          if (!isPublicRegistrationRole(newUser.role)) return false;
+        },
         after: async (createdUser) => {
           emailTrace("registration.complete", {
             userId: createdUser.id,
             recipient: createdUser.email,
             emailVerified: createdUser.emailVerified,
           });
+        },
+      },
+      update: {
+        before: async (updatedUser) => {
+          // A public update-user request must never promote or demote roles.
+          if (updatedUser.role !== undefined) return false;
         },
       },
     },
@@ -87,8 +99,7 @@ export const auth = betterAuth({
         type: "string",
         required: true,
         defaultValue: "patient",
-        // Role changes are an administrative provisioning operation, never registration input.
-        input: false,
+        input: true,
       },
       clinicianApproved: {
         type: "boolean",

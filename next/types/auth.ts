@@ -1,4 +1,5 @@
 export type UserRole = "patient" | "clinician" | "admin";
+export type PublicRegistrationRole = Exclude<UserRole, "admin">;
 export type ClinicianStatus = "PENDING" | "APPROVED" | "REJECTED" | "SUSPENDED";
 
 export interface AuthUser {
@@ -28,7 +29,7 @@ export interface RegisterInput {
   name: string;
   email: string;
   password: string;
-  role: UserRole;
+  role: PublicRegistrationRole;
 }
 
 export interface LoginInput {
