@@ -13,6 +13,7 @@ export interface Image {
 
 export interface Article {
   title: string;
+  articleType?: "condition" | "symptom" | "diagnosis" | "investigation" | "treatment" | "medication" | "procedure" | "prevention" | "lifestyle" | "patient-education" | "clinical-guide";
   description: string;
   slug: string;
   content: string;
