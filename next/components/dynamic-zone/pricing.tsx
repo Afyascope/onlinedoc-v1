@@ -90,13 +90,13 @@ const Card = ({ plan, onClick }: { plan: Plan; onClick: () => void }) => {
           )}
         </div>
 
-        {/* DESCRIPTION (Replaces Price) */}
+        {/* PRICE */}
         <div className="mb-8 min-h-[80px]">
-          <p className={cn(
-             "text-sm leading-relaxed font-secondary", 
-             plan.featured ? "text-neutral-600" : "text-neutral-600"
-          )}>
-            {plan.description}
+          <p className="flex items-baseline gap-1.5 font-secondary text-neutral-600">
+            <span className="text-base font-medium">KSh</span>
+            <span className="text-[28px] font-semibold leading-none">
+              {plan.price.toLocaleString("en-KE")}
+            </span>
           </p>
         </div>
 

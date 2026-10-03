@@ -46,7 +46,7 @@ export default async function fetchContentType(
 
     // 2. CRITICAL FIX: Use the correct Strapi param for previews
     if (isEnabled) {
-      queryParams.publicationState = "preview";
+      queryParams.status = "draft";
     }
 
     // Construct the URL
