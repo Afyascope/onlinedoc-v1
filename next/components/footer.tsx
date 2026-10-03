@@ -34,9 +34,9 @@ export const Footer = async ({ data, locale }: { data: any, locale: string }) =>
               Designed and Developed by{" "}
               <a 
                 className="text-brand hover:text-brand-hover transition-colors duration-200 font-bold font-primary" 
-                href="https://afyascope.co.ke"
+                href="https://portfolio-sigma-taupe-37.vercel.app/"
               >
-                Afyascope Digital
+                Eric M.Lugaya
               </a>
             </div>
           </div>

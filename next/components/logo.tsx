@@ -21,7 +21,7 @@ export const Logo = ({ image, locale }: { image?: Image, locale?: string }) => {
           className="h-9 w-9 rounded-xl"
         />
         
-  <span className="font-bold text-base md:text-lg lg:text-xl leading-none"><span className="text-primary">Afya</span><span className="text-accent">scope</span></span>
+  <span className="font-bold text-base md:text-lg lg:text-xl leading-none"><span className="text-primary">Online</span><span className="text-accent">Doc</span></span>
       </Link>
     );
   }

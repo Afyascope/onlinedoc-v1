@@ -390,6 +390,26 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
+    articleType: Schema.Attribute.Enumeration<
+      [
+        'condition',
+        'symptom',
+        'diagnosis',
+        'investigation',
+        'treatment',
+        'medication',
+        'procedure',
+        'prevention',
+        'lifestyle',
+        'patient-education',
+        'clinical-guide',
+      ]
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     categories: Schema.Attribute.Relation<
       'manyToMany',
       'api::category.category'
