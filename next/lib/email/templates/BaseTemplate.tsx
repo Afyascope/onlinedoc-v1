@@ -19,7 +19,7 @@ export function BaseTemplate({ title, preview, children }: { title: string; prev
                 <tr><td style={{ padding: "32px" }}>{children}</td></tr>
                 <tr><td style={{ padding: "24px 32px", backgroundColor: "#F8FAFC", color: "#64748B", fontSize: 12, lineHeight: 1.6 }}>
                   <p style={{ margin: "0 0 8px" }}>Need help? <a href={`mailto:${support}`} style={{ color: emailColors.brand }}>{support}</a></p>
-                  <p style={{ margin: 0 }}><a href={`${appUrl}/privacy`} style={{ color: "#64748B" }}>Privacy Policy</a> · © {new Date().getFullYear()} OnlineDoc</p>
+                  <p style={{ margin: 0 }}><a href={`${appUrl}/en/privacy-policy`} style={{ color: "#64748B" }}>Privacy Policy</a> · © {new Date().getFullYear()} OnlineDoc</p>
                 </td></tr>
               </tbody>
             </table>

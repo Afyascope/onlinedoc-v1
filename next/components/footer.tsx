@@ -49,7 +49,7 @@ export const Footer = async ({ data, locale }: { data: any, locale: string }) =>
 
             <div className="flex flex-col space-y-4">
                 <h4 className="text-primary font-bold font-primary">Legal</h4>
-                <LinkSection links={data?.policy_links} locale={locale} />
+                <LinkSection links={ensureLegalLinks(data?.policy_links)} locale={locale} />
             </div>
 
             <div className="flex flex-col space-y-4">
@@ -63,17 +63,38 @@ export const Footer = async ({ data, locale }: { data: any, locale: string }) =>
   );
 };
 
+const ensureLegalLinks = (links?: { text: string; URL: never | string }[]) => {
+  const configured = links ?? [];
+  const labels = new Set(configured.map((link) => link.text.trim().toLowerCase()));
+  return [
+    ...configured,
+    ...(!labels.has("privacy policy") ? [{ text: "Privacy Policy", URL: "/privacy-policy" }] : []),
+    ...(!labels.has("terms of service") ? [{ text: "Terms of Service", URL: "/terms-of-service" }] : []),
+    ...(!labels.has("medical disclaimer") ? [{ text: "Medical Disclaimer", URL: "/terms-of-service#medical-disclaimer" }] : []),
+  ];
+};
+
 const LinkSection = ({ links, locale }: { links?: { text: string; URL: never | string }[], locale: string }) => (
   <div className="flex flex-col space-y-3">
-    {links?.map((link) => (
+    {(links ?? []).map((link) => {
+      const label = link.text.trim().toLowerCase();
+      const legalPath = label === "privacy policy"
+        ? `/${locale}/privacy-policy`
+        : label === "terms of service"
+          ? `/${locale}/terms-of-service`
+          : label === "medical disclaimer"
+            ? `/${locale}/terms-of-service#medical-disclaimer`
+            : null;
+      return (
       <Link
         key={link.text}
         className="transition-colors text-neutral-500 hover:text-brand text-sm font-secondary"
-        href={`${link.URL.startsWith('http') ? '' : `/${locale}`}${link.URL}`}
+        href={legalPath ?? `${link.URL.startsWith('http') ? '' : `/${locale}`}${link.URL}`}
       >
         {link.text}
       </Link>
-    ))}
+      );
+    })}
   </div>
 );
 

@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
+import { useParams } from "next/navigation";
 import type { PublicRegistrationRole } from "@/types/auth";
 
 export function RegisterForm() {
   const router = useRouter();
+  const params = useParams<{ locale: string }>();
+  const locale = params?.locale ?? "en";
   const { register } = useAuth();
 
   const [name, setName] = useState("");
@@ -206,11 +209,11 @@ export function RegisterForm() {
               />
               <span className="text-sm text-neutral-600 font-secondary">
                 I accept the{" "}
-                <a href="/terms" className="text-brand hover:text-brand-hover underline">
+                <a href={`/${locale}/terms-of-service`} className="text-brand hover:text-brand-hover underline">
                   Terms and Conditions
                 </a>{" "}
                 and{" "}
-                <a href="/privacy" className="text-brand hover:text-brand-hover underline">
+                <a href={`/${locale}/privacy-policy`} className="text-brand hover:text-brand-hover underline">
                   Privacy Policy
                 </a>
               </span>

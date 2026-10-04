@@ -2,8 +2,10 @@ import { Link } from "next-view-transitions";
 
 export default function AuthLayout({
   children,
+  params: { locale },
 }: {
   children: React.ReactNode;
+  params: { locale: string };
 }) {
   return (
     <div className="relative min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center px-4 py-12">
@@ -30,10 +32,10 @@ export default function AuthLayout({
         </div>
 
         <div className="mt-8 flex items-center gap-6 text-xs text-neutral-400 font-secondary">
-          <a href="/privacy" className="hover:text-neutral-600 transition-colors">
+          <a href={`/${locale}/privacy-policy`} className="hover:text-neutral-600 transition-colors">
             Privacy Policy
           </a>
-          <a href="/terms" className="hover:text-neutral-600 transition-colors">
+          <a href={`/${locale}/terms-of-service`} className="hover:text-neutral-600 transition-colors">
             Terms &amp; Conditions
           </a>
         </div>
