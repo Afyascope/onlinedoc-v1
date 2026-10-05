@@ -8,6 +8,7 @@ import { Button } from "@/components/elements/button";
 import { Logo } from "@/components/logo";
 import { useMotionValueEvent, useScroll } from "framer-motion";
 import { LocaleSwitcher } from "../locale-switcher";
+import { healthLabel } from "@/lib/health/content";
 
 type Props = {
   leftNavbarItems: {
@@ -76,6 +77,9 @@ export const MobileNavbar = ({ leftNavbarItems, rightNavbarItems, logo, locale }
             </div>
           </div>
           <div className="flex flex-col items-start justify-start gap-[14px] px-8">
+            <Link href={`/${locale}/health`} onClick={() => setOpen(false)} className="relative">
+              <span className="block text-[26px] text-primary font-primary font-bold">{healthLabel(locale, "library")}</span>
+            </Link>
             {leftNavbarItems.map((navItem: any, idx: number) => (
               <div key={`nav-item-${idx}`}>
                 {navItem.children && navItem.children.length > 0 ? (

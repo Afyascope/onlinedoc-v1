@@ -1,0 +1,21 @@
+{
+  "kind": "collectionType",
+  "collectionName": "treatments",
+  "info": { "singularName": "treatment", "pluralName": "treatments", "displayName": "Treatments and Medicines", "description": "General educational information about treatments and medicines." },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": { "i18n": { "localized": true } },
+  "attributes": {
+    "name": { "type": "string", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "genericName": { "type": "string", "pluginOptions": { "i18n": { "localized": true } } },
+    "slug": { "type": "uid", "targetField": "name", "pluginOptions": { "i18n": { "localized": true } } },
+    "description": { "type": "text", "pluginOptions": { "i18n": { "localized": true } } },
+    "uses": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "generalUse": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "commonSideEffects": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "precautions": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "contraindications": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "seo": { "type": "component", "repeatable": false, "component": "shared.seo", "pluginOptions": { "i18n": { "localized": true } } },
+    "conditions": { "type": "relation", "relation": "manyToMany", "target": "api::condition.condition", "mappedBy": "treatments" },
+    "articles": { "type": "relation", "relation": "manyToMany", "target": "api::article.article", "inversedBy": "treatments" }
+  }
+}

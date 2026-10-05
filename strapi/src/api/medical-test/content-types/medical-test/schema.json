@@ -1,0 +1,19 @@
+{
+  "kind": "collectionType",
+  "collectionName": "medical_tests",
+  "info": { "singularName": "medical-test", "pluralName": "medical-tests", "displayName": "Tests and Investigations", "description": "Patient-facing information about medical tests and investigations." },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": { "i18n": { "localized": true } },
+  "attributes": {
+    "name": { "type": "string", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
+    "slug": { "type": "uid", "targetField": "name", "pluginOptions": { "i18n": { "localized": true } } },
+    "shortDescription": { "type": "text", "pluginOptions": { "i18n": { "localized": true } } },
+    "whatItIs": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "whyRequested": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "preparation": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "generalInterpretation": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "seo": { "type": "component", "repeatable": false, "component": "shared.seo", "pluginOptions": { "i18n": { "localized": true } } },
+    "conditions": { "type": "relation", "relation": "manyToMany", "target": "api::condition.condition", "mappedBy": "medicalTests" },
+    "articles": { "type": "relation", "relation": "manyToMany", "target": "api::article.article", "inversedBy": "medicalTests" }
+  }
+}

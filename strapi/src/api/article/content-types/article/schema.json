@@ -87,6 +87,36 @@
       "target": "api::category.category",
       "inversedBy": "articles"
     },
+    "conditions": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::condition.condition",
+      "mappedBy": "articles"
+    },
+    "treatments": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::treatment.treatment",
+      "mappedBy": "articles"
+    },
+    "medicalTests": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::medical-test.medical-test",
+      "mappedBy": "articles"
+    },
+    "healthGuides": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::health-guide.health-guide",
+      "mappedBy": "articles"
+    },
+    "nutritionGuides": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::nutrition-guide.nutrition-guide",
+      "mappedBy": "articles"
+    },
     "dynamic_zone": {
       "pluginOptions": {
         "i18n": {

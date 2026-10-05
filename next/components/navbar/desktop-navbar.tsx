@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Link } from "next-view-transitions";
 import { LocaleSwitcher } from "../locale-switcher";
+import { healthLabel } from "@/lib/health/content";
 
 type Props = {
   leftNavbarItems: {
@@ -57,6 +58,7 @@ export const DesktopNavbar = ({ leftNavbarItems, rightNavbarItems, logo, locale 
       <div className="flex flex-row gap-2 items-center">
         <Logo locale={locale} image={logo?.image} />
         <div className="flex items-center gap-1.5">
+          <NavbarItem href={`/${locale}/health` as never}>{healthLabel(locale, "library")}</NavbarItem>
           {leftNavbarItems.map((item) => (
             <NavbarItem href={`/${locale}${item.URL}` as never} key={item.text} target={item.target}>
               {item.text}

@@ -26,6 +26,12 @@
       "relation": "manyToMany",
       "target": "api::article.article",
       "mappedBy": "categories"
+    },
+    "conditions": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::condition.condition",
+      "mappedBy": "category"
     }
   }
 }

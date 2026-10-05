@@ -2,8 +2,7 @@ import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
 import { OrganizationSchema } from '@/components/seo/json-ld';
 import { fetchCached } from '@/lib/strapi/fetchCached';
-
-const VALID_LOCALES = ["en", "fr", "es", "de", "sw", "ha", "yo", "ig"];
+import { isValidLocale } from '@/lib/i18n/locale';
 
 export default async function MarketingLayout({
   children,
@@ -12,8 +11,8 @@ export default async function MarketingLayout({
   children: React.ReactNode;
   params: { locale: string };
 }) {
-  const isValidLocale = VALID_LOCALES.includes(locale);
-  const pageData = isValidLocale ? await fetchCached('global', { filters: { locale } }, true) : null;
+  const validLocale = isValidLocale(locale);
+  const pageData = validLocale ? await fetchCached('global', { filters: { locale } }, true) : null;
 
   return (
     <>
