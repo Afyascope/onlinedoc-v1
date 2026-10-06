@@ -79,7 +79,8 @@
           "localized": true
         }
       },
-      "type": "blocks"
+      "type": "customField",
+      "customField": "plugin::better-blocks.better-blocks"
     },
     "categories": {
       "type": "relation",

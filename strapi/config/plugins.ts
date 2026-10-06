@@ -7,6 +7,9 @@ export default ({ env }: { env: any }) => {
   }
 
   return {
+  'better-blocks': {
+    enabled: true,
+  },
   'users-permissions': {
     config: {
       jwtSecret: env('JWT_SECRET'),

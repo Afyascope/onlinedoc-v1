@@ -8,7 +8,7 @@
     "title": { "type": "string", "required": true, "pluginOptions": { "i18n": { "localized": true } } },
     "slug": { "type": "uid", "targetField": "title", "pluginOptions": { "i18n": { "localized": true } } },
     "shortDescription": { "type": "text", "pluginOptions": { "i18n": { "localized": true } } },
-    "instructions": { "type": "blocks", "pluginOptions": { "i18n": { "localized": true } } },
+    "instructions": { "type": "customField", "customField": "plugin::better-blocks.better-blocks", "pluginOptions": { "i18n": { "localized": true } } },
     "seo": { "type": "component", "repeatable": false, "component": "shared.seo", "pluginOptions": { "i18n": { "localized": true } } },
     "conditions": { "type": "relation", "relation": "manyToMany", "target": "api::condition.condition", "inversedBy": "healthGuides" },
     "articles": { "type": "relation", "relation": "manyToMany", "target": "api::article.article", "inversedBy": "healthGuides" }

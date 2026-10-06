@@ -1,4 +1,4 @@
-import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+import { BlocksRenderer } from "@qkix/better-blocks-react-renderer";
 import { HealthCard } from "@/components/health/health-card";
 import { healthLabel, type HealthItem, type HealthSection } from "@/lib/health/content";
 

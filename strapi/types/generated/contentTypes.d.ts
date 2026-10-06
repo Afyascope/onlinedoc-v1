@@ -418,7 +418,8 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::condition.condition'
     >;
-    content: Schema.Attribute.Blocks &
+    content: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -618,7 +619,8 @@ export interface ApiConditionCondition extends Struct.CollectionTypeSchema {
   attributes: {
     articles: Schema.Attribute.Relation<'manyToMany', 'api::article.article'>;
     category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
-    causes: Schema.Attribute.Blocks &
+    causes: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -627,7 +629,8 @@ export interface ApiConditionCondition extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    diagnosis: Schema.Attribute.Blocks &
+    diagnosis: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -643,7 +646,8 @@ export interface ApiConditionCondition extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
-    investigations: Schema.Attribute.Blocks &
+    investigations: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -669,20 +673,23 @@ export interface ApiConditionCondition extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::nutrition-guide.nutrition-guide'
     >;
-    overview: Schema.Attribute.Blocks &
+    overview: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
-    prevention: Schema.Attribute.Blocks &
+    prevention: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
     publishedAt: Schema.Attribute.DateTime;
-    riskFactors: Schema.Attribute.Blocks &
+    riskFactors: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -706,13 +713,15 @@ export interface ApiConditionCondition extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
-    symptoms: Schema.Attribute.Blocks &
+    symptoms: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
-    treatmentAndManagement: Schema.Attribute.Blocks &
+    treatmentAndManagement: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -725,7 +734,8 @@ export interface ApiConditionCondition extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    whenToSeekCare: Schema.Attribute.Blocks &
+    whenToSeekCare: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -847,7 +857,8 @@ export interface ApiHealthGuideHealthGuide extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    instructions: Schema.Attribute.Blocks &
+    instructions: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -942,7 +953,8 @@ export interface ApiMedicalTestMedicalTest extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    generalInterpretation: Schema.Attribute.Blocks &
+    generalInterpretation: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -960,7 +972,8 @@ export interface ApiMedicalTestMedicalTest extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
-    preparation: Schema.Attribute.Blocks &
+    preparation: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -988,13 +1001,15 @@ export interface ApiMedicalTestMedicalTest extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    whatItIs: Schema.Attribute.Blocks &
+    whatItIs: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
-    whyRequested: Schema.Attribute.Blocks &
+    whyRequested: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1026,7 +1041,8 @@ export interface ApiNutritionGuideNutritionGuide
       'manyToMany',
       'api::condition.condition'
     >;
-    content: Schema.Attribute.Blocks &
+    content: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1410,7 +1426,8 @@ export interface ApiTreatmentTreatment extends Struct.CollectionTypeSchema {
   };
   attributes: {
     articles: Schema.Attribute.Relation<'manyToMany', 'api::article.article'>;
-    commonSideEffects: Schema.Attribute.Blocks &
+    commonSideEffects: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1420,7 +1437,8 @@ export interface ApiTreatmentTreatment extends Struct.CollectionTypeSchema {
       'manyToMany',
       'api::condition.condition'
     >;
-    contraindications: Schema.Attribute.Blocks &
+    contraindications: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1435,7 +1453,8 @@ export interface ApiTreatmentTreatment extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
-    generalUse: Schema.Attribute.Blocks &
+    generalUse: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1459,7 +1478,8 @@ export interface ApiTreatmentTreatment extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
-    precautions: Schema.Attribute.Blocks &
+    precautions: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1481,7 +1501,8 @@ export interface ApiTreatmentTreatment extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    uses: Schema.Attribute.Blocks &
+    uses: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;

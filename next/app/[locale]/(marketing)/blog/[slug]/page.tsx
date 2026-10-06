@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { BlogLayout } from "@/components/blog-layout";
 import fetchContentType from "@/lib/strapi/fetchContentType";
 import { fetchCached } from "@/lib/strapi/fetchCached";
-import { BlocksRenderer } from "@strapi/blocks-react-renderer";
+import { BlocksRenderer as BetterBlocksRenderer } from "@qkix/better-blocks-react-renderer";
 import { generateMetadataObject } from '@/lib/shared/metadata';
 
 import ClientSlugHandler from "../../ClientSlugHandler";
@@ -57,7 +57,7 @@ export default async function SingleArticlePage({
   return (
     <BlogLayout article={article} locale={params.locale}>
       <ClientSlugHandler localizedSlugs={localizedSlugs} />
-      <BlocksRenderer content={article.content} />
+      <BetterBlocksRenderer content={article.content as never} />
     </BlogLayout>
   );
 }

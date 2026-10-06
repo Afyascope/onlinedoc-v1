@@ -19,6 +19,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@qkix/strapi-plugin-better-blocks": "^0.23.9",
     "@strapi/plugin-cloud": "5.17.0",
     "@strapi/plugin-seo": "^2.0.4",
     "@strapi/plugin-users-permissions": "5.17.0",
