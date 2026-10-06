@@ -7,7 +7,7 @@ COPY package.json package-lock.json ./
 # `npm ci`, so the scripts directory must exist in the image first.
 COPY scripts ./scripts
 COPY patches ./patches
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY . .
 # Do not set NODE_ENV=production here: `strapi build` loads the server config,
