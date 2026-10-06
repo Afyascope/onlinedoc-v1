@@ -15,7 +15,7 @@ COPY . .
 # because no runtime environment is available at build time. NODE_ENV=production
 # is applied in the runtime stage below.
 RUN npm run build
-RUN npm prune --omit=dev
+RUN npm prune --omit=dev --legacy-peer-deps
 
 FROM node:20-bookworm-slim AS runtime
 
