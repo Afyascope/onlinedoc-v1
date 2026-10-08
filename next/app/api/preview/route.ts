@@ -16,6 +16,16 @@ export const GET = async (request: Request) => {
 
   const contentType = uid?.split(".").pop();
 
+  // Health Library structured content types → /health/[section] routes
+  // (routes come from healthSections[*].route in lib/health/content.ts)
+  const healthSectionRoutes: Record<string, string> = {
+    'api::condition.condition': 'conditions',
+    'api::treatment.treatment': 'medicines',
+    'api::medical-test.medical-test': 'tests',
+    'api::health-guide.health-guide': 'guides',
+    'api::nutrition-guide.nutrition-guide': 'nutrition',
+  };
+
   // Specific for the application
   let slugToReturn = `/${locale}/${contentType}`;
 
@@ -29,6 +39,9 @@ export const GET = async (request: Request) => {
     slugToReturn = `/${locale}/blog${slug ? `/${slug}` : ''}`;
   } else if (contentType?.includes('product')) {
     slugToReturn = `/en/products${slug ? `/${slug}` : ''}`;
+  } else if (uid && healthSectionRoutes[uid]) {
+    const sectionRoute = healthSectionRoutes[uid];
+    slugToReturn = `/${locale}/health/${sectionRoute}${slug ? `/${slug}` : ''}`;
   }
 
   const draft = await draftMode()
