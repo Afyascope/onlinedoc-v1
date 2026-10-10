@@ -1,6 +1,7 @@
 import { draftMode } from "next/headers";
 import qs from "qs";
 import { apiUrl } from "@/lib/config";
+import { isPublicLocale, strapiLocaleFor } from "@/i18n.config";
 
 /**
  * Fetches data for a specified Strapi content type.
@@ -20,6 +21,19 @@ interface StrapiData {
 interface StrapiResponse {
   data: StrapiData | StrapiData[];
   meta?: any;
+}
+
+function normalizeLocaleQuery(params: Record<string, unknown>) {
+  const filters =
+    params.filters && typeof params.filters === "object"
+      ? { ...(params.filters as Record<string, unknown>) }
+      : null;
+
+  if (filters && typeof filters.locale === "string" && isPublicLocale(filters.locale)) {
+    filters.locale = strapiLocaleFor(filters.locale);
+  }
+
+  return filters ? { ...params, filters } : params;
 }
 
 export function spreadStrapiData(data: StrapiResponse): StrapiData | null {
@@ -42,7 +56,7 @@ export default async function fetchContentType(
   const { isEnabled } = await draftMode();
 
   try {
-    const queryParams = { ...params };
+    const queryParams = normalizeLocaleQuery(params);
 
     // 2. CRITICAL FIX: Use the correct Strapi param for previews
     if (isEnabled) {

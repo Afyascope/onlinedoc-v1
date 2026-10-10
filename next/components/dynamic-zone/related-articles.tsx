@@ -2,6 +2,7 @@ import { ArticleCard } from "@/components/blog/article-card";
 import { Button } from "@/components/elements/button";
 import { Container } from "../container";
 import { Link } from "next-view-transitions";
+import { isRelatedContentForLocale } from "@/lib/health/related-content";
 
 interface RelatedArticlesCTA {
   text: string;
@@ -23,7 +24,11 @@ export const RelatedArticles = ({
   CTA?: RelatedArticlesCTA | null;
   locale: string;
 }) => {
-  if (!articles || articles.length === 0) return null;
+  const availableArticles = (articles || []).filter((article) =>
+    isRelatedContentForLocale(article, locale)
+  );
+
+  if (availableArticles.length === 0) return null;
 
   return (
     <section className="relative bg-neutral-50">
@@ -40,7 +45,7 @@ export const RelatedArticles = ({
         </div>
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.slice(0, 3).map((article) => (
+          {availableArticles.slice(0, 3).map((article) => (
             <ArticleCard
               key={article.slug}
               article={article}

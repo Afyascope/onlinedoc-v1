@@ -4,11 +4,13 @@ import React, { createContext, useContext, useReducer } from "react";
 
 type State = {
   localizedSlugs: Record<string, string>;
+  localizedSlugPath: string | null;
 };
 
 type Action = {
   type: "SET_SLUGS";
   payload: Record<string, string>;
+  path: string;
 };
 
 const SlugContext = createContext<{
@@ -19,14 +21,20 @@ const SlugContext = createContext<{
 const slugReducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "SET_SLUGS":
-      return { ...state, localizedSlugs: action.payload };
+      return {
+        localizedSlugs: action.payload,
+        localizedSlugPath: action.path,
+      };
     default:
       return state;
   }
 };
 
 export const SlugProvider = ({ children }: { children: React.ReactNode }) => {
-  const [state, dispatch] = useReducer(slugReducer, { localizedSlugs: {} });
+  const [state, dispatch] = useReducer(slugReducer, {
+    localizedSlugs: {},
+    localizedSlugPath: null,
+  });
 
   return (
     <SlugContext.Provider value={{ state, dispatch }}>

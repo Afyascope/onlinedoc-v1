@@ -1,4 +1,4 @@
-const supportedLocales = new Set(["en", "fr"]);
+const supportedLocales = new Set(["en", "sw"]);
 
 export function stripLocalePrefix(pathname) {
   const segments = pathname.split("/");

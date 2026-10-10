@@ -20,7 +20,7 @@ test("localized admin root and nested routes stay inside the admin route", () =>
     "/settings",
   ];
 
-  for (const locale of ["en", "fr"]) {
+  for (const locale of ["en", "sw"]) {
     for (const route of routes) {
       assert.equal(isAdminPath(`/${locale}/dashboard/admin${route}`), true);
       assert.equal(
@@ -36,7 +36,7 @@ test("admin route matching rejects paths outside the admin dashboard", () => {
     "/en/dashboard/patient",
     "/en/dashboard/clinician",
     "/en/dashboard/administrator",
-    "/fr/dashboard/administer",
+    "/sw/dashboard/administer",
     "/dashboard/patient",
   ]) {
     assert.equal(isAdminPath(path), false, path);

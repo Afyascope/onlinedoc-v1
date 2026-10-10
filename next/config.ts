@@ -1,7 +1,15 @@
-export const defaultLocale = "en" as const;
-export const locales = ["en", "fr"] as const;
+export {
+  i18n,
+  isPublicLocale,
+  publicLocaleFor,
+  strapiLocaleFor,
+} from "./i18n.config";
+export type { Locale, StrapiLocale } from "./i18n.config";
 
-export type Locale = (typeof locales)[number];
+import { i18n } from "./i18n.config";
+
+export const defaultLocale = i18n.defaultLocale;
+export const locales = i18n.locales;
 
 export const pathnames = {};
 export const localePrefix = "always";

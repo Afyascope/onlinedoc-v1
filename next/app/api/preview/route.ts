@@ -1,5 +1,6 @@
 import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { toPublicLocale } from '@/lib/i18n/locale'
 
 export const GET = async (request: Request) => {
 
@@ -12,6 +13,11 @@ export const GET = async (request: Request) => {
 
   if (!process.env.PREVIEW_SECRET || !secret || secret !== process.env.PREVIEW_SECRET) {
     return new Response('Invalid token', { status: 401 })
+  }
+
+  const publicLocale = locale ? toPublicLocale(locale) : null;
+  if (!publicLocale) {
+    return new Response('Invalid locale', { status: 400 })
   }
 
   const contentType = uid?.split(".").pop();
@@ -27,21 +33,21 @@ export const GET = async (request: Request) => {
   };
 
   // Specific for the application
-  let slugToReturn = `/${locale}/${contentType}`;
+  let slugToReturn = `/${publicLocale}/${contentType}`;
 
   if (contentType === 'page' || contentType === 'global') {
     if (slug && slug !== 'homepage') {
-      slugToReturn = `/${locale}/${slug}`;
+      slugToReturn = `/${publicLocale}/${slug}`;
     } else {
-      slugToReturn = `/${locale}`;
+      slugToReturn = `/${publicLocale}`;
     }
   } else if (contentType === 'article' || contentType?.includes('blog')) {
-    slugToReturn = `/${locale}/blog${slug ? `/${slug}` : ''}`;
+    slugToReturn = `/${publicLocale}/blog${slug ? `/${slug}` : ''}`;
   } else if (contentType?.includes('product')) {
-    slugToReturn = `/en/products${slug ? `/${slug}` : ''}`;
+    slugToReturn = `/${publicLocale}/products${slug ? `/${slug}` : ''}`;
   } else if (uid && healthSectionRoutes[uid]) {
     const sectionRoute = healthSectionRoutes[uid];
-    slugToReturn = `/${locale}/health/${sectionRoute}${slug ? `/${slug}` : ''}`;
+    slugToReturn = `/${publicLocale}/health/${sectionRoute}${slug ? `/${slug}` : ''}`;
   }
 
   const draft = await draftMode()

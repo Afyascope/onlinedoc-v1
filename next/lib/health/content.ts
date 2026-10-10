@@ -5,6 +5,8 @@ export type HealthSection = "conditions" | "medicines" | "tests" | "guides" | "n
 
 export interface HealthItem {
   id: number;
+  locale?: string;
+  localizations?: Array<{ locale: string; slug: string }>;
   title?: string;
   name?: string;
   slug: string;

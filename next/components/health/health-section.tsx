@@ -1,6 +1,7 @@
 import { BlocksRenderer } from "@qkix/better-blocks-react-renderer";
 import { HealthCard } from "@/components/health/health-card";
 import { healthLabel, type HealthItem, type HealthSection } from "@/lib/health/content";
+import { isRelatedContentForLocale } from "@/lib/health/related-content";
 
 const sectionLabels: Record<string, string> = {
   overview: "overview", causes: "causes", symptoms: "symptoms", riskFactors: "riskFactors", diagnosis: "diagnosis", investigations: "investigations", treatmentAndManagement: "treatmentAndManagement", prevention: "prevention", whenToSeekCare: "whenToSeekCare", uses: "uses", generalUse: "generalUse", commonSideEffects: "commonSideEffects", precautions: "precautions", contraindications: "contraindications", whatItIs: "whatItIs", whyRequested: "whyRequested", preparation: "preparation", generalInterpretation: "generalInterpretation", instructions: "instructions", content: "content",
@@ -22,7 +23,7 @@ export function ContentSections({ item, locale, fields }: { item: HealthItem; lo
 }
 
 export function RelatedContent({ title, items, locale, section }: { title: string; items?: HealthItem[]; locale: string; section: HealthSection }) {
-  const available = items?.filter(item => item.slug) || [];
+  const available = items?.filter(item => isRelatedContentForLocale(item, locale)) || [];
   if (!available.length) return null;
   return <section className="mt-12 border-t border-border pt-8">
     <h2 className="mb-5 font-primary text-2xl font-semibold text-primary">{title}</h2>
