@@ -39,6 +39,13 @@ test("Strapi preview locales are mapped to public route prefixes", async () => {
   assert.match(preview, /`\/\$\{publicLocale\}\/blog/);
 });
 
+test("Strapi preview handler resolves the slug for the previewed locale and status", async () => {
+  const admin = await source("../strapi/config/admin.ts");
+
+  assert.match(admin, /async handler\(uid, \{ documentId, locale, status \}\)/);
+  assert.match(admin, /strapi\.documents\(uid\)\.findOne\(\{[\s\S]*?documentId,[\s\S]*?locale,[\s\S]*?status,[\s\S]*?fields:\s*\["slug"\]/);
+});
+
 test("health detail pages initialize localized slugs from the current entry", async () => {
   const healthPage = await source("app/[locale]/(marketing)/health/[section]/[slug]/page.tsx");
 

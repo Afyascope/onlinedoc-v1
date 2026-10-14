@@ -21,6 +21,8 @@ export default ({ env }) => ({
       async handler(uid, { documentId, locale, status }) {
         const document = await strapi.documents(uid).findOne({
           documentId,
+          locale,
+          status,
           populate: null,
           fields: ["slug"],
         });
