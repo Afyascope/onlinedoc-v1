@@ -1,4 +1,5 @@
 import type { Viewport, Metadata } from "next";
+import { headers } from "next/headers";
 
 import "./globals.css";
 
@@ -21,8 +22,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // The i18n middleware forwards the active public locale as `x-locale`.
+  // Routes without a locale prefix (e.g. /Services) default to English.
+  const locale = headers().get("x-locale");
+  const lang = locale === "sw" ? "sw" : "en";
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={lang} suppressHydrationWarning>
       <body suppressHydrationWarning>
         <SlugProvider>
           {children}

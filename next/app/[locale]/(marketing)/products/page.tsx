@@ -8,6 +8,7 @@ import fetchContentType from "@/lib/strapi/fetchContentType";
 import { fetchCached } from "@/lib/strapi/fetchCached";
 import { toClientProducts } from "@/lib/strapi/sanitizeProduct";
 import { generateMetadataObject } from '@/lib/shared/metadata';
+import { routeAlternates } from '@/lib/seo/alternates';
 import { MarketplaceCatalog } from "./catalog";
 
 import ClientSlugHandler from '../ClientSlugHandler';
@@ -26,7 +27,10 @@ export async function generateMetadata({
   }, true)
 
   const seo = pageData?.seo;
-  const metadata = generateMetadataObject(seo, { locale: params.locale });
+  const metadata = generateMetadataObject(seo, {
+    locale: params.locale,
+    alternates: routeAlternates(locale => `/${locale}/products`, params.locale),
+  });
   return metadata;
 }
 

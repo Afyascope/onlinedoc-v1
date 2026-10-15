@@ -2,8 +2,20 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LegalPage, type LegalSection } from "@/components/legal/legal-page";
 import { isValidLocale } from "@/lib/i18n/locale";
+import { absoluteUrl } from "@/lib/seo/alternates";
 
-export const metadata: Metadata = { title: "Privacy Policy | OnlineDoc", description: "Learn how OnlineDoc collects, uses, safeguards, and manages personal information.", robots: { index: true, follow: true } };
+export function generateMetadata(): Metadata {
+  // English-only content served under every locale prefix: canonicalize to the
+  // default-locale URL and emit no hreflang alternates.
+  const canonical = absoluteUrl("/en/privacy-policy");
+  return {
+    title: "Privacy Policy | OnlineDoc",
+    description: "Learn how OnlineDoc collects, uses, safeguards, and manages personal information.",
+    robots: { index: true, follow: true },
+    alternates: { canonical },
+    openGraph: { url: canonical },
+  };
+}
 
 const sections: LegalSection[] = [
   { title: "1. Introduction", paragraphs: ["OnlineDoc provides digital healthcare services, including online consultations and digital health education. This Privacy Policy explains how personal information is handled when you use our website and services.", "OnlineDoc is the platform name used throughout this policy. Where applicable law requires the operator's registered name or particulars, those details should be supplied through the site's legal-operator configuration; this policy does not invent a legal entity."] },

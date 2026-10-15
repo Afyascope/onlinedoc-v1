@@ -9,6 +9,7 @@ import { ContentSections, RelatedContent } from "@/components/health/health-sect
 import ClientSlugHandler from "../../../ClientSlugHandler";
 import fetchContentType from "@/lib/strapi/fetchContentType";
 import { contentTitle, healthLabel, healthSections, sectionTitle, type HealthItem, type HealthSection, contentMetadata } from "@/lib/health/content";
+import { detailAlternates } from "@/lib/seo/alternates";
 
 function sectionFromParam(value: string): HealthSection | undefined {
   return (Object.keys(healthSections) as HealthSection[]).find(key => healthSections[key].route === value);
@@ -17,8 +18,25 @@ function sectionFromParam(value: string): HealthSection | undefined {
 export async function generateMetadata({ params }: { params: { locale: string; section: string; slug: string } }): Promise<Metadata> {
   const section = sectionFromParam(params.section);
   if (!section) return {};
-  const item = await fetchContentType(healthSections[section].api, { filters: { slug: params.slug, locale: params.locale }, populate: { seo: { populate: ["metaImage", "twitterImage"] } } }, true) as HealthItem | null;
-  return contentMetadata(item?.seo, params.locale);
+  const item = await fetchContentType(healthSections[section].api, {
+    filters: { slug: params.slug, locale: params.locale },
+    populate: {
+      seo: { populate: ["metaImage"] },
+      localizations: { fields: ["slug", "locale"] },
+    },
+  }, true) as HealthItem | null;
+  if (!item) return { title: "Page Not Found", robots: { index: false } };
+  // Articles are exposed at both /blog/{slug} (primary) and /health/articles/{slug}
+  // (health library mirror). Canonicalize the mirror to the primary blog URL so
+  // the two paths never compete as duplicate content.
+  const buildPath = section === "articles"
+    ? (locale: string, slug: string) => `/${locale}/blog/${slug}`
+    : (locale: string, slug: string) => `/${locale}/health/${params.section}/${slug}`;
+  return contentMetadata(item.seo, params.locale, detailAlternates(item.localizations, {
+    locale: params.locale,
+    slug: params.slug,
+    buildPath,
+  }));
 }
 
 const fieldMap: Record<HealthSection, string[]> = {

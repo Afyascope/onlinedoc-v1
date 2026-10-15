@@ -5,6 +5,7 @@ import PageContent from '@/lib/shared/PageContent';
 import fetchContentType from '@/lib/strapi/fetchContentType';
 import { fetchCached } from '@/lib/strapi/fetchCached';
 import { generateMetadataObject } from '@/lib/shared/metadata';
+import { routeAlternates } from '@/lib/seo/alternates';
 import { sanitizeProductDynamicZone } from '@/lib/strapi/sanitizeProduct';
 import { isValidLocale } from '@/lib/i18n/locale';
 import ClientSlugHandler from './ClientSlugHandler';
@@ -30,7 +31,10 @@ export async function generateMetadata({
   );
 
   const seo = pageData?.seo;
-  const metadata = generateMetadataObject(seo, { locale: params.locale });
+  const metadata = generateMetadataObject(seo, {
+    locale: params.locale,
+    alternates: routeAlternates(locale => `/${locale}`, params.locale),
+  });
   return metadata;
 }
 

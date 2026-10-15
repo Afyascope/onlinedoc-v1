@@ -2,8 +2,20 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LegalPage, type LegalSection } from "@/components/legal/legal-page";
 import { isValidLocale } from "@/lib/i18n/locale";
+import { absoluteUrl } from "@/lib/seo/alternates";
 
-export const metadata: Metadata = { title: "Terms of Service | OnlineDoc", description: "Terms governing use of OnlineDoc consultations, digital products, and platform services.", robots: { index: true, follow: true } };
+export function generateMetadata(): Metadata {
+  // English-only content served under every locale prefix: canonicalize to the
+  // default-locale URL and emit no hreflang alternates.
+  const canonical = absoluteUrl("/en/terms-of-service");
+  return {
+    title: "Terms of Service | OnlineDoc",
+    description: "Terms governing use of OnlineDoc consultations, digital products, and platform services.",
+    robots: { index: true, follow: true },
+    alternates: { canonical },
+    openGraph: { url: canonical },
+  };
+}
 
 const sections: LegalSection[] = [
   { title: "1. Introduction", paragraphs: ["These Terms of Service (Terms) govern your access to and use of OnlineDoc, including online consultations, chat consultations, health education, and downloadable digital products. OnlineDoc is the platform through which patients can access licensed clinicians and related services."] },

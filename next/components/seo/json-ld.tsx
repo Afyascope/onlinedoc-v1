@@ -81,12 +81,18 @@ export function ProductSchema({
   description,
   url,
   imageUrl,
+  price,
+  priceCurrency = "KES",
 }: {
   name: string;
   description: string;
   url: string;
   imageUrl?: string;
+  price?: number | string | null;
+  priceCurrency?: string;
 }) {
+  const hasPrice = price !== undefined && price !== null && `${price}`.trim() !== "";
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -96,8 +102,8 @@ export function ProductSchema({
     ...(imageUrl ? { image: imageUrl } : {}),
     offers: {
       "@type": "Offer",
-      price: "0",
-      priceCurrency: "KES",
+      ...(hasPrice ? { price: `${price}` } : {}),
+      priceCurrency,
       availability: "https://schema.org/InStock",
     },
   };

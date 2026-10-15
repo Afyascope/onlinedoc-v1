@@ -1,11 +1,16 @@
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation'; // 1. Add this import
+import { notFound, permanentRedirect } from 'next/navigation';
 import PageContent from '@/lib/shared/PageContent';
 import fetchContentType from '@/lib/strapi/fetchContentType';
 import { fetchCached } from '@/lib/strapi/fetchCached';
 import { generateMetadataObject } from '@/lib/shared/metadata';
+import { detailAlternates } from '@/lib/seo/alternates';
 import { isValidLocale } from '@/lib/i18n/locale';
 import ClientSlugHandler from '../ClientSlugHandler';
+
+// Slugs that have their own dedicated route and must never be served through
+// this catch-all (otherwise e.g. /en/homepage duplicates /en).
+const RESERVED_PAGE_SLUGS = new Set(["homepage"]);
 
 export async function generateMetadata({
   params,
@@ -13,6 +18,7 @@ export async function generateMetadata({
   params: { locale: string; slug: string };
 }): Promise<Metadata> {
   if (!isValidLocale(params.locale)) return {};
+  if (RESERVED_PAGE_SLUGS.has(params.slug)) permanentRedirect(`/${params.locale}`);
 
   const pageData = await fetchContentType(
     "pages",
@@ -21,7 +27,10 @@ export async function generateMetadata({
         slug: params.slug,
         locale: params.locale,
       },
-      populate: "seo.metaImage",
+      populate: {
+        seo: { populate: ["metaImage"] },
+        localizations: { fields: ["slug", "locale"] },
+      },
     },
     true,
   );
@@ -34,11 +43,19 @@ export async function generateMetadata({
   }
 
   const seo = pageData?.seo;
-  return generateMetadataObject(seo, { locale: params.locale });
+  return generateMetadataObject(seo, {
+    locale: params.locale,
+    alternates: detailAlternates(pageData?.localizations, {
+      locale: params.locale,
+      slug: params.slug,
+      buildPath: (locale, slug) => `/${locale}/${slug}`,
+    }),
+  });
 }
 
 export default async function Page({ params }: { params: { locale: string, slug: string } }) {
   if (!isValidLocale(params.locale)) notFound();
+  if (RESERVED_PAGE_SLUGS.has(params.slug)) permanentRedirect(`/${params.locale}`);
 
   const pageData = await fetchCached(
     "pages",
@@ -63,7 +80,7 @@ export default async function Page({ params }: { params: { locale: string, slug:
       return acc;
     },
     { [params.locale]: params.slug }
-  );
+  ) || { [params.locale]: params.slug };
 
   return (
     <>

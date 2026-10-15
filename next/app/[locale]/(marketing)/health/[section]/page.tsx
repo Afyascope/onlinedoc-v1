@@ -6,6 +6,7 @@ import { Subheading } from "@/components/elements/subheading";
 import { HealthSearch } from "@/components/health/health-search";
 import fetchContentType from "@/lib/strapi/fetchContentType";
 import { healthSections, sectionTitle, healthLabel, type HealthListResponse, type HealthSection } from "@/lib/health/content";
+import { routeAlternates, openGraphLocale } from "@/lib/seo/alternates";
 
 function sectionFromParam(value: string): HealthSection | undefined {
   return (Object.keys(healthSections) as HealthSection[]).find(key => healthSections[key].route === value);
@@ -16,7 +17,16 @@ export async function generateMetadata({ params }: { params: { locale: string; s
   if (!section) return {};
   const title = sectionTitle(section, params.locale);
   const description = healthSections[section].intro[params.locale] || healthSections[section].intro.en;
-  return { title, description, openGraph: { title, description, locale: params.locale, siteName: "OnlineDoc Healthcare" } };
+  // The "articles" section mirrors the blog index; canonicalize it to /blog.
+  const pathFor = section === "articles"
+    ? (locale: string) => `/${locale}/blog`
+    : (locale: string) => `/${locale}/health/${healthSections[section].route}`;
+  return {
+    title,
+    description,
+    alternates: routeAlternates(pathFor, params.locale),
+    openGraph: { title, description, locale: openGraphLocale(params.locale), siteName: "OnlineDoc Healthcare" },
+  };
 }
 
 export default async function HealthListing({ params }: { params: { locale: string; section: string } }) {

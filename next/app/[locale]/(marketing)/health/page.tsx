@@ -4,10 +4,17 @@ import { Container } from "@/components/container";
 import { Heading } from "@/components/elements/heading";
 import { Subheading } from "@/components/elements/subheading";
 import { healthLabel, healthSections, sectionTitle, type HealthSection } from "@/lib/health/content";
+import { routeAlternates, openGraphLocale } from "@/lib/seo/alternates";
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const title = healthLabel(params.locale, "library");
-  return { title, description: healthLabel(params.locale, "intro"), openGraph: { title, description: healthLabel(params.locale, "intro"), locale: params.locale, siteName: "OnlineDoc Healthcare" } };
+  const intro = healthLabel(params.locale, "intro");
+  return {
+    title,
+    description: intro,
+    alternates: routeAlternates(locale => `/${locale}/health`, params.locale),
+    openGraph: { title, description: intro, locale: openGraphLocale(params.locale), siteName: "OnlineDoc Healthcare" },
+  };
 }
 
 const icons: Record<HealthSection, string> = { conditions: "♡", medicines: "+", tests: "⌕", guides: "↗", nutrition: "◌", articles: "✎" };

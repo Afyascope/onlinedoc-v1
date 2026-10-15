@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { generateMetadataObject } from "@/lib/shared/metadata";
+import type { Alternates } from "@/lib/seo/alternates";
 
 export type HealthSection = "conditions" | "medicines" | "tests" | "guides" | "nutrition" | "articles";
 
@@ -85,10 +86,10 @@ export function contentDescription(section: HealthSection, item: HealthItem): st
   return healthSections[section].itemDescription(item);
 }
 
-export function contentMetadata(seo: Record<string, unknown> | undefined, locale: string): Metadata {
+export function contentMetadata(seo: Record<string, unknown> | undefined, locale: string, alternates?: Alternates): Metadata {
   return generateMetadataObject(seo, {
     locale,
     type: "article",
-    canonical: typeof seo?.canonicalURL === "string" ? seo.canonicalURL : undefined,
+    alternates,
   }) as Metadata;
 }

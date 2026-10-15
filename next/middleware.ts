@@ -50,6 +50,11 @@ export function middleware(request: NextRequest) {
     locale => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   )
 
+  // Forward the active locale to server components so the root layout can set
+  // the correct <html lang> during SSR. Clone the incoming headers so existing
+  // request headers (auth, cookies, etc.) are preserved.
+  const requestHeaders = new Headers(request.headers)
+
   // Layer 1: i18n (existing logic)
   if (pathnameIsMissingLocale) {
     const locale = getLocale(request)
@@ -64,12 +69,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  requestHeaders.set('x-locale', locale)
+
   // Strip locale to check the actual route
   const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
 
   // Public routes — always accessible
   if (publicRoutes.some(route => pathWithoutLocale.startsWith(route))) {
-    return NextResponse.next();
+    return NextResponse.next({ request: { headers: requestHeaders } });
   }
 
   // Protected routes — check session cookie existence
@@ -87,7 +94,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  return NextResponse.next();
+  return NextResponse.next({ request: { headers: requestHeaders } });
 }
 
 export const config = {
