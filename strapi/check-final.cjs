@@ -1,0 +1,10 @@
+const Database = require('better-sqlite3');
+const db = new Database('.tmp/data.db', { readonly: true });
+const en = db.prepare(`SELECT document_id, locale, title, instructions FROM health_guides WHERE document_id='tkqs5rsyjj4kbgksuwa4l9gu' AND locale='en' LIMIT 1`).get();
+const sw = db.prepare(`SELECT document_id, locale, title, instructions, published_at, updated_at, created_at FROM health_guides WHERE document_id='tkqs5rsyjj4kbgksuwa4l9gu' AND locale='sw-KE' LIMIT 1`).get();
+const enBefore = JSON.parse(require('fs').readFileSync('/tmp/opencode/pilot-en-instructions.json'));
+console.log('EN unchanged:', en.instructions === require('fs').readFileSync('/tmp/opencode/pilot-en-instructions.json').toString());
+console.log('sw-KE exists:', !!sw);
+console.log('sw-KE draft?', sw && sw.published_at === null);
+console.log('linked same docId:', en.document_id === sw.document_id);
+db.close();

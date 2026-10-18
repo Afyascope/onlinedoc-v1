@@ -1,0 +1,101 @@
+diff --git a/node_modules/strapi-plugin-ai-translator/dist/admin/index-CkFc9Uv8.mjs b/node_modules/strapi-plugin-ai-translator/dist/admin/index-CkFc9Uv8.mjs
+index 1c19cb6..ebffd9c 100644
+--- a/node_modules/strapi-plugin-ai-translator/dist/admin/index-CkFc9Uv8.mjs
++++ b/node_modules/strapi-plugin-ai-translator/dist/admin/index-CkFc9Uv8.mjs
+@@ -5,7 +5,9 @@ import React__default, { useContext, useRef, useCallback, useDebugValue, useMemo
+ import { useIntl, FormattedMessage } from "react-intl";
+ import { useNotification, useFetchClient, unstable_useContentManagerContext } from "@strapi/strapi/admin";
+ import "react-dom/client";
+-import { Flex, Box, Popover, Typography, Button, LinkButton, Link, setOpacity, Portal, Alert, Field, Th, SubNav, Badge } from "@strapi/design-system";
++import { Flex, Box, Popover, Typography, Button, LinkButton, Link, Portal, Alert, Field, Th, SubNav, Badge } from "@strapi/design-system";
++import { Arrow as PopoverArrowPrimitive } from "@radix-ui/react-popover";
++const setOpacity = (hex, alpha) => `${hex}${Math.floor(alpha * 255).toString(16).padStart(2, "0")}`;
+ import { useNavigate, useLocation, NavLink, useParams } from "react-router-dom";
+ import ReactDOM, { unstable_batchedUpdates as unstable_batchedUpdates$1 } from "react-dom";
+ import "@strapi/icons/symbols";
+@@ -20165,7 +20167,7 @@ const ContentContainer = styled(Box)`
+     padding-left: ${({ theme }) => theme.spaces[4]};
+   }
+ `;
+-const PopoverArrow = styled(Popover.Arrow)`
++const PopoverArrow = styled(PopoverArrowPrimitive)`
+   fill: ${({ theme }) => theme.colors.neutral0};
+   transform: translateY(-16px) rotate(-90deg);
+ `;
+diff --git a/node_modules/strapi-plugin-ai-translator/dist/admin/index-L3v0Zi_I.js b/node_modules/strapi-plugin-ai-translator/dist/admin/index-L3v0Zi_I.js
+index d4000b6..4d5ee70 100644
+--- a/node_modules/strapi-plugin-ai-translator/dist/admin/index-L3v0Zi_I.js
++++ b/node_modules/strapi-plugin-ai-translator/dist/admin/index-L3v0Zi_I.js
+@@ -6,6 +6,8 @@ const reactIntl = require("react-intl");
+ const admin$1 = require("@strapi/strapi/admin");
+ require("react-dom/client");
+ const designSystem = require("@strapi/design-system");
++const radixPopover = require("@radix-ui/react-popover");
++const setOpacity = (hex, alpha) => `${hex}${Math.floor(alpha * 255).toString(16).padStart(2, "0")}`;
+ const reactRouterDom = require("react-router-dom");
+ const ReactDOM = require("react-dom");
+ require("@strapi/icons/symbols");
+@@ -20185,7 +20187,7 @@ const ContentContainer = styled.styled(designSystem.Box)`
+     padding-left: ${({ theme }) => theme.spaces[4]};
+   }
+ `;
+-const PopoverArrow = styled.styled(designSystem.Popover.Arrow)`
++const PopoverArrow = styled.styled(radixPopover.Arrow)`
+   fill: ${({ theme }) => theme.colors.neutral0};
+   transform: translateY(-16px) rotate(-90deg);
+ `;
+@@ -20982,7 +20984,7 @@ const GuidedTourOverlay = styled.styled(designSystem.Box)`
+   left: 0;
+   right: 0;
+   bottom: 0;
+-  background-color: ${({ theme }) => designSystem.setOpacity(theme.colors.neutral800, 0.2)};
++  background-color: ${({ theme }) => setOpacity(theme.colors.neutral800, 0.2)};
+   z-index: 10;
+ `;
+ const GuidedTourTooltipImpl = ({ children, content, tourName, step, when }) => {
+diff --git a/node_modules/strapi-plugin-ai-translator/dist/server/index.js b/node_modules/strapi-plugin-ai-translator/dist/server/index.js
+index bc113ab..715b8fd 100644
+--- a/node_modules/strapi-plugin-ai-translator/dist/server/index.js
++++ b/node_modules/strapi-plugin-ai-translator/dist/server/index.js
+@@ -403,6 +403,18 @@ const contentTypeService = ({ strapi }) => ({
+           }
+           continue;
+         }
++        if (fieldDef.type === "customField" && fieldDef.customField === "plugin::better-blocks.better-blocks") {
++          const bbLocalized = hasFieldLevelI18n ? fieldDef.pluginOptions?.i18n?.localized === true : true;
++          if (!bbLocalized) {
++            continue;
++          }
++          localizableFields.push({
++            name: fieldName,
++            type: "blocks",
++            required: fieldDef.required || false
++          });
++          continue;
++        }
+         if (!TRANSLATABLE_FIELD_TYPES.has(fieldDef.type)) {
+           continue;
+         }
+diff --git a/node_modules/strapi-plugin-ai-translator/dist/server/index.mjs b/node_modules/strapi-plugin-ai-translator/dist/server/index.mjs
+index 5385cc9..ad506a8 100644
+--- a/node_modules/strapi-plugin-ai-translator/dist/server/index.mjs
++++ b/node_modules/strapi-plugin-ai-translator/dist/server/index.mjs
+@@ -401,6 +401,18 @@ const contentTypeService = ({ strapi }) => ({
+           }
+           continue;
+         }
++        if (fieldDef.type === "customField" && fieldDef.customField === "plugin::better-blocks.better-blocks") {
++          const bbLocalized = hasFieldLevelI18n ? fieldDef.pluginOptions?.i18n?.localized === true : true;
++          if (!bbLocalized) {
++            continue;
++          }
++          localizableFields.push({
++            name: fieldName,
++            type: "blocks",
++            required: fieldDef.required || false
++          });
++          continue;
++        }
+         if (!TRANSLATABLE_FIELD_TYPES.has(fieldDef.type)) {
+           continue;
+         }

@@ -10,6 +10,9 @@ export default ({ env }: { env: any }) => {
   'better-blocks': {
     enabled: true,
   },
+  'ai-translator': {
+    enabled: true,
+  },
   'users-permissions': {
     config: {
       jwtSecret: env('JWT_SECRET'),

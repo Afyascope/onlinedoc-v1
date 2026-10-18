@@ -28,7 +28,7 @@
     "articles": { "type": "relation", "relation": "manyToMany", "target": "api::article.article", "inversedBy": "conditions" },
     "treatments": { "type": "relation", "relation": "manyToMany", "target": "api::treatment.treatment", "inversedBy": "conditions" },
     "medicalTests": { "type": "relation", "relation": "manyToMany", "target": "api::medical-test.medical-test", "inversedBy": "conditions" },
-    "nutritionGuides": { "type": "relation", "relation": "manyToMany", "target": "api::nutrition-guide.nutrition-guide", "inversedBy": "conditions" },
+    "nutritionGuides": { "type": "relation", "relation": "manyToMany", "target": "api::nutrition-guide.nutrition-guide", "mappedBy": "conditions" },
     "healthGuides": { "type": "relation", "relation": "manyToMany", "target": "api::health-guide.health-guide", "mappedBy": "conditions" }
   }
 }
