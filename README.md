@@ -156,4 +156,4 @@ Eric Musanyi — Lead Clinician & Developer
 If you'd like, I can also:
 
 - Add a short troubleshooting/development section (how to run Strapi + seed data).
-- Add badges that show build/test status for CI if you have a CI provider configured.
+- Add badges that show build/test status for CI if you have a CI provider configured

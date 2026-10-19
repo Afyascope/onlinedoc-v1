@@ -49,7 +49,7 @@ const fieldMap: Record<HealthSection, string[]> = {
 export default async function HealthDetail({ params }: { params: { locale: string; section: string; slug: string } }) {
   const section = sectionFromParam(params.section);
   if (!section) notFound();
-  const item = await fetchContentType(healthSections[section].api, { filters: { slug: params.slug, locale: params.locale } }, true) as HealthItem | null;
+  const item = await fetchContentType(healthSections[section].api, { filters: { slug: params.slug, locale: params.locale } }, true, true) as HealthItem | null;
   if (!item) notFound();
   const localizedSlugs = item.localizations?.reduce(
     (acc: Record<string, string>, localization) => {

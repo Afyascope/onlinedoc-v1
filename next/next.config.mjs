@@ -26,10 +26,28 @@ function strapiImageRemotePatterns() {
   }
 }
 
+function r2ImageRemotePatterns() {
+  const endpoint = process.env.R2_ENDPOINT;
+  const bucket = process.env.R2_BUCKET;
+  if (!endpoint || !bucket) return [];
+  try {
+    const parsed = new URL(endpoint);
+    return [{
+      protocol: parsed.protocol.replace(":", ""),
+      hostname: `${bucket}.${parsed.hostname}`,
+    }];
+  } catch {
+    return [];
+  }
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: strapiImageRemotePatterns(),
+    remotePatterns: [
+      ...strapiImageRemotePatterns(),
+      ...r2ImageRemotePatterns(),
+    ],
   },
 
   pageExtensions: ["ts", "tsx"],

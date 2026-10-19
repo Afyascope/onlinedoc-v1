@@ -44,7 +44,7 @@ export default async function Blog({
   }, true)
   const articles = await fetchContentType('articles', {
     filters: { locale: params.locale },
-  }, false)
+  }, false, true)
 
   const articleList: Article[] = articles?.data ?? [];
   const [featured, ...rest] = articleList;

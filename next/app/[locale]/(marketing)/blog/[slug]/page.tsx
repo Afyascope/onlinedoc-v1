@@ -60,6 +60,7 @@ export default async function SingleArticlePage({
       }
     },
     true,
+    true,
   );
 
   if (!article) {

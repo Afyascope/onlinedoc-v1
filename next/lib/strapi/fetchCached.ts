@@ -5,8 +5,9 @@ export const fetchCached = cache(
   async (
     contentType: string,
     params?: Record<string, unknown>,
-    spreadData?: boolean
+    spreadData?: boolean,
+    fresh?: boolean,
   ): Promise<any> => {
-    return fetchContentType(contentType, params, spreadData);
+    return fetchContentType(contentType, params, spreadData, fresh);
   }
 );
