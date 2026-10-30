@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "catalogue_releases_one_active_per_domain" ON "catalogue_releases" USING btree ("domain") WHERE "status" = 'active';

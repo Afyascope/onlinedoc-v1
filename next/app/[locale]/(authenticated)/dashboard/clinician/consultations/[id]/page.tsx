@@ -1,10 +1,11 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { consultations, consultationStatusHistory, consultationNotes, consultationFiles, user } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { consultations, consultationStatusHistory, consultationNotes, consultationFiles, user, prescriptions } from "@/db/schema";
+import { and, asc, eq, desc } from "drizzle-orm";
 import { headers } from "next/headers";
 import { ClinicianConsultationDetailClient } from "./client";
 import { requireApprovedClinician } from "@/lib/clinician-access";
+import { getConsultationClinicalSelections } from "@/lib/catalogue/service";
 
 export default async function ClinicianConsultationDetailPage({ params }: { params: { id: string } }) {
   await requireApprovedClinician();
@@ -52,6 +53,12 @@ export default async function ClinicianConsultationDetailPage({ params }: { para
     .limit(1);
 
   const canAssign = c.clinicianId === userId;
+  const { diagnoses, requests } = await getConsultationClinicalSelections(params.id);
+  const prescriptionItems = await db
+    .select()
+    .from(prescriptions)
+    .where(and(eq(prescriptions.consultationId, params.id)))
+    .orderBy(asc(prescriptions.sortOrder), desc(prescriptions.createdAt));
 
   return (
     <ClinicianConsultationDetailClient
@@ -62,6 +69,9 @@ export default async function ClinicianConsultationDetailPage({ params }: { para
       patient={patient[0] || null}
       userId={userId || ""}
       canAssign={canAssign}
+      diagnoses={diagnoses}
+      requests={requests}
+      prescriptionItems={prescriptionItems}
     />
   );
 }

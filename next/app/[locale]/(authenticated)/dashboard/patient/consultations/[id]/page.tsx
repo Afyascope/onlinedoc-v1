@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/db";
-import { consultations, consultationStatusHistory, consultationNotes, consultationFiles } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { consultations, consultationStatusHistory, consultationFiles, consultationRequests, prescriptions } from "@/db/schema";
+import { and, eq, desc } from "drizzle-orm";
 import { headers } from "next/headers";
 import { PatientConsultationDetailClient } from "./client";
 
@@ -10,7 +10,18 @@ export default async function ConsultationDetailPage({ params }: { params: { id:
   const userId = session?.user?.id;
 
   const consultationRows = userId
-    ? await db.select().from(consultations).where(eq(consultations.id, params.id)).limit(1)
+    ? await db.select({
+        id: consultations.id,
+        patientId: consultations.patientId,
+        clinicianId: consultations.clinicianId,
+        title: consultations.title,
+        consultationType: consultations.consultationType,
+        status: consultations.status,
+        fee: consultations.fee,
+        completedAt: consultations.completedAt,
+        followUpDate: consultations.followUpDate,
+        createdAt: consultations.createdAt,
+      }).from(consultations).where(eq(consultations.id, params.id)).limit(1)
     : [];
 
   if (consultationRows.length === 0) {
@@ -29,25 +40,41 @@ export default async function ConsultationDetailPage({ params }: { params: { id:
     .where(eq(consultationStatusHistory.consultationId, params.id))
     .orderBy(desc(consultationStatusHistory.createdAt));
 
-  const notesRows = await db
-    .select()
-    .from(consultationNotes)
-    .where(eq(consultationNotes.consultationId, params.id))
-    .orderBy(desc(consultationNotes.createdAt));
-
   const files = await db
     .select()
     .from(consultationFiles)
     .where(eq(consultationFiles.consultationId, params.id))
     .orderBy(desc(consultationFiles.createdAt));
 
+  const [prescriptionDocument, laboratoryDocument, radiologyDocument] = await Promise.all([
+    db.select({ id: prescriptions.id })
+      .from(prescriptions)
+      .where(eq(prescriptions.consultationId, params.id))
+      .limit(1),
+    db.select({ id: consultationRequests.id })
+      .from(consultationRequests)
+      .where(and(
+        eq(consultationRequests.consultationId, params.id),
+        eq(consultationRequests.domain, "laboratory"),
+      ))
+      .limit(1),
+    db.select({ id: consultationRequests.id })
+      .from(consultationRequests)
+      .where(and(
+        eq(consultationRequests.consultationId, params.id),
+        eq(consultationRequests.domain, "radiology"),
+      ))
+      .limit(1),
+  ]);
+
   return (
     <PatientConsultationDetailClient
       consultation={consultation}
       statusHistory={statusHistory}
-      notes={notesRows}
       files={files}
-      role={session?.user?.role as "patient" | "clinician"}
+      hasPrescriptionDocument={prescriptionDocument.length > 0}
+      hasLaboratoryDocument={laboratoryDocument.length > 0}
+      hasRadiologyDocument={radiologyDocument.length > 0}
     />
   );
 }

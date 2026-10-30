@@ -10,7 +10,14 @@ export default async function ConsultationsPage() {
   const userId = session?.user?.id;
 
   const list = userId
-    ? await db.select().from(consultations).where(eq(consultations.patientId, userId)).orderBy(desc(consultations.createdAt))
+    ? await db.select({
+        id: consultations.id,
+        title: consultations.title,
+        consultationType: consultations.consultationType,
+        status: consultations.status,
+        fee: consultations.fee,
+        createdAt: consultations.createdAt,
+      }).from(consultations).where(eq(consultations.patientId, userId)).orderBy(desc(consultations.createdAt))
     : [];
 
   return <PatientConsultationsClient consultations={list} />;

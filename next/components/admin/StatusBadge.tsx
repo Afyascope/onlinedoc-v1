@@ -20,6 +20,11 @@ const statusColors: Record<string, string> = {
   // Active/Suspended
   active: "bg-green-50 text-green-700",
   suspended: "bg-red-50 text-red-700",
+  // Catalogue lifecycle
+  imported: "bg-blue-50 text-blue-700",
+  validated: "bg-cyan-50 text-cyan-700",
+  retired: "bg-neutral-100 text-neutral-500",
+  inactive: "bg-amber-50 text-amber-700",
   // Consultation statuses
   draft: "bg-neutral-100 text-neutral-600",
   awaiting_payment: "bg-amber-50 text-amber-700",

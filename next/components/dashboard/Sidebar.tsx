@@ -31,6 +31,7 @@ import {
   IconReport,
   IconChartBar,
   IconHistory,
+  IconDatabase,
 } from "@tabler/icons-react";
 
 interface NavItem {
@@ -66,6 +67,7 @@ const navConfig: Record<UserRole, NavItem[]> = {
     { label: "Users", href: "/dashboard/admin/users", icon: <IconUsers size={20} /> },
     { label: "Clinicians", href: "/dashboard/admin/clinicians", icon: <IconStethoscope size={20} /> },
     { label: "Consultations", href: "/dashboard/admin/consultations", icon: <IconMessageChatbot size={20} /> },
+    { label: "Catalogue", href: "/dashboard/admin/catalogue", icon: <IconDatabase size={20} /> },
     { label: "Marketplace", href: "/dashboard/admin/products", icon: <IconPackage size={20} /> },
     { label: "Orders", href: "/dashboard/admin/orders", icon: <IconShoppingCart size={20} /> },
     { label: "Payments", href: "/dashboard/admin/payments", icon: <IconCreditCard size={20} /> },

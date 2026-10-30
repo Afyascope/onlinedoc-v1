@@ -27,7 +27,6 @@ interface Consultation {
   consultationType: string;
   status: string;
   fee: string;
-  paystackReference: string | null;
 }
 
 const paymentMethods = [
