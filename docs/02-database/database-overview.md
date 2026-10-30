@@ -36,6 +36,7 @@ The database is organized into logical business domains.
 
 - Identity
 - Consultations
+- Clinical Catalogue
 - Communication
 - Commerce
 - Content
@@ -64,7 +65,33 @@ Responsible for healthcare interactions.
 Includes:
 
 - Consultations
-- Consultation Notes (future)
+- Consultation Notes (including History Notes)
+- Consultation Diagnoses
+- Consultation Requests (laboratory and radiology)
+- Prescriptions
+- Consultation Documents
+- Consultation Status History
+
+Structured clinical selections store immutable snapshots of catalogue values,
+source metadata, and release versions so historical records are not rewritten
+when catalogues change.
+
+---
+
+# Clinical Catalogue Domain
+
+Responsible for approved clinical terminology used during consultations.
+
+Includes:
+
+- Catalogue Releases
+- Catalogue Resources
+- Catalogue Resource History
+
+The catalogue lives in PostgreSQL, not Strapi. Four domains are supported:
+diagnosis, laboratory, radiology, and medication. Each domain has at most one
+active release; imports are staged, validated, approved, and activated before
+clinicians can search them. See `../04-features/clinical-catalogue.md`.
 
 ---
 
@@ -127,6 +154,9 @@ The database follows these principles.
 - Preserve historical information.
 - Use relationships instead of repeated values.
 - Design for future expansion.
+- Keep clinical catalogue data in PostgreSQL and version it through releases.
+- Snapshot clinical selections instead of relying on mutable catalogue rows.
+- Keep generated document metadata separate from on-demand PDF bytes.
 
 ---
 

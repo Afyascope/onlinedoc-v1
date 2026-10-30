@@ -1,36 +1,19 @@
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { describeDatabaseTarget, sanitizeDatabaseError } from "@/lib/db/errors";
+import { configureDatabaseNetworking } from "@/lib/db/network";
 import * as schema from "./schema";
 
-const globalForDb = globalThis as unknown as { queryClient?: ReturnType<typeof postgres>; db?: ReturnType<typeof drizzle>; diagnosticStarted?: boolean };
+const globalForDb = globalThis as unknown as {
+  queryClient?: ReturnType<typeof postgres>;
+  db?: ReturnType<typeof drizzle>;
+  diagnosticStarted?: boolean;
+  networkConfigured?: ReturnType<typeof configureDatabaseNetworking>;
+};
 
-function databaseUrlDiagnostics() {
-  const raw = process.env.DATABASE_URL;
-  if (!raw) return { present: false };
-  try {
-    const url = new URL(raw);
-    const passwordMasked = url.password.length > 0;
-    url.password = passwordMasked ? "***" : "";
-    return {
-      present: true,
-      url: url.toString(),
-      host: url.hostname,
-      port: Number(url.port || 5432),
-      sslmode: url.searchParams.get("sslmode"),
-      pooledEndpoint: /-pooler\./i.test(url.hostname),
-      passwordMasked,
-    };
-  } catch (error) {
-    return { present: true, parseError: error instanceof Error ? error.message : String(error) };
-  }
-}
-
-function databaseError(error: unknown) {
-  if (error instanceof Error) {
-    return { name: error.name, message: error.message, code: (error as Error & { code?: string }).code };
-  }
-  return { name: "UnknownError" };
+if (!globalForDb.networkConfigured) {
+  globalForDb.networkConfigured = configureDatabaseNetworking();
 }
 
 if (!globalForDb.queryClient) {
@@ -55,7 +38,7 @@ if (process.env.NODE_ENV !== "test" && process.env.NEXT_PHASE !== "phase-product
   globalForDb.diagnosticStarted = true;
   void (async () => {
     const startedAt = Date.now();
-    console.info(JSON.stringify({ event: "database.startup.diagnostic.started", startedAt: new Date(startedAt).toISOString(), config: databaseUrlDiagnostics(), postgres: { ssl: "require", connect_timeout: 10, idle_timeout: 30, max: 1 } }));
+    console.info(JSON.stringify({ event: "database.startup.diagnostic.started", startedAt: new Date(startedAt).toISOString(), config: describeDatabaseTarget(process.env.DATABASE_URL), network: globalForDb.networkConfigured, postgres: { ssl: "require", connect_timeout: 10, idle_timeout: 30, max: 1 } }));
     try {
       const result = await db.execute(sql`SELECT 1 AS connected, current_database() AS database, current_user AS user, version() AS version`);
       const completedAt = Date.now();
@@ -63,7 +46,7 @@ if (process.env.NODE_ENV !== "test" && process.env.NEXT_PHASE !== "phase-product
       console.info(JSON.stringify({ event: "database.startup.diagnostic.succeeded", completedAt: new Date(completedAt).toISOString(), durationMs: completedAt - startedAt, tcpTlsAuthenticationAndSql: "completed", connected: row?.connected, currentDatabase: row?.database, currentUser: row?.user, version: row?.version }));
     } catch (error) {
       const completedAt = Date.now();
-      console.error(JSON.stringify({ event: "database.startup.diagnostic.failed", completedAt: new Date(completedAt).toISOString(), durationMs: completedAt - startedAt, error: databaseError(error) }));
+      console.error(JSON.stringify({ event: "database.startup.diagnostic.failed", completedAt: new Date(completedAt).toISOString(), durationMs: completedAt - startedAt, error: sanitizeDatabaseError(error) }));
     }
   })();
 }
