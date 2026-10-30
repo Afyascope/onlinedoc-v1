@@ -1,0 +1,1 @@
+ALTER TABLE "catalogue_resources" ADD COLUMN "notes" text;

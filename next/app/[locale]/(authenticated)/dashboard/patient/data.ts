@@ -47,7 +47,12 @@ export async function getPatientOverview() {
     .where(eq(medicalRecords.patientId, userId));
 
   const recent = await db
-    .select()
+    .select({
+      id: consultations.id,
+      title: consultations.title,
+      status: consultations.status,
+      createdAt: consultations.createdAt,
+    })
     .from(consultations)
     .where(eq(consultations.patientId, userId))
     .orderBy(consultations.createdAt)

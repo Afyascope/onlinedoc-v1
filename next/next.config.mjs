@@ -52,6 +52,14 @@ const nextConfig = {
 
   pageExtensions: ["ts", "tsx"],
 
+  // Catalogue imports allow files up to 10 MB. Leave headroom for multipart
+  // form overhead; the catalogue parser enforces the exact 10 MB limit.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "12mb",
+    },
+  },
+
   // 3. REDIRECTS: Keep your dynamic redirect logic
   async redirects() {
     let redirections = [];

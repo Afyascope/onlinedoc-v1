@@ -5,15 +5,19 @@ import { DashboardHeader } from "@/components/dashboard/Header";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
 import { ActivityCard } from "@/components/dashboard/ActivityCard";
 import { IconPill, IconRefresh } from "@tabler/icons-react";
+import { formatPrescription } from "@/lib/prescriptions/display";
 import { format } from "date-fns";
 
 interface Prescription {
   id: string;
-  clinicianId: string;
   medication: string;
   dosage: string;
+  dosageForm: string | null;
   frequency: string;
+  duration: string | null;
+  route: string | null;
   instructions: string | null;
+  strengthSnapshot: string | null;
   startDate: string;
   endDate: string | null;
   status: string;
@@ -47,20 +51,28 @@ export function PatientPrescriptionsClient({ prescriptions: list }: { prescripti
             </div>
           ) : (
             <div className="space-y-3">
-              {active.map((p) => (
+              {active.map((p) => {
+                const display = formatPrescription({
+                  medication: p.medication,
+                  dosage: p.dosage,
+                  dosageForm: p.dosageForm,
+                  frequency: p.frequency,
+                  duration: p.duration,
+                  route: p.route,
+                  instructions: p.instructions,
+                  strength: p.strengthSnapshot,
+                });
+                return (
                 <div key={p.id} className="p-4 rounded-xl border border-border hover:border-brand/20 transition-colors">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-primary">{p.medication}</p>
-                      <p className="text-xs text-neutral-500 mt-0.5">{p.dosage} &middot; {p.frequency}</p>
+                      <p className="text-sm font-semibold text-primary">{display.heading}</p>
+                      <p className="text-xs text-neutral-500 mt-0.5">{display.instruction ?? "Dosage instructions not recorded."}</p>
                     </div>
                     <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${statusColors[p.status]}`}>
                       {p.status}
                     </span>
                   </div>
-                  {p.instructions && (
-                    <p className="text-xs text-neutral-500 mt-2">{p.instructions}</p>
-                  )}
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                     <p className="text-xs text-neutral-400">
                       {format(new Date(p.startDate), "MMM d, yyyy")}
@@ -77,7 +89,8 @@ export function PatientPrescriptionsClient({ prescriptions: list }: { prescripti
                     </button>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </ActivityCard>
@@ -90,12 +103,23 @@ export function PatientPrescriptionsClient({ prescriptions: list }: { prescripti
             </div>
           ) : (
             <div className="space-y-3">
-              {past.map((p) => (
+              {past.map((p) => {
+                const display = formatPrescription({
+                  medication: p.medication,
+                  dosage: p.dosage,
+                  dosageForm: p.dosageForm,
+                  frequency: p.frequency,
+                  duration: p.duration,
+                  route: p.route,
+                  instructions: p.instructions,
+                  strength: p.strengthSnapshot,
+                });
+                return (
                 <div key={p.id} className="p-4 rounded-xl border border-border">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="text-sm font-semibold text-primary">{p.medication}</p>
-                      <p className="text-xs text-neutral-500 mt-0.5">{p.dosage} &middot; {p.frequency}</p>
+                      <p className="text-sm font-semibold text-primary">{display.heading}</p>
+                      <p className="text-xs text-neutral-500 mt-0.5">{display.instruction ?? "Dosage instructions not recorded."}</p>
                     </div>
                     <span className={`px-2.5 py-1 rounded-lg text-xs font-medium ${statusColors[p.status] || "bg-neutral-100 text-neutral-600"}`}>
                       {p.status}
@@ -106,7 +130,8 @@ export function PatientPrescriptionsClient({ prescriptions: list }: { prescripti
                     {p.endDate && ` - ${format(new Date(p.endDate), "MMM d, yyyy")}`}
                   </p>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </ActivityCard>

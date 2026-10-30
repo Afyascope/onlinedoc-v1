@@ -10,7 +10,14 @@ export default async function PaymentPage({ params }: { params: { id: string } }
   const userId = session?.user?.id;
 
   const rows = userId
-    ? await db.select().from(consultations).where(eq(consultations.id, params.id)).limit(1)
+    ? await db.select({
+        id: consultations.id,
+        patientId: consultations.patientId,
+        title: consultations.title,
+        consultationType: consultations.consultationType,
+        status: consultations.status,
+        fee: consultations.fee,
+      }).from(consultations).where(eq(consultations.id, params.id)).limit(1)
     : [];
 
   if (rows.length === 0 || rows[0].patientId !== userId) {

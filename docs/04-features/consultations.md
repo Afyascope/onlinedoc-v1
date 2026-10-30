@@ -43,7 +43,10 @@ As a clinician, I want to:
 
 - View assigned consultations.
 - Accept consultations.
-- Complete consultations.
+- Search the active clinical catalogue while consulting.
+- Record structured diagnoses, laboratory and radiology requests, and
+  prescriptions.
+- Complete consultations and generate documents.
 
 ### Administrator
 
@@ -111,6 +114,20 @@ Consultation Completed
 - Every consultation is assigned to one clinician.
 - Every consultation has one conversation.
 - Consultation history cannot be deleted.
+- Completion requires an approved, assigned clinician and an `in_consultation`
+  status.
+- Structured catalogue selections must reference resources in the active
+  release at completion time.
+- Completed consultations keep immutable catalogue snapshots even if the
+  catalogue is later revised or retired.
+- Clinical notes (history, examination, assessment, advice, and internal
+  comments) are clinician-only. They are never rendered on patient consultation
+  pages or in patient-accessible PDFs.
+- Patient consultation pages show administrative details only: status,
+  consultation date, fee/payment status, follow-up date, attachments, and links
+  to patient-facing PDFs. They do not render or serialize diagnoses, structured
+  investigation requests, structured prescription entries, intake clinical
+  history, or clinician notes.
 
 ---
 
@@ -127,6 +144,8 @@ Clinician
 - Consultation Queue
 - Active Consultations
 - Consultation Details
+- Structured completion form with catalogue search
+- Document downloads for the assigned clinician
 
 Administrator
 
@@ -134,10 +153,43 @@ Administrator
 
 ---
 
+## Structured Clinical Record
+
+During a consultation, the clinician can select:
+
+- Diagnoses from the active diagnosis catalogue.
+- Laboratory tests from the active laboratory catalogue.
+- Radiology services from the active radiology catalogue.
+- Medications from the active medication catalogue, with dosage, form,
+  frequency, duration, route, and instructions. New prescriptions use the
+  standardized frequency values `OD`, `BD`, `TID`, `QID`, `PRN`, `STAT`,
+  `Nocte`, `Weekly`, and `Monthly`; legacy free-text values remain readable.
+
+Each selection stores both the resource identifier and a snapshot of the values
+that were visible at selection time, including source and release version.
+This protects historical records from later catalogue updates.
+
+Completion writes the notes, structured selections, prescriptions, completed
+status, and status history in one transaction. If a selected resource has been
+deactivated or replaced, completion fails and the clinician must reselect it.
+
+## Documents
+
+Patients can download their own prescription, laboratory request, and radiology
+request PDFs when those items exist. The assigned clinician can additionally
+download the complete clinical report and medical facesheet.
+
+Patient prescription, laboratory, and radiology PDFs never include clinical
+notes, selection notes, or a Clinical Summary. The clinician-only clinical
+report and medical facesheet are the only document types that include those
+notes. Patients never receive the report or facesheet through the document
+route.
+
 ## Related APIs
 
 - Consultations
-- Conversations
+- Clinical Catalogue
+- Conversation
 - Payments
 
 ---
@@ -145,9 +197,23 @@ Administrator
 ## Related Database Entities
 
 - Consultation
+- Consultation Notes
+- Consultation Diagnoses
+- Consultation Requests
+- Prescription
+- Catalogue Release
+- Catalogue Resource
+- Consultation Document
 - Conversation
 - Patient
 - Clinician
+
+---
+
+## Related Documents
+
+- ../04-features/clinical-catalogue.md
+- ../03-api/clinical-catalogue.md
 
 ---
 
@@ -155,7 +221,4 @@ Administrator
 
 - Audio Consultation
 - Video Consultation
-- Clinical Notes
-- Prescriptions
 - Referrals
-- Laboratory Requests

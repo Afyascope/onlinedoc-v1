@@ -36,6 +36,7 @@ Phase 1 includes the following contracts.
 
 - Authentication
 - Consultations
+- Clinical Catalogue
 - Conversations
 - Messages
 - Digital Products

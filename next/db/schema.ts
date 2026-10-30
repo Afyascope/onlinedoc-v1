@@ -1,4 +1,5 @@
-import { pgTable, text, timestamp, boolean, integer, decimal, date, time, jsonb, uniqueIndex, type AnyPgColumn } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, text, timestamp, boolean, integer, decimal, date, time, jsonb, uniqueIndex, index, type AnyPgColumn } from "drizzle-orm/pg-core";
 
 // ── Better Auth tables ──
 
@@ -92,6 +93,9 @@ export const prescriptions = pgTable("prescriptions", {
   id: text("id").primaryKey(),
   patientId: text("patient_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   clinicianId: text("clinician_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  // `medication` is the immutable catalogue display-name snapshot for items
+  // created through the medication catalogue. Legacy free-text rows continue
+  // to use it as their medication name.
   medication: text("medication").notNull(),
   dosage: text("dosage").notNull(),
   frequency: text("frequency").notNull(),
@@ -101,9 +105,28 @@ export const prescriptions = pgTable("prescriptions", {
   status: text("status").notNull().default("active"),
   refillsRemaining: integer("refills_remaining").notNull().default(0),
   refillsTotal: integer("refills_total").notNull().default(0),
+  consultationId: text("consultation_id").references(() => consultations.id),
+  catalogueResourceId: text("catalogue_resource_id").references(() => catalogueResources.id),
+  catalogueReleaseId: text("catalogue_release_id").references(() => catalogueReleases.id),
+  genericNameSnapshot: text("generic_name_snapshot"),
+  brandNameSnapshot: text("brand_name_snapshot"),
+  strengthSnapshot: text("strength_snapshot"),
+  dosageFormSnapshot: text("dosage_form_snapshot"),
+  routeSnapshot: text("route_snapshot"),
+  sourceSnapshot: text("source_snapshot"),
+  sourceIdentifierSnapshot: text("source_identifier_snapshot"),
+  releaseVersionSnapshot: text("release_version_snapshot"),
+  dosageForm: text("dosage_form"),
+  duration: text("duration"),
+  route: text("route"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  selectedBy: text("selected_by").references(() => user.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-});
+}, (table) => [
+  index("prescriptions_consultation_id_idx").on(table.consultationId),
+  index("prescriptions_catalogue_resource_id_idx").on(table.catalogueResourceId),
+]);
 
 export const payments = pgTable("payments", {
   id: text("id").primaryKey(),
@@ -169,7 +192,12 @@ export const consultationNotes = pgTable("consultation_notes", {
   id: text("id").primaryKey(),
   consultationId: text("consultation_id").notNull().references(() => consultations.id, { onDelete: "cascade" }),
   clinicianId: text("clinician_id").notNull().references(() => user.id),
+  // The clinician's history notes are the single source of the Clinical
+  // Summary used in request and consultation documents.
+  historyNotes: text("history_notes"),
   diagnosis: text("diagnosis"),
+  // Retained for backward compatibility only. New consultations use the
+  // structured diagnosis/request/prescription tables.
   treatment: text("treatment"),
   prescription: text("prescription"),
   advice: text("advice"),
@@ -289,3 +317,158 @@ export const platformSettings = pgTable("platform_settings", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+// ── Clinical resource catalogues (PostgreSQL is the runtime source of truth) ──
+
+export const catalogueReleases = pgTable("catalogue_releases", {
+  id: text("id").primaryKey(),
+  domain: text("domain").notNull(),
+  fileName: text("file_name").notNull(),
+  fileChecksum: text("file_checksum").notNull(),
+  fileSize: integer("file_size"),
+  mimeType: text("mime_type"),
+  fileType: text("file_type"),
+  sourceName: text("source_name"),
+  sourceIdentifier: text("source_identifier"),
+  sourceVersion: text("source_version"),
+  sourceUrl: text("source_url"),
+  status: text("status").notNull().default("draft"),
+  rowCount: integer("row_count").notNull().default(0),
+  validRowCount: integer("valid_row_count").notNull().default(0),
+  invalidRowCount: integer("invalid_row_count").notNull().default(0),
+  newCount: integer("new_count").notNull().default(0),
+  updatedCount: integer("updated_count").notNull().default(0),
+  unchangedCount: integer("unchanged_count").notNull().default(0),
+  errorCount: integer("error_count").notNull().default(0),
+  warningCount: integer("warning_count").notNull().default(0),
+  validationResult: jsonb("validation_result"),
+  rows: jsonb("rows"),
+  transformationNotes: text("transformation_notes"),
+  notes: text("notes"),
+  importedBy: text("imported_by").notNull().references(() => user.id),
+  approvedBy: text("approved_by").references(() => user.id),
+  activatedBy: text("activated_by").references(() => user.id),
+  validatedAt: timestamp("validated_at"),
+  approvedAt: timestamp("approved_at"),
+  activatedAt: timestamp("activated_at"),
+  retiredAt: timestamp("retired_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => [
+  index("catalogue_releases_domain_status_idx").on(table.domain, table.status),
+  index("catalogue_releases_domain_checksum_idx").on(table.domain, table.fileChecksum),
+  uniqueIndex("catalogue_releases_one_active_per_domain").on(table.domain).where(sql`"status" = 'active'`),
+]);
+
+export const catalogueResources = pgTable("catalogue_resources", {
+  id: text("id").primaryKey(),
+  releaseId: text("release_id").notNull().references(() => catalogueReleases.id),
+  domain: text("domain").notNull(),
+  stableIdentifier: text("stable_identifier").notNull(),
+  code: text("code"),
+  name: text("name").notNull(),
+  description: text("description"),
+  codingSystem: text("coding_system"),
+  codingSystemVersion: text("coding_system_version"),
+  synonyms: text("synonyms"),
+  category: text("category"),
+  specimen: text("specimen"),
+  modality: text("modality"),
+  genericName: text("generic_name"),
+  brandName: text("brand_name"),
+  activeIngredient: text("active_ingredient"),
+  strength: text("strength"),
+  dosageForm: text("dosage_form"),
+  route: text("route"),
+  source: text("source"),
+  sourceIdentifier: text("source_identifier"),
+  sourceVersion: text("source_version"),
+  sourceUrl: text("source_url"),
+  provenanceNotes: text("provenance_notes"),
+  notes: text("notes"),
+  lifecycle: text("lifecycle").notNull().default("imported"),
+  isActive: boolean("is_active").notNull().default(true),
+  effectiveFrom: date("effective_from"),
+  effectiveTo: date("effective_to"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+}, (table) => [
+  uniqueIndex("catalogue_resources_release_domain_identifier_unique").on(table.releaseId, table.domain, table.stableIdentifier),
+  index("catalogue_resources_domain_lifecycle_idx").on(table.domain, table.lifecycle),
+  index("catalogue_resources_release_domain_idx").on(table.releaseId, table.domain),
+  index("catalogue_resources_source_identifier_idx").on(table.source, table.sourceIdentifier),
+]);
+
+export const catalogueResourceHistory = pgTable("catalogue_resource_history", {
+  id: text("id").primaryKey(),
+  resourceId: text("resource_id").notNull().references(() => catalogueResources.id),
+  releaseId: text("release_id").notNull().references(() => catalogueReleases.id),
+  action: text("action").notNull(),
+  actorId: text("actor_id").references(() => user.id),
+  before: jsonb("before"),
+  after: jsonb("after"),
+  reason: text("reason"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  index("catalogue_resource_history_resource_idx").on(table.resourceId),
+]);
+
+// ── Structured consultation selections (immutable snapshots) ──
+
+export const consultationDiagnoses = pgTable("consultation_diagnoses", {
+  id: text("id").primaryKey(),
+  consultationId: text("consultation_id").notNull().references(() => consultations.id, { onDelete: "cascade" }),
+  resourceId: text("resource_id").notNull().references(() => catalogueResources.id),
+  releaseId: text("release_id").notNull().references(() => catalogueReleases.id),
+  codeSnapshot: text("code_snapshot"),
+  nameSnapshot: text("name_snapshot").notNull(),
+  codingSystemSnapshot: text("coding_system_snapshot"),
+  codingSystemVersionSnapshot: text("coding_system_version_snapshot"),
+  sourceSnapshot: text("source_snapshot"),
+  sourceIdentifierSnapshot: text("source_identifier_snapshot"),
+  releaseVersionSnapshot: text("release_version_snapshot"),
+  notes: text("notes"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  selectedBy: text("selected_by").notNull().references(() => user.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  index("consultation_diagnoses_consultation_idx").on(table.consultationId),
+  index("consultation_diagnoses_resource_idx").on(table.resourceId),
+]);
+
+export const consultationRequests = pgTable("consultation_requests", {
+  id: text("id").primaryKey(),
+  consultationId: text("consultation_id").notNull().references(() => consultations.id, { onDelete: "cascade" }),
+  domain: text("domain").notNull(),
+  resourceId: text("resource_id").notNull().references(() => catalogueResources.id),
+  releaseId: text("release_id").notNull().references(() => catalogueReleases.id),
+  codeSnapshot: text("code_snapshot"),
+  nameSnapshot: text("name_snapshot").notNull(),
+  categorySnapshot: text("category_snapshot"),
+  modalitySnapshot: text("modality_snapshot"),
+  sourceSnapshot: text("source_snapshot"),
+  sourceIdentifierSnapshot: text("source_identifier_snapshot"),
+  releaseVersionSnapshot: text("release_version_snapshot"),
+  notes: text("notes"),
+  status: text("status").notNull().default("requested"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  requestedBy: text("requested_by").notNull().references(() => user.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  index("consultation_requests_consultation_domain_idx").on(table.consultationId, table.domain),
+  index("consultation_requests_resource_idx").on(table.resourceId),
+]);
+
+export const consultationDocuments = pgTable("consultation_documents", {
+  id: text("id").primaryKey(),
+  consultationId: text("consultation_id").notNull().references(() => consultations.id, { onDelete: "cascade" }),
+  documentType: text("document_type").notNull(),
+  generatedBy: text("generated_by").notNull().references(() => user.id),
+  generatedAt: timestamp("generated_at").notNull().defaultNow(),
+  checksum: text("checksum"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+}, (table) => [
+  index("consultation_documents_consultation_type_idx").on(table.consultationId, table.documentType),
+]);
