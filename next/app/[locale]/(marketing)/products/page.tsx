@@ -10,6 +10,8 @@ import { toClientProducts } from "@/lib/strapi/sanitizeProduct";
 import { generateMetadataObject } from '@/lib/shared/metadata';
 import { routeAlternates } from '@/lib/seo/alternates';
 import { MarketplaceCatalog } from "./catalog";
+import { ItemListSchema } from "@/components/seo/json-ld";
+import { absoluteUrl } from "@/lib/seo/alternates";
 
 import ClientSlugHandler from '../ClientSlugHandler';
 
@@ -30,6 +32,10 @@ export async function generateMetadata({
   const metadata = generateMetadataObject(seo, {
     locale: params.locale,
     alternates: routeAlternates(locale => `/${locale}/products`, params.locale),
+    fallbackTitle: "Products",
+    fallbackDescription:
+      pageData?.sub_heading ||
+      "Explore digital health products and resources created by OnlineDoc clinicians.",
   });
   return metadata;
 }
@@ -56,10 +62,19 @@ export default async function Products({
     { [params.locale]: "products" }
   ) || { [params.locale]: "products" };
   const featured = products?.filter((product: any) => product.featured);
+  const itemList = products
+    .filter((product: any) => product?.slug && product?.name)
+    .map((product: any) => ({
+      name: product.name,
+      url: absoluteUrl(`/en/products/${product.slug}`),
+    }));
 
   return (
-    <div className="relative overflow-hidden w-full">
+    <main className="relative overflow-hidden w-full">
       <ClientSlugHandler localizedSlugs={localizedSlugs} />
+      {itemList.length > 0 ? (
+        <ItemListSchema name="OnlineDoc digital health products" items={itemList} />
+      ) : null}
       <AmbientColor />
       <Container className="pt-28 md:pt-32 pb-20">
         <ProductsHero
@@ -71,6 +86,6 @@ export default async function Products({
         <Featured products={featured} locale={params.locale} />
         <MarketplaceCatalog products={products} locale={params.locale} />
       </Container>
-    </div>
+    </main>
   );
 }

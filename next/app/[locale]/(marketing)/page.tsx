@@ -5,7 +5,7 @@ import PageContent from '@/lib/shared/PageContent';
 import fetchContentType from '@/lib/strapi/fetchContentType';
 import { fetchCached } from '@/lib/strapi/fetchCached';
 import { generateMetadataObject } from '@/lib/shared/metadata';
-import { routeAlternates } from '@/lib/seo/alternates';
+import { localizedLocales, routeAlternates } from '@/lib/seo/alternates';
 import { sanitizeProductDynamicZone } from '@/lib/strapi/sanitizeProduct';
 import { isValidLocale } from '@/lib/i18n/locale';
 import ClientSlugHandler from './ClientSlugHandler';
@@ -25,15 +25,22 @@ export async function generateMetadata({
         slug: "homepage",
         locale: params.locale,
       },
-      populate: "seo.metaImage",
+      populate: {
+        seo: { populate: ["metaImage"] },
+        localizations: { fields: ["locale"] },
+      },
     },
     true
   );
 
   const seo = pageData?.seo;
+  // This localized route exists even when the CMS is temporarily unavailable.
+  // Keep its self canonical, while adding cross-language alternates only from
+  // real published homepage localizations.
+  const availableLocales = localizedLocales(pageData?.localizations, params.locale);
   const metadata = generateMetadataObject(seo, {
     locale: params.locale,
-    alternates: routeAlternates(locale => `/${locale}`, params.locale),
+    alternates: routeAlternates(locale => `/${locale}`, params.locale, availableLocales),
   });
   return metadata;
 }

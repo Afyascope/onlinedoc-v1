@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/client";
-import { siteUrl } from "@/lib/config";
+import { appOrigin } from "@/lib/config";
 
 export const authClient = createAuthClient({
-  baseURL: siteUrl(),
+  baseURL: appOrigin(),
 });

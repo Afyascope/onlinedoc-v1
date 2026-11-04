@@ -12,6 +12,10 @@ import ClientSlugHandler from '../ClientSlugHandler';
 // this catch-all (otherwise e.g. /en/homepage duplicates /en).
 const RESERVED_PAGE_SLUGS = new Set(["homepage"]);
 
+function fallbackTitle(pageData: { title?: string } | null | undefined, humanizedSlug: string): string {
+  return pageData?.title?.trim() || humanizedSlug;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -43,6 +47,13 @@ export async function generateMetadata({
   }
 
   const seo = pageData?.seo;
+  const humanizedSlug = params.slug
+    .split("-")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  const fallbackDescription = pageData?.dynamic_zone?.find(
+    (block: { sub_heading?: string }) => typeof block.sub_heading === "string" && block.sub_heading.trim(),
+  )?.sub_heading;
   return generateMetadataObject(seo, {
     locale: params.locale,
     alternates: detailAlternates(pageData?.localizations, {
@@ -50,6 +61,8 @@ export async function generateMetadata({
       slug: params.slug,
       buildPath: (locale, slug) => `/${locale}/${slug}`,
     }),
+    fallbackTitle: fallbackTitle(pageData, humanizedSlug),
+    fallbackDescription,
   });
 }
 

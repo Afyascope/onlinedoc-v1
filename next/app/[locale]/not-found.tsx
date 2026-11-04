@@ -5,7 +5,7 @@ import { Subheading } from "@/components/elements/subheading";
 import { Link } from "next-view-transitions";
 
 export const metadata: Metadata = {
-  title: "Page Not Found | OnlineDoc Healthcare",
+  title: "Page Not Found",
   robots: { index: false },
 };
 

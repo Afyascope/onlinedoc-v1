@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { siteUrl } from "@/lib/config";
+import { appOrigin } from "@/lib/config";
 
 export const emailColors = { primary: "#0F2A43", brand: "#2CB1BC", background: "#F8FAFC" };
 
 export function BaseTemplate({ title, preview, children }: { title: string; preview?: string; children: ReactNode }) {
   const support = process.env.EMAIL_REPLY_TO || "support@onlinedoc.co.ke";
-  const appUrl = siteUrl();
+  const appUrl = appOrigin();
   return (
     <html lang="en">
       <head><meta charSet="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>{title}</title></head>

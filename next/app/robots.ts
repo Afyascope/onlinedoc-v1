@@ -9,7 +9,13 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       // The dashboard is served under a locale prefix (/{locale}/dashboard/),
       // so both the bare and locale-prefixed forms are disallowed.
-      disallow: ["/api/", "/dashboard/", "/*/dashboard/"],
+      disallow: [
+        "/api/",
+        "/dashboard",
+        "/dashboard/",
+        "/*/dashboard",
+        "/*/dashboard/",
+      ],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };

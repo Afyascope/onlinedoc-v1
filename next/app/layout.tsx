@@ -13,8 +13,59 @@ export const viewport: Viewport = {
   ],
 };
 
+const siteName = "OnlineDoc Healthcare";
+const defaultDescription =
+  "Consult licensed clinicians online, explore a clinician-informed health library, and access digital health products with OnlineDoc Healthcare.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),
+  title: {
+    default: `${siteName} | Online doctor consultations & health library`,
+    template: `%s | ${siteName}`,
+  },
+  description: defaultDescription,
+  applicationName: siteName,
+  authors: [{ name: siteName, url: siteUrl() }],
+  creator: siteName,
+  publisher: siteName,
+  category: "health",
+  classification: "Healthcare",
+  referrer: "origin-when-cross-origin",
+  formatDetection: { email: false, address: false, telephone: false },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    siteName,
+    title: `${siteName} | Online doctor consultations & health library`,
+    description: defaultDescription,
+    url: siteUrl(),
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: `${siteName} — online consultations, health library, and digital health products`,
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteName} | Online doctor consultations & health library`,
+    description: defaultDescription,
+    images: ["/og-default.png"],
+  },
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({

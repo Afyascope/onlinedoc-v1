@@ -65,6 +65,7 @@ export const Hero = ({
             alt={backgroundImage?.alternativeText?.trim() || ""}
             fill
             priority
+            decoding="sync"
             quality={85}
             sizes="100vw"
             className="z-0 object-cover object-[72%_center] md:object-[65%_center]"

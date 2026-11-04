@@ -1,6 +1,6 @@
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
-import { OrganizationSchema } from '@/components/seo/json-ld';
+import { OrganizationSchema, WebSiteSchema } from '@/components/seo/json-ld';
 import { fetchCached } from '@/lib/strapi/fetchCached';
 import { isValidLocale } from '@/lib/i18n/locale';
 
@@ -17,6 +17,7 @@ export default async function MarketingLayout({
   return (
     <>
       <OrganizationSchema />
+      <WebSiteSchema />
       <Navbar data={pageData?.navbar} locale={locale} />
       {children}
       <Footer data={pageData?.footer} locale={locale} />

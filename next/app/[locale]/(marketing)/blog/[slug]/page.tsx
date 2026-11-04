@@ -9,7 +9,7 @@ import { BlocksRenderer as BetterBlocksRenderer } from "@qkix/better-blocks-reac
 import { generateMetadataObject } from '@/lib/shared/metadata';
 import { detailAlternates, absoluteUrl } from '@/lib/seo/alternates';
 import { strapiImage } from '@/lib/strapi/strapiImage';
-import { ArticleSchema } from "@/components/seo/json-ld";
+import { ArticleSchema, BreadcrumbSchema } from "@/components/seo/json-ld";
 
 import ClientSlugHandler from "../../ClientSlugHandler";
 
@@ -38,11 +38,16 @@ export async function generateMetadata({
   return generateMetadataObject(seo, {
     locale: params.locale,
     type: "article",
+    publishedTime: article?.publishedAt,
+    modifiedTime: article?.updatedAt,
+    authors: ["OnlineDoc Healthcare"],
     alternates: detailAlternates(article?.localizations, {
       locale: params.locale,
       slug: params.slug,
       buildPath: (locale, slug) => `/${locale}/blog/${slug}`,
     }),
+    fallbackTitle: article?.title,
+    fallbackDescription: article?.description,
   });
 }
 
@@ -79,6 +84,18 @@ export default async function SingleArticlePage({
   const articleUrl = absoluteUrl(`/${params.locale}/blog/${params.slug}`);
   const imageSource = seo?.metaImage?.url || article.image?.url;
 
+  const breadcrumbs = [
+    {
+      name: params.locale === "sw" ? "Nyumbani" : "Home",
+      href: absoluteUrl(`/${params.locale}`),
+    },
+    {
+      name: params.locale === "sw" ? "Makala" : "Blog",
+      href: absoluteUrl(`/${params.locale}/blog`),
+    },
+    { name: article.title, href: articleUrl },
+  ];
+
   return (
     <>
       <ArticleSchema
@@ -88,8 +105,14 @@ export default async function SingleArticlePage({
         imageUrl={imageSource ? strapiImage(imageSource) : undefined}
         datePublished={article.publishedAt}
         dateModified={article.updatedAt}
+        inLanguage={params.locale}
       />
-      <BlogLayout article={article} locale={params.locale}>
+      <BreadcrumbSchema items={breadcrumbs} />
+      <BlogLayout
+        article={article}
+        locale={params.locale}
+        breadcrumbs={breadcrumbs}
+      >
         <ClientSlugHandler localizedSlugs={localizedSlugs} />
         <BetterBlocksRenderer content={article.content as never} />
       </BlogLayout>

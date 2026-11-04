@@ -21,11 +21,26 @@ export async function generateMetadata({ params }: { params: { locale: string; s
   const pathFor = section === "articles"
     ? (locale: string) => `/${locale}/blog`
     : (locale: string) => `/${locale}/health/${healthSections[section].route}`;
+  const alternates = routeAlternates(pathFor, params.locale);
   return {
     title,
     description,
-    alternates: routeAlternates(pathFor, params.locale),
-    openGraph: { title, description, locale: openGraphLocale(params.locale), siteName: "OnlineDoc Healthcare" },
+    alternates,
+    openGraph: {
+      title,
+      description,
+      url: alternates.canonical,
+      locale: openGraphLocale(params.locale),
+      siteName: "OnlineDoc Healthcare",
+      type: "website",
+      images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "OnlineDoc Healthcare" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-default.png"],
+    },
   };
 }
 

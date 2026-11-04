@@ -9,11 +9,26 @@ import { routeAlternates, openGraphLocale } from "@/lib/seo/alternates";
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const title = healthLabel(params.locale, "library");
   const intro = healthLabel(params.locale, "intro");
+  const alternates = routeAlternates(locale => `/${locale}/health`, params.locale);
   return {
     title,
     description: intro,
-    alternates: routeAlternates(locale => `/${locale}/health`, params.locale),
-    openGraph: { title, description: intro, locale: openGraphLocale(params.locale), siteName: "OnlineDoc Healthcare" },
+    alternates,
+    openGraph: {
+      title,
+      description: intro,
+      url: alternates.canonical,
+      locale: openGraphLocale(params.locale),
+      siteName: "OnlineDoc Healthcare",
+      type: "website",
+      images: [{ url: "/og-default.png", width: 1200, height: 630, alt: "OnlineDoc Healthcare" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: intro,
+      images: ["/og-default.png"],
+    },
   };
 }
 

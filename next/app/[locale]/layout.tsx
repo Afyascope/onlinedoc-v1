@@ -55,7 +55,7 @@ export default function LocaleLayout({
                 </div>
             </AuthProvider>
             </CartProvider>
-            <Analytics />
+            {process.env.VERCEL ? <Analytics /> : null}
         </ViewTransitions>
     );
 }
