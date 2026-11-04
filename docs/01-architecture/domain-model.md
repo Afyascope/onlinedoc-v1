@@ -28,20 +28,21 @@ Everything else either supports, extends, or results from a consultation.
 
 # Core Domain
 
-Patient                                          
+Patient
     │
-    │ starts                                     
+    │ starts
     ▼
-Consultation                                     
-    │                                            
-    ├── Conversation                             
-    ├── Messages                                  
-    ├── Payment                                  
-    ├── Notes                                    
-    ├── Prescription (Future)                     
-    ├── Laboratory Request (Future)              
-    ├── Referral (Future)                        
-    └── Medical Certificate (Future)             
+Consultation
+    │
+    ├── Conversation
+    ├── Messages
+    ├── Payment
+    ├── Notes
+    ├── Diagnoses (catalogue snapshots)
+    ├── Laboratory Request (catalogue snapshot)
+    ├── Radiology Request (catalogue snapshot)
+    ├── Prescription (catalogue snapshot)
+    └── Generated Documents
 
 ---
 
@@ -111,11 +112,15 @@ Types
 
 Status
 
-- Pending
-- Accepted
-- Active
-- Completed
-- Cancelled
+- draft
+- awaiting_payment
+- paid
+- waiting_for_clinician
+- in_consultation
+- completed
+- follow_up_required
+- closed
+- cancelled
 
 Relationships
 
@@ -129,13 +134,20 @@ Contains
 - Conversation
 - Messages
 - Payment
-- Notes
+- Notes (including History Notes)
+- Diagnoses (snapshotted)
+- Laboratory requests (snapshotted)
+- Radiology requests (snapshotted)
+- Prescriptions (snapshotted)
+- Generated document records
+
+Catalogue selections reference an active catalogue release but copy the values
+and provenance into the consultation so later catalogue revisions do not alter
+historical records.
 
 Future
 
-- Prescription
-- Referral
-- Laboratory Request
+- Referrals
 - Medical Certificate
 
 ---
@@ -343,12 +355,24 @@ Examples
 
 ---
 
+# Catalogue Entities
+
+The clinical catalogue is a first-class domain:
+
+- Catalogue Release
+- Catalogue Resource
+- Catalogue Resource History
+
+Catalogues are imported by administrators, validated, approved, and activated.
+Clinicians can only search the active release. See
+`../04-features/clinical-catalogue.md`.
+
+---
+
 # Future Entities
 
 These entities are intentionally excluded from Phase 1.
 
-- Prescription
-- Laboratory Request
 - Referral
 - Medical Certificate
 - Appointment

@@ -11,6 +11,7 @@ interface DynamicZoneComponent {
 interface Props {
   dynamicZone: DynamicZoneComponent[];
   locale: string;
+  isHomepage?: boolean;
 }
 
 const componentMapping: { [key: string]: any } = {
@@ -29,7 +30,7 @@ const componentMapping: { [key: string]: any } = {
   'dynamic-zone.related-articles': dynamic(() => import('./related-articles').then(mod => mod.RelatedArticles))
 }
 
-const DynamicZoneManager: React.FC<Props> = ({ dynamicZone, locale }) => {
+const DynamicZoneManager: React.FC<Props> = ({ dynamicZone, locale, isHomepage = false }) => {
   return (
     <div>
       {
@@ -41,7 +42,11 @@ const DynamicZoneManager: React.FC<Props> = ({ dynamicZone, locale }) => {
           }
           return (
             <SectionErrorBoundary key={componentData.id}>
-              <Component {...componentData} locale={locale} />
+              <Component
+                {...componentData}
+                locale={locale}
+                {...(isHomepage && componentData.__component === 'dynamic-zone.hero' ? { isHomepageHero: true } : {})}
+              />
             </SectionErrorBoundary>
           );
         })}

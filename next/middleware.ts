@@ -28,6 +28,13 @@ function getLocaleFromPath(pathname: string): string | null {
   return null;
 }
 
+function isForwardedServerAction(request: NextRequest, pathname: string): boolean {
+  return request.method === 'POST'
+    && (pathname === '/[locale]' || pathname.startsWith('/[locale]/'))
+    && request.headers.get('x-action-forwarded') === '1'
+    && request.headers.has('next-action');
+}
+
 const publicRoutes = [
   '/login',
   '/register',
@@ -54,6 +61,14 @@ export function middleware(request: NextRequest) {
   // the correct <html lang> during SSR. Clone the incoming headers so existing
   // request headers (auth, cookies, etc.) are preserved.
   const requestHeaders = new Headers(request.headers)
+
+  // Next forwards server actions to a worker route pattern such as
+  // /[locale]/dashboard/... . Redirecting that internal POST breaks the
+  // forwarded request body, so let it reach the action handler. Each server
+  // action enforces its own authorization.
+  if (isForwardedServerAction(request, pathname)) {
+    return NextResponse.next()
+  }
 
   // Layer 1: i18n (existing logic)
   if (pathnameIsMissingLocale) {
