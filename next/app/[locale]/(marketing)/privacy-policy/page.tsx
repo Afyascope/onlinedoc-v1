@@ -8,12 +8,20 @@ export function generateMetadata(): Metadata {
   // English-only content served under every locale prefix: canonicalize to the
   // default-locale URL and emit no hreflang alternates.
   const canonical = absoluteUrl("/en/privacy-policy");
+  const description = "Learn how OnlineDoc collects, uses, safeguards, and manages personal information.";
   return {
-    title: "Privacy Policy | OnlineDoc",
-    description: "Learn how OnlineDoc collects, uses, safeguards, and manages personal information.",
+    title: "Privacy Policy",
+    description,
     robots: { index: true, follow: true },
     alternates: { canonical },
-    openGraph: { url: canonical },
+    openGraph: {
+      title: "Privacy Policy",
+      description,
+      url: canonical,
+      siteName: "OnlineDoc Healthcare",
+      type: "website",
+      images: [{ url: absoluteUrl("/og-default.png"), width: 1200, height: 630, alt: "OnlineDoc Healthcare" }],
+    },
   };
 }
 

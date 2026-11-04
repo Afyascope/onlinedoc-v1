@@ -8,12 +8,20 @@ export function generateMetadata(): Metadata {
   // English-only content served under every locale prefix: canonicalize to the
   // default-locale URL and emit no hreflang alternates.
   const canonical = absoluteUrl("/en/terms-of-service");
+  const description = "Terms governing use of OnlineDoc consultations, digital products, and platform services.";
   return {
-    title: "Terms of Service | OnlineDoc",
-    description: "Terms governing use of OnlineDoc consultations, digital products, and platform services.",
+    title: "Terms of Service",
+    description,
     robots: { index: true, follow: true },
     alternates: { canonical },
-    openGraph: { url: canonical },
+    openGraph: {
+      title: "Terms of Service",
+      description,
+      url: canonical,
+      siteName: "OnlineDoc Healthcare",
+      type: "website",
+      images: [{ url: absoluteUrl("/og-default.png"), width: 1200, height: 630, alt: "OnlineDoc Healthcare" }],
+    },
   };
 }
 

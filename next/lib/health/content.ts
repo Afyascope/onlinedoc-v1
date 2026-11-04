@@ -7,6 +7,9 @@ export type HealthSection = "conditions" | "medicines" | "tests" | "guides" | "n
 export interface HealthItem {
   id: number;
   locale?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
   localizations?: Array<{ locale: string; slug: string }>;
   title?: string;
   name?: string;
@@ -82,14 +85,51 @@ export function contentTitle(section: HealthSection, item: HealthItem): string {
   return healthSections[section].itemTitle(item);
 }
 
-export function contentDescription(section: HealthSection, item: HealthItem): string | undefined {
-  return healthSections[section].itemDescription(item);
+function firstBlockText(value: unknown): string | undefined {
+  if (!Array.isArray(value)) return undefined;
+  for (const block of value) {
+    if (!block || typeof block !== "object") continue;
+    const children = (block as { children?: unknown }).children;
+    if (!Array.isArray(children)) continue;
+    const text = children
+      .map((child) => (child && typeof child === "object" && typeof (child as { text?: unknown }).text === "string"
+        ? (child as { text: string }).text
+        : ""))
+      .join(" ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text) return text.length > 160 ? `${text.slice(0, 157).trimEnd()}...` : text;
+  }
+  return undefined;
 }
 
-export function contentMetadata(seo: Record<string, unknown> | undefined, locale: string, alternates?: Alternates): Metadata {
+export function contentDescription(section: HealthSection, item: HealthItem): string | undefined {
+  return healthSections[section].itemDescription(item)
+    || firstBlockText(item.content)
+    || firstBlockText(item.overview)
+    || firstBlockText(item.instructions)
+    || firstBlockText(item.uses);
+}
+
+export function contentMetadata(
+  seo: Record<string, unknown> | undefined,
+  locale: string,
+  alternates?: Alternates,
+  dates?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    fallbackTitle?: string;
+    fallbackDescription?: string;
+  },
+): Metadata {
   return generateMetadataObject(seo, {
     locale,
     type: "article",
     alternates,
+    publishedTime: dates?.publishedTime,
+    modifiedTime: dates?.modifiedTime,
+    authors: ["OnlineDoc Healthcare"],
+    fallbackTitle: dates?.fallbackTitle,
+    fallbackDescription: dates?.fallbackDescription,
   }) as Metadata;
 }

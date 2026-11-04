@@ -13,32 +13,22 @@ import {
 } from "@tabler/icons-react";
 
 import { Button } from "../elements/button";
+import Image from "next/image";
+import { strapiImage } from "@/lib/strapi/strapiImage";
 
 export function FormNextToSection({ heading, sub_heading, form, section, social_media_icon_links }: { heading: string, sub_heading: string, form: any, section: any, social_media_icon_links: any }) {
 
-  const socials = [
-    {
-      title: "twitter",
-      href: "https://twitter.com/strapijs",
-      icon: (
-        <IconBrandX className="h-5 w-5 text-neutral-500 hover:text-primary" />
-      ),
-    },
-    {
-      title: "github",
-      href: "https://github.com/strapi",
-      icon: (
-        <IconBrandGithub className="h-5 w-5 text-neutral-500 hover:text-primary" />
-      ),
-    },
-    {
-      title: "linkedin",
-      href: "https://linkedin.com/strapi",
-      icon: (
-        <IconBrandLinkedin className="h-5 w-5 text-neutral-500 hover:text-primary" />
-      ),
-    },
-  ];
+  const socials = (social_media_icon_links ?? [])
+    .flatMap((item: any) =>
+      (item?.link ?? [])
+        .filter((link: any) => typeof link?.URL === "string" && link.URL.trim())
+        .map((link: any) => ({
+          title: typeof link.text === "string" && link.text.trim() ? link.text.trim() : "Social link",
+          href: link.URL,
+          image: typeof item?.image?.url === "string" ? item.image.url : null,
+          alternativeText: item?.image?.alternativeText?.trim() || "",
+        })),
+    );
 
   return (
     <motion.div
@@ -51,9 +41,9 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
       <div className="flex relative z-20 items-center w-full justify-center px-4 py-4 lg:py-40 sm:px-6 lg:flex-none lg:px-20  xl:px-24">
         <div className="mx-auto w-full max-w-md">
           <div>
-            <h1 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-primary">
+            <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-primary">
               {heading}
-            </h1>
+            </h2>
             <p className="mt-4 text-secondary text-sm max-w-sm">
               {sub_heading}
             </p>
@@ -102,11 +92,23 @@ export function FormNextToSection({ heading, sub_heading, form, section, social_
             </div>
           </div>
           <div className="flex items-center justify-center space-x-4 py-4">
-            {socials.map((social) => (
-                <Link href={social.href} target="_blank" key={social.title}>
-                  {social.icon}
+            {socials.map((social: any) => {
+              const lower = social.title.toLowerCase();
+              const icon = lower.includes("twitter") || lower === "x"
+                ? <IconBrandX className="h-5 w-5 text-neutral-500 hover:text-primary" />
+                : lower.includes("github")
+                  ? <IconBrandGithub className="h-5 w-5 text-neutral-500 hover:text-primary" />
+                  : lower.includes("linkedin")
+                    ? <IconBrandLinkedin className="h-5 w-5 text-neutral-500 hover:text-primary" />
+                    : null;
+              return (
+                <Link href={social.href} target="_blank" key={`${social.title}-${social.href}`} aria-label={social.title} title={social.title}>
+                  {icon ?? (social.image
+                    ? <Image src={strapiImage(social.image)} alt={social.alternativeText} width={20} height={20} className="h-5 w-5 object-contain" />
+                    : <span className="text-xs">{social.title}</span>)}
                 </Link>
-              ))}
+              );
+            })}
           </div>
         </div>
       </div>

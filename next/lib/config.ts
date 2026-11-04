@@ -1,14 +1,55 @@
-function configured(name: string, value: string | undefined, developmentFallback: string): string {
+function configured(name: string, value: string | undefined, developmentFallback: string, browserFallback?: string): string {
   if (value) return value.replace(/\/$/, "");
-  if (process.env.NODE_ENV === "production") throw new Error(`${name} must be configured in production`);
+  if (process.env.NODE_ENV === "production") {
+    // Server-only variables such as BETTER_AUTH_URL are not inlined into the
+    // client bundle. Fall back to the origin the app is actually served from
+    // instead of crashing every page that imports the auth client.
+    if (browserFallback) return browserFallback.replace(/\/$/, "");
+    throw new Error(`${name} must be configured in production`);
+  }
   return developmentFallback;
 }
 
+/**
+ * Canonical public origin used for SEO URLs only (canonical, hreflang, sitemap,
+ * robots, Open Graph and JSON-LD).
+ */
 export function siteUrl(): string {
-  return configured(
+  const browserFallback = typeof window !== "undefined" ? window.location.origin : undefined;
+  const value = configured(
     "NEXT_PUBLIC_SITE_URL",
-    process.env.NEXT_PUBLIC_SITE_URL || process.env.APP_URL || process.env.BETTER_AUTH_URL,
+    process.env.NEXT_PUBLIC_SITE_URL,
     "http://localhost:3000",
+    browserFallback,
+  );
+  const parsed = new URL(value);
+  if (parsed.pathname !== "/" || parsed.search || parsed.hash) {
+    throw new Error("NEXT_PUBLIC_SITE_URL must be an origin without a path, query, or fragment");
+  }
+  if (process.env.NODE_ENV === "production" && parsed.origin !== "https://www.onlinedoc.co.ke") {
+    throw new Error("NEXT_PUBLIC_SITE_URL must be https://www.onlinedoc.co.ke in production");
+  }
+  return parsed.origin;
+}
+
+/**
+ * Origin of the running application. Kept separate from `siteUrl()` so a local
+ * build can verify production canonicals without sending auth, payment or
+ * email callbacks to the production site.
+ */
+export function appOrigin(): string {
+  const browserFallback = typeof window !== "undefined" ? window.location.origin : undefined;
+  const serverValue =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.APP_URL ||
+    process.env.BETTER_AUTH_URL ||
+    (typeof window === "undefined" ? process.env.NEXT_PUBLIC_SITE_URL : undefined);
+
+  return configured(
+    "NEXT_PUBLIC_APP_URL",
+    serverValue,
+    "http://localhost:3000",
+    browserFallback,
   );
 }
 
@@ -16,7 +57,7 @@ export function apiUrl(): string {
   return configured("NEXT_PUBLIC_API_URL", process.env.NEXT_PUBLIC_API_URL, "http://localhost:1337");
 }
 
-export function appUrl(path = ""): string { return `${siteUrl()}${path}`; }
+export function appUrl(path = ""): string { return `${appOrigin()}${path}`; }
 export function paystackCurrency(): string { return configured("PAYSTACK_CURRENCY", process.env.PAYSTACK_CURRENCY, "KES"); }
 /**
  * Fee precedence: an existing platform_settings row is authoritative. The

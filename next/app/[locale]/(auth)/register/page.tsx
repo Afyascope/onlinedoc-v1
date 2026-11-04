@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata: Metadata = {
-  title: "Register | OnlineDoc Healthcare",
+  title: "Register",
   description: "Create your OnlineDoc account",
 };
 

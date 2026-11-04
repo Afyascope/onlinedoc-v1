@@ -30,6 +30,11 @@ export async function generateMetadata({
   const metadata = generateMetadataObject(seo, {
     locale: params.locale,
     alternates: routeAlternates(locale => `/${locale}/blog`, params.locale),
+    fallbackTitle: params.locale === "sw" ? "Makala" : "Blog",
+    fallbackDescription:
+      params.locale === "sw"
+        ? "Makala za afya zilizopitiwa na wataalamu, mwongozo wa afya, na habari za OnlineDoc Healthcare."
+        : "Clinician-informed health articles, guides, and medical insights from OnlineDoc Healthcare.",
   });
   return metadata;
 }
@@ -49,16 +54,16 @@ export default async function Blog({
   const articleList: Article[] = articles?.data ?? [];
   const [featured, ...rest] = articleList;
 
-  const localizedSlugs = blogPage.localizations?.reduce(
+  const localizedSlugs = blogPage?.localizations?.reduce(
     (acc: Record<string, string>, localization: any) => {
       acc[localization.locale] = "blog";
       return acc;
     },
     { [params.locale]: "blog" }
-  );
+  ) ?? { [params.locale]: "blog" };
 
   return (
-    <div className="relative overflow-hidden py-20 md:py-0">
+    <main className="relative overflow-hidden py-20 md:py-0">
       <ClientSlugHandler localizedSlugs={localizedSlugs} />
       <AmbientColor />
       <Container className="flex flex-col items-center justify-between pb-20">
@@ -67,10 +72,10 @@ export default async function Blog({
             <IconClipboardText className="h-6 w-6 text-white" />
           </FeatureIconContainer>
           <Heading as="h1" className="mt-4">
-            {blogPage.heading}
+            {blogPage?.heading || (params.locale === "sw" ? "Makala" : "Blog")}
           </Heading>
           <Subheading className="max-w-3xl mx-auto">
-            {blogPage.sub_heading}
+            {blogPage?.sub_heading || (params.locale === "sw" ? "Makala za afya zilizopitiwa na wataalamu." : "Clinician-informed health articles, guides, and medical insights.")}
           </Subheading>
         </div>
 
@@ -89,6 +94,6 @@ export default async function Blog({
 
         {rest.length > 0 && <AllPosts articles={rest} locale={params.locale} />}
       </Container>
-    </div>
+    </main>
   );
 }

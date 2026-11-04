@@ -43,7 +43,12 @@ function r2ImageRemotePatterns() {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  poweredByHeader: false,
+
   images: {
+    // Serve modern formats first to reduce image bytes and improve LCP.
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
     remotePatterns: [
       ...strapiImageRemotePatterns(),
       ...r2ImageRemotePatterns(),
@@ -62,33 +67,42 @@ const nextConfig = {
 
   // 3. REDIRECTS: Keep your dynamic redirect logic
   async redirects() {
-    let redirections = [];
+    // Legacy links still stored in the CMS navigation/footer. These are kept
+    // static so they work even when Strapi is unreachable during a build.
+    let redirections = [
+      { source: "/:locale/product", destination: "/:locale/products", permanent: true },
+      { source: "/:locale/policy", destination: "/:locale/privacy-policy", permanent: true },
+      { source: "/:locale/terms", destination: "/:locale/terms-of-service", permanent: true },
+      { source: "/:locale/disclaimer", destination: "/:locale/terms-of-service#medical-disclaimer", permanent: true },
+      { source: "/:locale/consultation", destination: "/:locale/register", permanent: false },
+    ];
     if (!process.env.NEXT_PUBLIC_API_URL && process.env.NODE_ENV === "production") {
       throw new Error("NEXT_PUBLIC_API_URL must be configured in production");
     }
-    if (!process.env.NEXT_PUBLIC_API_URL) return [];
+    if (!process.env.NEXT_PUBLIC_API_URL) return redirections;
     try {
       const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/redirections`
       );
       // If API is down during build, don't crash the whole deploy
-      if (!res.ok) return [];
+      if (!res.ok) return redirections;
       
       const result = await res.json();
-      const redirectItems = result.data.map(({ source, destination }) => {
-        return {
+      const seen = new Set(redirections.map((redirect) => redirect.source));
+      const redirectItems = result.data
+        .map(({ source, destination }) => ({
           source: `/:locale${source}`,
           destination: `/:locale${destination}`,
           permanent: false,
-        };
-      });
+        }))
+        .filter((redirect) => !seen.has(redirect.source));
 
       redirections = redirections.concat(redirectItems);
       return redirections;
     } catch (error) {
-      // Return empty array if Strapi is unreachable during build
-      console.warn("Could not fetch redirects during build, skipping...");
-      return [];
+      // Keep the static redirects if Strapi is unreachable during build.
+      console.warn("Could not fetch redirects during build, using static redirects...");
+      return redirections;
     }
   },
 };

@@ -20,25 +20,65 @@ export function openGraphLocale(locale: string): string {
 }
 
 export function absoluteUrl(path: string): string {
-  const normalized = path.startsWith("/") ? path : `/${path}`;
+  const pathOnly = path.split(/[?#]/, 1)[0] || "/";
+  const normalized = `/${pathOnly}`.replace(/\/{2,}/g, "/");
   return `${siteUrl()}${normalized}`;
 }
 
 /**
- * Alternates for route-level pages that genuinely exist in every configured
- * public locale (home, blog index, health index/section, ...). `x-default`
- * points at the default locale, which always exists for these routes.
+ * Public locales backed by a real CMS localization record, plus the current
+ * locale when the requested page genuinely exists. Never assumes that a route
+ * prefix alone means a translated page exists.
  */
-export function routeAlternates(pathFor: (locale: Locale) => string, self: string): Alternates {
+export function localizedLocales(
+  localizations: Array<{ locale?: string }> | null | undefined,
+  self: string,
+  options?: { selfExists?: boolean },
+): Locale[] {
+  const available = new Set<Locale>();
+
+  if (options?.selfExists !== false && isPublicLocale(self)) {
+    available.add(self);
+  }
+
+  for (const localization of localizations ?? []) {
+    if (!localization?.locale) continue;
+    const publicLocale = publicLocaleFor(localization.locale);
+    if (publicLocale) available.add(publicLocale);
+  }
+
+  return i18n.locales.filter(locale => available.has(locale));
+}
+
+/**
+ * Alternates for route-level pages. Only pass locales that genuinely have a
+ * published page; the caller derives them from CMS localizations. If the
+ * current locale is unavailable, the canonical points at the default locale.
+ */
+export function routeAlternates(
+  pathFor: (locale: Locale) => string,
+  self: string,
+  availableLocales: readonly Locale[] = i18n.locales,
+): Alternates {
+  const locales = availableLocales.length > 0 ? availableLocales : [i18n.defaultLocale];
   const languages: Record<string, string> = {};
-  for (const locale of i18n.locales) {
+  for (const locale of locales) {
     languages[locale] = absoluteUrl(pathFor(locale));
   }
-  languages["x-default"] = absoluteUrl(pathFor(i18n.defaultLocale));
 
   const selfLocale = isPublicLocale(self) ? self : i18n.defaultLocale;
+  const canonicalLocale = locales.includes(selfLocale)
+    ? selfLocale
+    : locales.includes(i18n.defaultLocale)
+      ? i18n.defaultLocale
+      : locales[0];
+
+  if (languages[i18n.defaultLocale]) {
+    languages["x-default"] = languages[i18n.defaultLocale];
+  }
+
   return {
-    canonical: absoluteUrl(pathFor(selfLocale)),
+    canonical: absoluteUrl(pathFor(canonicalLocale)),
     languages,
   };
 }

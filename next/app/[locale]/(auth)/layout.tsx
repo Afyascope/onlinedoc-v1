@@ -1,4 +1,14 @@
+import type { Metadata } from "next";
 import { Link } from "next-view-transitions";
+
+// Account utility pages have no search value and should never be indexed.
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+  },
+};
 
 export default function AuthLayout({
   children,

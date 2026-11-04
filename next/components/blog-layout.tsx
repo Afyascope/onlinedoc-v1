@@ -5,20 +5,26 @@ import { format } from "date-fns";
 import DynamicZoneManager from "./dynamic-zone/manager";
 import { ArticleMedia } from "./blog/article-media";
 import { CategoryBadge } from "./blog/article-card";
+import { Breadcrumbs, type Crumb } from "./seo/breadcrumbs";
 import { Article } from "@/types/types";
 
 export async function BlogLayout({
   article,
   locale,
+  breadcrumbs,
   children,
 }: {
   article: Article;
   locale: string;
+  breadcrumbs?: Crumb[];
   children: React.ReactNode;
 }) {
 
   return (
+    <main>
     <Container className="mt-20 lg:mt-32 mb-20">
+
+      {breadcrumbs?.length ? <Breadcrumbs items={breadcrumbs} /> : null}
 
       {/* Navigation */}
       <div className="flex justify-between items-center py-8">
@@ -68,13 +74,39 @@ export async function BlogLayout({
             </div>
 
             {/* Footer / Meta Data */}
-            <div className="flex space-x-4 items-center pt-8 border-t border-border mt-12">
-              <time
-                dateTime={article.publishedAt}
-                className="flex items-center text-sm text-neutral-600"
-              >
-                Published on {format(new Date(article.publishedAt), "MMMM dd, yyyy")}
-              </time>
+            <div className="mt-12 border-t border-border pt-8">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-neutral-600">
+                <time dateTime={article.publishedAt}>
+                  {locale === "sw" ? "Imechapishwa" : "Published"}{" "}
+                  {format(new Date(article.publishedAt), "MMMM dd, yyyy")}
+                </time>
+                {article.updatedAt && article.updatedAt !== article.publishedAt ? (
+                  <time dateTime={article.updatedAt}>
+                    {locale === "sw" ? "Imesasishwa" : "Last updated"}{" "}
+                    {format(new Date(article.updatedAt), "MMMM dd, yyyy")}
+                  </time>
+                ) : null}
+              </div>
+              <p className="mt-2 text-sm text-neutral-600">
+                {locale === "sw" ? "Imechapishwa na " : "Published by "}
+                <Link
+                  href={`/${locale}`}
+                  className="font-medium text-brand hover:underline"
+                >
+                  OnlineDoc Healthcare
+                </Link>
+              </p>
+              <p className="mt-3 text-xs leading-relaxed text-neutral-500">
+                {locale === "sw"
+                  ? "Taarifa hizi ni kwa elimu ya jumla na hazichukui nafasi ya ushauri wa mtaalamu wa afya."
+                  : "This information is for general education and does not replace advice from a qualified health professional."}{" "}
+                <Link
+                  href={`/${locale}/terms-of-service#medical-disclaimer`}
+                  className="font-medium text-brand hover:underline"
+                >
+                  {locale === "sw" ? "Kanusho la matibabu" : "Medical disclaimer"}
+                </Link>
+              </p>
             </div>
 
           </article>
@@ -88,5 +120,6 @@ export async function BlogLayout({
         </div>
       )}
     </Container>
+    </main>
   );
 }

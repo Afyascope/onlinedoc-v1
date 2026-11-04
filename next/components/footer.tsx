@@ -43,17 +43,17 @@ export const Footer = async ({ data, locale }: { data: any, locale: string }) =>
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-10 items-start w-full md:w-auto">
             <div className="flex flex-col space-y-4">
-               <h4 className="text-primary font-bold font-primary">Company</h4>
+               <h3 className="text-primary font-bold font-primary">Company</h3>
                <LinkSection links={data?.internal_links} locale={locale} />
             </div>
 
             <div className="flex flex-col space-y-4">
-                <h4 className="text-primary font-bold font-primary">Legal</h4>
+                <h3 className="text-primary font-bold font-primary">Legal</h3>
                 <LinkSection links={ensureLegalLinks(data?.policy_links)} locale={locale} />
             </div>
 
             <div className="flex flex-col space-y-4">
-                <h4 className="text-primary font-bold font-primary">Connect</h4>
+                <h3 className="text-primary font-bold font-primary">Connect</h3>
                 <SocialLinks links={data?.social_media_links} />
             </div>
           </div>
@@ -84,7 +84,9 @@ const LinkSection = ({ links, locale }: { links?: { text: string; URL: never | s
           ? `/${locale}/terms-of-service`
           : label === "medical disclaimer"
             ? `/${locale}/terms-of-service#medical-disclaimer`
-            : null;
+            : label === "cookie policy"
+              ? `/${locale}/privacy-policy`
+              : null;
       return (
       <Link
         key={link.text}
