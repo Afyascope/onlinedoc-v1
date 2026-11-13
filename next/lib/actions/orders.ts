@@ -26,7 +26,10 @@ async function getSession() {
  * resolved server-side from Strapi. The browser only ever supplies the slug.
  */
 export async function initiateProductPayment(productSlug: string) {
-  const session = await getSession();
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.id) {
+    return { success: false as const, error: "Sign in required", code: "UNAUTHENTICATED" as const };
+  }
 
   if (!productSlug) return { success: false, error: "Product not found" };
 

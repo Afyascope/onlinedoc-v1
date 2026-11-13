@@ -6,13 +6,17 @@ import { useAuth } from "@/context/auth-context";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
 import { getDashboardPath } from "@/lib/clinician-status";
+import { safeAuthRedirect } from "@/lib/auth-redirect.mjs";
 
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/dashboard/patient";
+  const requestedRedirect = searchParams.get("redirect");
   const verified = searchParams.get("verified") === "true";
   const { login } = useAuth();
+  const registerHref = requestedRedirect
+    ? `/register?redirect=${encodeURIComponent(safeAuthRedirect(requestedRedirect, "/dashboard/patient"))}`
+    : "/register";
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,7 +37,11 @@ export function LoginForm() {
       return;
     }
 
-    router.push(result.user ? getDashboardPath(result.user) : redirectTo);
+    const fallback = result.user ? getDashboardPath(result.user) : "/dashboard/patient";
+    const destination = requestedRedirect
+      ? safeAuthRedirect(requestedRedirect, fallback)
+      : fallback;
+    router.push(destination);
   };
 
   return (
@@ -125,7 +133,7 @@ export function LoginForm() {
 
           <p className="text-center text-sm text-neutral-600 mt-6 font-secondary">
             Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-brand hover:text-brand-hover font-medium">
+            <Link href={registerHref} className="text-brand hover:text-brand-hover font-medium">
               Create one
             </Link>
           </p>

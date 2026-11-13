@@ -5,11 +5,19 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
 import { getDashboardPath } from "@/lib/clinician-status";
+import { safeAuthRedirect } from "@/lib/auth-redirect.mjs";
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const token = searchParams.get("token") || "";
+  const callbackURL = searchParams.get("callbackURL");
+  const redirectTo = callbackURL && callbackURL !== "/"
+    ? safeAuthRedirect(callbackURL, "")
+    : "";
+  const redirectQuery = redirectTo ? `&redirect=${encodeURIComponent(redirectTo)}` : "";
+  const loginHref = `/login?verified=true${redirectQuery}`;
+  const signInHref = redirectTo ? `/login?redirect=${encodeURIComponent(redirectTo)}` : "/login";
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
   const [message, setMessage] = useState("");
 
@@ -33,8 +41,8 @@ export default function VerifyEmailPage() {
         setMessage("Email verified successfully!");
         const { data: session } = await authClient.getSession();
         const destination = session?.user
-          ? getDashboardPath(session.user as any)
-          : "/login?verified=true";
+          ? (redirectTo || getDashboardPath(session.user as any))
+          : loginHref;
         setTimeout(() => router.push(destination), 900);
       } catch {
         setStatus("error");
@@ -43,7 +51,7 @@ export default function VerifyEmailPage() {
     }
 
     verify();
-  }, [token, router]);
+  }, [token, router, redirectTo, loginHref]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-50 px-4">
@@ -75,7 +83,7 @@ export default function VerifyEmailPage() {
                 {message}
               </p>
               <Link
-                href="/login"
+                href={loginHref}
                 className="inline-block bg-brand text-white font-bold px-8 py-3 rounded-xl hover:bg-brand-hover transition-all text-sm"
               >
                 Sign in
@@ -97,7 +105,7 @@ export default function VerifyEmailPage() {
                 {message}
               </p>
               <Link
-                href="/login"
+                href={signInHref}
                 className="text-brand hover:text-brand-hover font-medium text-sm"
               >
                 Back to login

@@ -1,18 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { Container } from "@/components/container";
 import { Link } from "next-view-transitions";
 import { useParams } from "next/navigation";
 import type { PublicRegistrationRole } from "@/types/auth";
+import { safeAuthRedirect } from "@/lib/auth-redirect.mjs";
 
 export function RegisterForm() {
-  const router = useRouter();
+  const searchParams = useSearchParams();
   const params = useParams<{ locale: string }>();
   const locale = params?.locale ?? "en";
   const { register } = useAuth();
+  const redirectTo = safeAuthRedirect(searchParams.get("redirect"), "");
+  const redirectQuery = redirectTo ? `?redirect=${encodeURIComponent(redirectTo)}` : "";
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -50,7 +53,7 @@ export function RegisterForm() {
 
     setIsLoading(true);
 
-    const result = await register(name, email, password, role);
+    const result = await register(name, email, password, role, redirectTo || undefined);
     setIsLoading(false);
 
     if (result.error) {
@@ -80,7 +83,7 @@ export function RegisterForm() {
                 : "We sent a verification email. Please check your inbox to verify your email address."}
             </p>
             <Link
-              href="/login"
+              href={`/login${redirectQuery}`}
               className="inline-block bg-brand text-white font-bold px-8 py-3 rounded-xl hover:bg-brand-hover transition-all text-sm"
             >
               Sign in
@@ -243,7 +246,7 @@ export function RegisterForm() {
 
           <p className="text-center text-sm text-neutral-600 mt-6 font-secondary">
             Already have an account?{" "}
-            <Link href="/login" className="text-brand hover:text-brand-hover font-medium">
+            <Link href={`/login${redirectQuery}`} className="text-brand hover:text-brand-hover font-medium">
               Sign in
             </Link>
           </p>

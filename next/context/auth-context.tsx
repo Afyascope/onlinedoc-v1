@@ -11,9 +11,9 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   role: UserRole | null;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<{ error?: string; user?: AuthUser }>;
-  register: (name: string, email: string, password: string, role: PublicRegistrationRole) => Promise<{ error?: string; data?: any }>;
+  register: (name: string, email: string, password: string, role: PublicRegistrationRole, redirectTo?: string) => Promise<{ error?: string; data?: any }>;
   logout: () => Promise<void>;
-  refresh: () => Promise<void>;
+  refresh: () => Promise<AuthSession | null>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -23,31 +23,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<AuthSession["session"] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (): Promise<AuthSession | null> => {
     try {
       const { data, error } = await authClient.getSession();
       if (error) {
         setUser(null);
         setSession(null);
-        return;
+        return null;
       }
       if (data?.user) {
         setUser(data.user as unknown as AuthUser);
         setSession(data.session as AuthSession["session"]);
-      } else {
-        setUser(null);
-        setSession(null);
+        return data as unknown as AuthSession;
       }
+      setUser(null);
+      setSession(null);
+      return null;
     } catch {
       setUser(null);
       setSession(null);
+      return null;
     } finally {
       setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    refresh();
+    void refresh();
   }, [refresh]);
 
   const login = async (email: string, password: string, rememberMe?: boolean) => {
@@ -63,12 +65,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { user: data?.user as unknown as AuthUser };
   };
 
-  const register = async (name: string, email: string, password: string, role: PublicRegistrationRole) => {
+  const register = async (name: string, email: string, password: string, role: PublicRegistrationRole, redirectTo?: string) => {
     const { data, error } = await authClient.signUp.email({
       name,
       email,
       password,
       role,
+      ...(redirectTo ? { callbackURL: redirectTo } : {}),
     } as any);
     if (error) {
       return { error: error.message || error.code || "Registration failed" };
